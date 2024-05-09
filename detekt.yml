@@ -1,0 +1,221 @@
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+  excludes: &ExcludePatterns
+    - './third-party/**'
+
+# https://detekt.dev/docs/rules/comments
+comments:
+  excludes: *ExcludePatterns
+  OutdatedDocumentation:
+    active: true
+    allowParamOnConstructorProperties: true
+
+# https://detekt.dev/docs/rules/complexity
+complexity:
+  excludes: *ExcludePatterns
+  ComplexCondition:
+    threshold: 8
+  LongMethod:
+    threshold: 200
+  LongParameterList:
+    active: false
+  # We prefer named arguments when calling functions with long parameter lists
+  NamedArguments:
+    active: true
+  CyclomaticComplexMethod:
+    active: false
+  NestedScopeFunctions:
+    active: true
+  StringLiteralDuplication:
+    active: false
+  TooManyFunctions:
+    active: false
+
+# https://detekt.dev/docs/rules/coroutines
+coroutines:
+  excludes: *ExcludePatterns
+  GlobalCoroutineUsage:
+    active: true
+  SuspendFunSwallowedCancellation:
+    active: true
+  SuspendFunWithCoroutineScopeReceiver:
+    active: true
+
+# https://detekt.dev/docs/rules/exceptions
+exceptions:
+  excludes: *ExcludePatterns
+  NotImplementedDeclaration:
+    active: true
+  ObjectExtendsThrowable:
+    active: true
+  TooGenericExceptionCaught:
+    active: false
+
+# https://detekt.dev/docs/rules/naming
+naming:
+  excludes: *ExcludePatterns
+  FunctionNaming:
+    ignoreAnnotated: [ 'Composable' ]
+  BooleanPropertyNaming:
+    active: true
+  InvalidPackageDeclaration:
+    active: false
+  NonBooleanPropertyPrefixedWithIs:
+    active: true
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Za-z][_A-Za-z0-9]*'
+  MatchingDeclarationName:
+    active: false
+
+# https://detekt.dev/docs/rules/performance
+performance:
+  excludes: *ExcludePatterns
+  CouldBeSequence:
+    active: true
+
+# https://detekt.dev/docs/rules/potential-bugs
+potential-bugs:
+  excludes: *ExcludePatterns
+  CastToNullableType:
+    active: true
+  MissingPackageDeclaration:
+    active: false
+    excludes:
+      - './gradle/build-logic/src/main/kotlin/plugins.kt'
+      - '**/*.gradle.kts'
+  NullCheckOnMutableProperty:
+    active: true
+  NullableToStringCall:
+    active: true
+  PropertyUsedBeforeDeclaration:
+    active: true
+  UnnecessaryNotNullCheck:
+    active: true
+
+# https://detekt.dev/docs/rules/style
+style:
+  excludes: *ExcludePatterns
+  MaxLineLength:
+    # The best max line length is 100, but we can relax it a bit
+    # to avoid some unexpected situations.
+    maxLineLength: 110
+    excludeCommentStatements: true
+  WildcardImport:
+    # We never want to use wildcard imports in our code
+    excludeImports: [ ]
+  BracesOnIfStatements:
+    active: false
+    # For single line if statements, we don't want to add braces
+    singleLine: 'never'
+    # For multiline, we want to keep the existing style
+    multiLine: 'consistent'
+  BracesOnWhenStatements:
+    active: false
+  CanBeNonNullable:
+    active: true
+  ClassOrdering:
+    active: true
+  CollapsibleIfStatements:
+    active: true
+  DestructuringDeclarationWithTooManyEntries:
+    maxDestructuringEntries: 4
+  DoubleNegativeLambda:
+    active: true
+  EqualsOnSignatureLine:
+    active: true
+  ExplicitCollectionElementAccessMethod:
+    active: true
+  ExpressionBodySyntax:
+    active: false
+    includeLineWrapping: true
+  ForbiddenComment:
+    active: false
+  ReturnCount:
+    active: false
+  MagicNumber:
+    active: false
+  MultilineRawStringIndentation:
+    active: true
+    indentSize: 2
+  NoTabs:
+    active: true
+  NullableBooleanCheck:
+    active: true
+  RedundantExplicitType:
+    active: true
+  RedundantVisibilityModifierRule:
+    active: true
+  SpacingBetweenPackageAndImports:
+    active: true
+  StringShouldBeRawString:
+    active: true
+    maxEscapedCharacterCount: 5
+  ThrowsCount:
+    active: false
+  TrailingWhitespace:
+    active: true
+  UnnecessaryAnnotationUseSiteTarget:
+    active: true
+  UnnecessaryBackticks:
+    active: true
+  UnnecessaryBracesAroundTrailingLambda:
+    active: true
+  UnnecessaryInnerClass:
+    active: true
+  UnnecessaryLet:
+    active: true
+  UnnecessaryParentheses:
+    active: true
+  UntilInsteadOfRangeTo:
+    active: true
+  UnusedImports:
+    active: true
+  UseDataClass:
+    active: true
+    allowVars: true
+  UseEmptyCounterpart:
+    active: true
+  UseIfEmptyOrIfBlank:
+    active: true
+  UseLet:
+    active: true
+  UseSumOfInsteadOfFlatMapSize:
+    active: true
+
+# https://detekt.dev/docs/rules/formatting
+formatting:
+  excludes: *ExcludePatterns
+  Indentation:
+    active: true
+    indentSize: 2
+  NoEmptyFirstLineInClassBody:
+    active: false
+  ArgumentListWrapping:
+    active: false
+  Wrapping:
+    active: false
+  TrailingCommaOnDeclarationSite:
+    active: false
+  AnnotationOnSeparateLine:
+    active: false
+  SpacingBetweenDeclarationsWithAnnotations:
+    active: false
+  # These rules are duplicated with Detekt's standard rules, so just disable them
+  Filename:
+    active: false
+  FinalNewline:
+    active: false
+  MaximumLineLength:
+    active: false
+  ModifierOrdering:
+    active: false
+  MultiLineIfElse:
+    active: false
+  EnumEntryNameCase:
+    active: false
+  NoUnusedImports:
+    active: false
+  NoWildcardImports:
+    active: false
