@@ -28,6 +28,6 @@ dependencyResolutionManagement {
   }
 }
 
-include(":gallery")
-include(":gradle-plugin")
-include(":runtime")
+include(":modules:gallery")
+include(":modules:gradle-plugin")
+include(":modules:runtime")

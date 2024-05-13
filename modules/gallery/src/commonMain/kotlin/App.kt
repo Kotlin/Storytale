@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import storytale.gallery.generated.resources.Res
-import storytale.gallery.generated.resources.compose_multiplatform
+import storytale.modules.gallery.generated.resources.Res
+import storytale.modules.gallery.generated.resources.compose_multiplatform
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
