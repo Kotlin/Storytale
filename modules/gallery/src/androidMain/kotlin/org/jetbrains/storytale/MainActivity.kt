@@ -1,7 +1,6 @@
 package org.jetbrains.storytale
 
 import App
-import Story
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,9 +12,6 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       App()
-      val story = Story("Android Story") {
-        App()
-      }
     }
   }
 }
