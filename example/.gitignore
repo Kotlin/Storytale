@@ -1,4 +1,5 @@
 *.iml
+.kotlin
 .gradle
 **/build/
 xcuserdata
@@ -7,10 +8,8 @@ local.properties
 .idea
 .DS_Store
 captures
-.kotlin
 .externalNativeBuild
 .cxx
-/example/build
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
