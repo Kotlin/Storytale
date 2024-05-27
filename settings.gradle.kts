@@ -28,6 +28,7 @@ dependencyResolutionManagement {
   }
 }
 
+include(":example")
 include(":modules:gallery")
 include(":modules:gradle-plugin")
 include(":modules:runtime")

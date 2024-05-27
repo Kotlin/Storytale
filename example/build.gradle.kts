@@ -53,7 +53,7 @@ kotlin {
     val desktopMain by getting
 
     androidMain.dependencies {
-      implementation(libs.compose.ui.tooling.preview)
+      implementation(compose.preview)
       implementation(libs.androidx.activity.compose)
     }
     commonMain.dependencies {
@@ -63,7 +63,6 @@ kotlin {
       implementation(compose.ui)
       implementation(compose.components.resources)
       implementation(compose.components.uiToolingPreview)
-      implementation(projects.modules.runtime)
     }
     desktopMain.dependencies {
       implementation(compose.desktop.currentOs)
@@ -72,7 +71,7 @@ kotlin {
 }
 
 android {
-  namespace = "org.jetbrains.storytale"
+  namespace = "org.jetbrains.storytale.example"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -80,7 +79,7 @@ android {
   sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
   defaultConfig {
-    applicationId = "org.jetbrains.storytale"
+    applicationId = "org.jetbrains.storytale.example"
     minSdk = libs.versions.android.minSdk.get().toInt()
     targetSdk = libs.versions.android.targetSdk.get().toInt()
     versionCode = 1
@@ -100,9 +99,17 @@ android {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
-  dependencies {
-    debugImplementation(libs.compose.ui.tooling)
+  buildFeatures {
+    compose = true
   }
+  dependencies {
+    debugImplementation(compose.uiTooling)
+  }
+}
+
+compose.resources {
+  publicResClass = true
+  packageOfResClass = "org.jetbrains.storytale.example"
 }
 
 compose.desktop {
