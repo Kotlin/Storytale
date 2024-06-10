@@ -1,3 +1,5 @@
+package org.jetbrains.storytale.runtime
+
 class StoryBuilder {
   val list = mutableListOf<Story>()
   fun addStory(story: Story) = list.add(story)
