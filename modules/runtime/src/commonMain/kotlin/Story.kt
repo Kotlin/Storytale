@@ -1,3 +1,5 @@
+package org.jetbrains.storytale.runtime
+
 import androidx.compose.runtime.Composable
 
 abstract class Story {
