@@ -3,6 +3,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
   repositories {
+    mavenLocal()
     google {
       mavenContent {
         includeGroupAndSubgroups("androidx")
@@ -24,11 +25,13 @@ dependencyResolutionManagement {
         includeGroupAndSubgroups("com.google")
       }
     }
+    mavenLocal()
     mavenCentral()
   }
 }
 
-include(":example")
 include(":modules:gallery")
 include(":modules:gradle-plugin")
+include(":modules:compiler-plugin")
 include(":modules:runtime")
+include(":examples")

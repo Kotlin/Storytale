@@ -1,40 +1,20 @@
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-//  kotlin("jvm")
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.androidLibrary)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
+  `maven-publish`
 }
 
 kotlin {
-  androidTarget()
   @OptIn(ExperimentalWasmDsl::class)
   wasmJs()
-
-  js { browser() }
-
-  androidTarget {
-    compilations.all {
-      kotlinOptions {
-        jvmTarget = "11"
-      }
-    }
-  }
-
-  jvm("desktop")
-
-  listOf(
-    iosX64(),
-    iosArm64(),
-    iosSimulatorArm64()
-  ).forEach { iosTarget ->
-    iosTarget.binaries.framework {
-      baseName = "ComposeApp"
-      isStatic = true
-    }
-  }
+  js()
+  jvm()
+//  iosX64()
+//  iosArm64()
+//  iosSimulatorArm64()
 
   sourceSets {
     commonMain.dependencies {
@@ -43,12 +23,7 @@ kotlin {
   }
 }
 
-android {
-  namespace = "org.jetbrains.storytale.runtime"
-  compileSdk = libs.versions.android.compileSdk.get().toInt()
+group = "org.jetbrains.compose.storytale"
+version = "1.0"
 
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-}
+publishing {}
