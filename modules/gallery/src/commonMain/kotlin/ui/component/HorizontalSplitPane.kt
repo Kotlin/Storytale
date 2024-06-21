@@ -1,10 +1,9 @@
 package ui.component
 
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.SubcomposeLayout
@@ -42,13 +42,13 @@ fun HorizontalSplitPane(
     val leftArea = subcompose(
       slotId = HorizontalSplitPaneSlot.Left,
       content = {
-        Box(Modifier.widthIn(min = minimumWidth)) { left() }
+        left()
       }
     ).fastMap {
       it.measure(
         constraints.copy(
           maxWidth = dividerOffset.coerceIn(
-            minimumValue = minimumWidth,
+            minimumValue = 0.dp,
             maximumValue = layoutWidth.dp - minimumWidth
           ).roundToPx()
         )
@@ -59,13 +59,14 @@ fun HorizontalSplitPane(
       content = {
         Divider(
           modifier = Modifier.fillMaxHeight()
-            .width(12.dp)
+            .clip(CircleShape)
+            .width(6.dp)
             .pointerInput(Unit) {
               detectDragGestures { _, dragAmount ->
                 dividerOffset = (dividerOffset + dragAmount.x.toDp())
                   .coerceIn(
-                    minimumValue = minimumWidth,
-                    maximumValue = layoutWidth.dp - minimumWidth
+                    minimumValue = 0.dp,
+                    maximumValue = layoutWidth.toDp() - minimumWidth
                   )
               }
             },
@@ -80,7 +81,8 @@ fun HorizontalSplitPane(
     ).fastMap {
       it.measure(
         constraints.copy(
-          maxWidth = layoutWidth - leftArea.first().width - divider.first().width
+          maxWidth = (layoutWidth - leftArea.first().width - divider.first().width)
+            .coerceAtLeast(0)
         )
       )
     }

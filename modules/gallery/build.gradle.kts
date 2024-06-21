@@ -70,6 +70,23 @@ kotlin {
       implementation(compose.desktop.currentOs)
     }
   }
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class)
+  compilerOptions {
+    freeCompilerArgs = listOf(
+      "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
+      "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+      "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+      "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+      "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
+      "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+      "-opt-in=kotlinx.coroutines.FlowPreview",
+      "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+      "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
+      "-Xexpect-actual-classes"
+    )
+  }
 }
 
 android {

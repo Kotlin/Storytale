@@ -3,7 +3,14 @@ package compose
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
+
+val currentDensity: Density
+  @Composable
+  @ReadOnlyComposable
+  get() = LocalDensity.current
 
 val currentTextStyle: TextStyle
   @Composable
