@@ -1,4 +1,4 @@
-package ui.component
+package org.jetbrains.compose.storytale.gallery.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

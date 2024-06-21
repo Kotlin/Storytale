@@ -1,3 +1,4 @@
+package org.jetbrains.compose.storytale.gallery
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -17,14 +18,16 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import storytale.modules.gallery.generated.resources.Res
-import storytale.modules.gallery.generated.resources.story_widget_icon
-import ui.component.CenterRow
-import ui.component.Gap
-import ui.theme.currentColorScheme
+import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.generated.resources.Res
+import org.jetbrains.compose.storytale.gallery.generated.resources.story_widget_icon
+import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
+import org.jetbrains.compose.storytale.gallery.ui.component.Gap
+import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
 fun StoryComponentListItem(
+  story: Story,
   selected: Boolean,
   modifier: Modifier = Modifier,
   shape: Shape = RoundedCornerShape(12.dp),
@@ -66,7 +69,7 @@ fun StoryComponentListItem(
       )
       Gap(11.dp)
       Text(
-        text = "MyButton",
+        text = story.name,
         color = animatedTextColor,
         fontSize = 15.sp
       )

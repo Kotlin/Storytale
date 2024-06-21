@@ -1,11 +1,11 @@
-package ui.theme
+package org.jetbrains.compose.storytale.gallery.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import compose.noCompositionLocalProvided
+import org.jetbrains.compose.storytale.gallery.compose.noCompositionLocalProvided
 
 @Immutable
 data class ColorScheme(
