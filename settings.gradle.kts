@@ -3,7 +3,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
   repositories {
-    mavenLocal()
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
     google {
       mavenContent {
         includeGroupAndSubgroups("androidx")
@@ -12,6 +12,7 @@ pluginManagement {
       }
     }
     mavenCentral()
+    mavenLocal()
     gradlePluginPortal()
   }
 }
@@ -25,6 +26,7 @@ dependencyResolutionManagement {
         includeGroupAndSubgroups("com.google")
       }
     }
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
     mavenLocal()
     mavenCentral()
   }
