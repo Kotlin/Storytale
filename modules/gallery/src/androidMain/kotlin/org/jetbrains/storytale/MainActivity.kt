@@ -1,23 +1,20 @@
 package org.jetbrains.storytale
 
-import App
+import StoryGallery
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.enableEdgeToEdge
+import ui.theme.StoryGalleryTheme
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
     setContent {
-      App()
+      StoryGalleryTheme {
+        StoryGallery()
+      }
     }
   }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-  App()
 }
