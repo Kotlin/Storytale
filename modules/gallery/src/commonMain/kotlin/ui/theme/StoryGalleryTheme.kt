@@ -1,4 +1,4 @@
-package ui.theme
+package org.jetbrains.compose.storytale.gallery.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.LocalTextStyle

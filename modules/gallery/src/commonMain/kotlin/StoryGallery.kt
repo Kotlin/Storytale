@@ -1,27 +1,37 @@
+package org.jetbrains.compose.storytale.gallery
+
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import compose.ScreenSize
-import compose.isMobile
-import gallery.StoryGalleryContent
-import gallery.StoryNavigationBar
+import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.compose.ScreenSize
+import org.jetbrains.compose.storytale.gallery.compose.isMobile
+import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
+import org.jetbrains.compose.storytale.gallery.story.StoryParameters
+import org.jetbrains.compose.storytale.gallery.ui.component.HorizontalSplitPane
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import ui.component.HorizontalSplitPane
 
 @Composable
 @Preview
-fun StoryGallery(
-  story: List<String> = (1..60).map { "MyButton" },
-) = when (!ScreenSize.isMobile) {
-  true -> HorizontalSplitPane(
-    minimumWidth = 320.dp,
-    left = {
-      StoryNavigationBar(story)
-    },
-    right = {
-      StoryGalleryContent()
-    }
-  )
-  false -> StoryNavigationBar(story, Modifier.systemBarsPadding())
+fun StoryGallery(stories: List<Story>) {
+  var activeStoryIndex by remember { mutableIntStateOf(0) }
+  val onSelectStory = { index: Int -> activeStoryIndex = index }
+  val activeStory = stories[activeStoryIndex]
+
+  when (!ScreenSize.isMobile) {
+    true -> HorizontalSplitPane(
+      minimumWidth = 320.dp,
+      left = {
+        StoryNavigationBar(activeStoryIndex, stories, onSelectStory)
+      },
+      content = {
+        with(activeStory) { content() }
+      },
+      right = {
+        StoryParameters(activeStory)
+      }
+    )
+    false -> StoryNavigationBar(activeStoryIndex, stories, onSelectStory, Modifier.systemBarsPadding())
+  }
 }

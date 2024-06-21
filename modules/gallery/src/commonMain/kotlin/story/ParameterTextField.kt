@@ -1,4 +1,4 @@
-package gallery
+package org.jetbrains.compose.storytale.gallery.story
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
@@ -18,13 +18,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import compose.currentTextStyle
+import org.jetbrains.compose.storytale.gallery.compose.currentTextStyle
 import org.jetbrains.compose.resources.painterResource
-import storytale.modules.gallery.generated.resources.Res
-import storytale.modules.gallery.generated.resources.edit
-import ui.component.CenterRow
-import ui.component.Gap
-import ui.theme.currentColorScheme
+import org.jetbrains.compose.storytale.gallery.generated.resources.Res
+import org.jetbrains.compose.storytale.gallery.generated.resources.edit
+import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
+import org.jetbrains.compose.storytale.gallery.ui.component.Gap
+import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
 fun ParameterTextField(

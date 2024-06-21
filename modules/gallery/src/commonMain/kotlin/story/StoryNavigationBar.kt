@@ -1,6 +1,5 @@
-package gallery
+package org.jetbrains.compose.storytale.gallery.story
 
-import StoryTextInput
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,14 +14,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import storytale.modules.gallery.generated.resources.Res
-import storytale.modules.gallery.generated.resources.compose_multiplatform
-import ui.component.CenterRow
-import ui.component.Gap
+import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.StoryTextInput
+import org.jetbrains.compose.storytale.gallery.generated.resources.Res
+import org.jetbrains.compose.storytale.gallery.generated.resources.compose_multiplatform
+import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
+import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 
 @Composable
 fun StoryNavigationBar(
-  story: List<String>,
+  activeStoryIndex: Int,
+  stories: List<Story>,
+  onSelectStory: (Int) -> Unit,
   modifier: Modifier = Modifier
 ) = Column(
   modifier = Modifier.background(Color.White).then(modifier)
@@ -47,5 +50,5 @@ fun StoryNavigationBar(
     Gap(18.dp)
     StoryTextInput(Modifier.fillMaxWidth())
   }
-  StoryGalleryList(story)
+  StoryGalleryList(activeStoryIndex, stories, onSelectStory)
 }

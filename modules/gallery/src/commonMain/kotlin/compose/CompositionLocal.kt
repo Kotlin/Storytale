@@ -1,4 +1,4 @@
-package compose
+package org.jetbrains.compose.storytale.gallery.compose
 
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.Composable

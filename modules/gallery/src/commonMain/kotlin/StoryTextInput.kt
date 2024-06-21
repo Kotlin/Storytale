@@ -1,3 +1,5 @@
+package org.jetbrains.compose.storytale.gallery
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -18,8 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ui.component.CenterRow
-import ui.component.Gap
+import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
+import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 
 @Composable
 fun StoryTextInput(

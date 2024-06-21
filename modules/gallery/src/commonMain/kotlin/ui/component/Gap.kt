@@ -1,4 +1,4 @@
-package ui.component
+package org.jetbrains.compose.storytale.gallery.ui.component
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope

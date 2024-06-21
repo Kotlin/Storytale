@@ -1,14 +1,7 @@
-package gallery
+package org.jetbrains.compose.storytale.gallery.story
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -21,27 +14,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import storytale.modules.gallery.generated.resources.Res
-import storytale.modules.gallery.generated.resources.story_widget_icon
-import ui.component.CenterRow
-import ui.component.Gap
-import ui.theme.currentColorScheme
+import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.generated.resources.Res
+import org.jetbrains.compose.storytale.gallery.generated.resources.story_widget_icon
+import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
+import org.jetbrains.compose.storytale.gallery.ui.component.Gap
+import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
-fun StoryGalleryContent() = Box(
+fun StoryParameters(activeStory: Story) = Box(
   modifier = Modifier.fillMaxSize()
     .background(Color(0xFFF8F9FD))
 ) {
-  StoryGalleryParameterDrawer(Modifier.align(Alignment.CenterEnd))
+  StoryGalleryParameterDrawer(activeStory, Modifier.align(Alignment.CenterEnd))
 }
 
 @Composable
 fun StoryGalleryParameterDrawer(
+  activeStory: Story,
   modifier: Modifier = Modifier
 ) = Box(
   modifier = modifier.fillMaxHeight()
     .widthIn(max = 280.dp)
-    .clip(RoundedCornerShape(topStart = 36.dp, bottomStart = 36.dp))
     .background(Color.White)
 ) {
   Column(Modifier.padding(horizontal = 24.dp, vertical = 28.dp)) {
@@ -54,13 +48,12 @@ fun StoryGalleryParameterDrawer(
       )
       Gap(11.dp)
       Text(
-        text = "MyButton",
+        text = activeStory.name,
         fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold,
       )
     }
     Gap(36.dp)
-    StoryGalleryParameterItem()
   }
 }
 
