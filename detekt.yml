@@ -137,7 +137,7 @@ style:
   MagicNumber:
     active: false
   MultilineRawStringIndentation:
-    active: true
+    active: false
     indentSize: 2
   NoTabs:
     active: true
