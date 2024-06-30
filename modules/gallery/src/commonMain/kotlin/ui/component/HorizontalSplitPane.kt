@@ -39,7 +39,6 @@ fun HorizontalSplitPane(
     modifier = modifier,
   ) { constraints ->
     val layoutWidth = constraints.maxWidth
-
     val leftArea = subcompose(
       slotId = HorizontalSplitPaneSlot.Left,
       content = { left() }

@@ -24,7 +24,7 @@ fun StoryGalleryList(
   activeStoryIndex: Int,
   stories: List<Story>,
   onSelectStory: (index: Int) -> Unit
-  ) {
+) {
   LazyColumn(
     contentPadding = PaddingValues(bottom = 20.dp)
   ) {
