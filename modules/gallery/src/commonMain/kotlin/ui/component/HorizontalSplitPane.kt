@@ -1,7 +1,8 @@
 package org.jetbrains.compose.storytale.gallery.ui.component
 
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
@@ -9,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -24,17 +24,15 @@ import androidx.compose.ui.util.fastMap
 enum class HorizontalSplitPaneSlot {
   Left,
   Divider,
-  Center,
   Right
 }
 
 @Composable
 fun HorizontalSplitPane(
-  minimumWidth: Dp,
-  content: @Composable () -> Unit,
-  left: @Composable () -> Unit,
-  right: @Composable () -> Unit,
   modifier: Modifier = Modifier,
+  minimumWidth: Dp = 250.dp,
+  left: @Composable () -> Unit,
+  right: @Composable () -> Unit
 ) {
   var dividerOffset by remember { mutableStateOf(minimumWidth) }
   SubcomposeLayout(
@@ -47,14 +45,14 @@ fun HorizontalSplitPane(
     ).fastMap {
       it.measure(
         constraints.copy(
-          minWidth = minimumWidth.roundToPx(),
           maxWidth = dividerOffset.coerceIn(
             minimumValue = 0.dp,
-            maximumValue = layoutWidth.dp - minimumWidth
+            maximumValue = layoutWidth.toDp() - minimumWidth
           ).roundToPx()
         )
       )
     }
+
     val divider = subcompose(
       slotId = HorizontalSplitPaneSlot.Divider,
       content = {
@@ -62,7 +60,7 @@ fun HorizontalSplitPane(
           modifier = Modifier.fillMaxHeight()
             .clip(CircleShape)
             .width(6.dp)
-            .pointerInput(Unit) {
+            .pointerInput(layoutWidth) {
               detectDragGestures { _, dragAmount ->
                 dividerOffset = (dividerOffset + dragAmount.x.toDp())
                   .coerceIn(
@@ -82,26 +80,11 @@ fun HorizontalSplitPane(
     ).fastMap {
       it.measure(
         constraints.copy(
-          maxWidth = minimumWidth.roundToPx()
+          maxWidth = (layoutWidth - leftArea.first().width - divider.first().width)
+            .coerceAtLeast(0)
         )
       )
     }
-
-    val contentArea = subcompose(
-      slotId = HorizontalSplitPaneSlot.Center,
-      content = {
-        Box(modifier = Modifier.padding(12.dp).fillMaxWidth(), contentAlignment = Alignment.Center) {
-          content()
-        }
-      }
-    ).fastMap {
-      it.measure(
-        constraints.copy(
-          maxWidth = layoutWidth - leftArea.first().width - divider.first().width - rightArea.first().width
-        )
-      )
-    }
-
     layout(constraints.maxWidth, constraints.maxHeight) {
       leftArea.fastForEach {
         it.place(0, 0)
@@ -109,13 +92,8 @@ fun HorizontalSplitPane(
       divider.fastForEach {
         it.place(leftArea.first().width, 0)
       }
-
-      contentArea.fastForEach {
-        it.place(divider.first().width + leftArea.first().width, 0, 1f)
-      }
-
       rightArea.fastForEach {
-        it.place(divider.first().width + leftArea.first().width + contentArea.first().width, 0)
+        it.place(divider.first().width + leftArea.first().width, 0)
       }
     }
   }

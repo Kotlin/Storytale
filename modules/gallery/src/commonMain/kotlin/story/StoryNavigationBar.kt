@@ -3,6 +3,7 @@ package org.jetbrains.compose.storytale.gallery.story
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,7 +29,7 @@ fun StoryNavigationBar(
   onSelectStory: (Int) -> Unit,
   modifier: Modifier = Modifier
 ) = Column(
-  modifier = Modifier.background(Color.White).then(modifier)
+  modifier = Modifier.fillMaxHeight().background(Color.White).then(modifier)
 ) {
   Column(
     modifier = Modifier.padding(20.dp)
