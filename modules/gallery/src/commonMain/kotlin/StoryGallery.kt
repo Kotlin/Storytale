@@ -17,8 +17,9 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.compose.ScreenSize
 import org.jetbrains.compose.storytale.gallery.compose.isMobile
-import org.jetbrains.compose.storytale.gallery.story.StoryGalleryParameterDrawer
+import org.jetbrains.compose.storytale.gallery.story.StoryContentWrapper
 import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
+import org.jetbrains.compose.storytale.gallery.story.StoryParameterDrawer
 import org.jetbrains.compose.storytale.gallery.ui.component.HorizontalSplitPane
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -41,17 +42,22 @@ fun StoryGallery(stories: List<Story>) {
             .background(Color(0xFFFAFAFA))
         ) {
           Box(
-            modifier = Modifier
-              .weight(1f)
-              .fillMaxSize(),
+            modifier = Modifier.weight(1f).fillMaxSize(),
             contentAlignment = Alignment.Center
           ) {
-            with(activeStory) { content() }
+            with(activeStory) {
+              StoryContentWrapper(name, content)
+            }
           }
-          StoryGalleryParameterDrawer(activeStory)
+          StoryParameterDrawer(activeStory)
         }
       }
     )
-    false -> StoryNavigationBar(activeStoryIndex, stories, onSelectStory, Modifier.systemBarsPadding())
+    false -> StoryNavigationBar(
+      activeStoryIndex = activeStoryIndex,
+      stories = stories,
+      onSelectStory = onSelectStory,
+      modifier = Modifier.systemBarsPadding()
+    )
   }
 }
