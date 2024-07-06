@@ -1,4 +1,4 @@
-package org.jetbrains.compose.storytale.gallery
+package org.jetbrains.compose.storytale.gallery.story
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -26,7 +26,7 @@ import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
-fun StoryComponentListItem(
+fun StoryListItem(
   story: Story,
   selected: Boolean,
   modifier: Modifier = Modifier,

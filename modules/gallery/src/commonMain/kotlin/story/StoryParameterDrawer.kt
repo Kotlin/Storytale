@@ -23,12 +23,14 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.generated.resources.Res
 import org.jetbrains.compose.storytale.gallery.generated.resources.story_widget_icon
+import org.jetbrains.compose.storytale.gallery.story.parameters.BooleanParameterField
+import org.jetbrains.compose.storytale.gallery.story.parameters.StringParameterField
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
-fun StoryGalleryParameterDrawer(
+fun StoryParameterDrawer(
   activeStory: Story,
   modifier: Modifier = Modifier
 ) = Box(
@@ -53,18 +55,20 @@ fun StoryGalleryParameterDrawer(
       )
     }
     Gap(36.dp)
+    Column(
+      verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+      // fake data
+      StringParameterField(
+        parameterName = "Button Text",
+        defaultString = "My Button",
+        modifier = Modifier.fillMaxWidth()
+      )
+      BooleanParameterField(
+        parameterName = "Enabled",
+        defaultVale = true,
+        modifier = Modifier.fillMaxWidth()
+      )
+    }
   }
-}
-
-@Composable
-fun StoryGalleryParameterItem() = Column(
-  verticalArrangement = Arrangement.spacedBy(12.dp),
-) {
-  Text(
-    text = "Button Text",
-    fontSize = 17.sp,
-    fontWeight = FontWeight.Medium,
-    color = currentColorScheme.primaryText.copy(.67f),
-  )
-  ParameterTextField(Modifier.fillMaxWidth())
 }
