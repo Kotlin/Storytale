@@ -26,15 +26,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun StoryGallery(stories: List<Story>) {
-  var activeStoryIndex by remember { mutableIntStateOf(0) }
-  val onSelectStory = { index: Int -> activeStoryIndex = index }
-  val activeStory = stories[activeStoryIndex]
+  var activeStoryId by remember { mutableIntStateOf(0) }
+  val onSelectStory = { id: Int -> activeStoryId = id }
+  val activeStory = stories.first { it.id == activeStoryId }
 
   when (!ScreenSize.isMobile) {
     true -> HorizontalSplitPane(
       minimumWidth = 320.dp,
       left = {
-        StoryNavigationBar(activeStoryIndex, stories, onSelectStory)
+        StoryNavigationBar(activeStoryId, stories, onSelectStory)
       },
       right = {
         Row(
@@ -54,7 +54,7 @@ fun StoryGallery(stories: List<Story>) {
       }
     )
     false -> StoryNavigationBar(
-      activeStoryIndex = activeStoryIndex,
+      activeStoryId = activeStoryId,
       stories = stories,
       onSelectStory = onSelectStory,
       modifier = Modifier.systemBarsPadding()

@@ -19,37 +19,37 @@ import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.component.NumberChip
 
 @Composable
-fun StoryList(
-  activeStoryId: Int,
-  stories: List<Story>,
-  onSelectStory: (index: Int) -> Unit
+fun StorySearchList(
+  result: List<Story>,
+  activeStoryIndex: Int,
+  onSelectStory: (index: Int) -> Unit,
+  modifier: Modifier = Modifier
+) = LazyColumn(
+  modifier = modifier,
+  contentPadding = PaddingValues(bottom = 20.dp)
 ) {
-  LazyColumn(
-    contentPadding = PaddingValues(bottom = 20.dp)
-  ) {
-    item {
-      CenterRow(Modifier.padding(horizontal = 20.dp)) {
-        Text(
-          text = "Stories",
-          fontWeight = FontWeight.SemiBold,
-          color = Color.Black,
-          fontSize = 20.sp,
-          modifier = Modifier.weight(1f)
+  item {
+    CenterRow(Modifier.padding(horizontal = 20.dp)) {
+      Text(
+        text = "Search Results",
+        fontWeight = FontWeight.SemiBold,
+        color = Color.Black,
+        fontSize = 20.sp,
+        modifier = Modifier.weight(1f)
+      )
+      NumberChip(result.size)
+    }
+    Gap(14.dp)
+    Column(
+      verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+      result.forEach { item ->
+        StoryListItem(
+          story = item,
+          selected = item.id == activeStoryIndex,
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+          onClick = { onSelectStory(item.id) }
         )
-        NumberChip(stories.size)
-      }
-      Gap(14.dp)
-      Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-      ) {
-        stories.forEach { item ->
-          StoryListItem(
-            story = item,
-            selected = item.id == activeStoryId,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-            onClick = { onSelectStory(item.id) }
-          )
-        }
       }
     }
   }
