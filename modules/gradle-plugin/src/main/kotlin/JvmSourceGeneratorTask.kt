@@ -31,12 +31,21 @@ open class JvmSourceGeneratorTask : DefaultTask() {
     val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
       addImport("androidx.compose.ui.window", "Window")
       addImport("androidx.compose.ui.window", "application")
+      addImport("androidx.compose.ui.unit", "DpSize")
+      addImport("androidx.compose.ui.unit", "dp")
+      addImport("androidx.compose.ui.window", "rememberWindowState")
       addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
       function("main") {
         addStatement("""
                 |application {
-                |   Window(onCloseRequest = ::exitApplication, title = "example") {
+                | Window(
+                |   onCloseRequest = ::exitApplication,
+                |   title = "example",
+                |   state = rememberWindowState(
+                |   size = DpSize(1440.dp, 920.dp)
+                |  )
+                | ) {
                 |      Gallery()
                 |   }
                 |}""".trimMargin())
