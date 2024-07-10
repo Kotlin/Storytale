@@ -18,4 +18,4 @@ fun Modifier.clickableWithoutRipple(
 inline fun Modifier.thenIf(
   condition: Boolean,
   modifier: Modifier.() -> Modifier,
-): Modifier = if (condition) this.then(modifier()) else this
+): Modifier = if (condition) modifier() else this
