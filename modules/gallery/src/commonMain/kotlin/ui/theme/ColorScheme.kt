@@ -10,6 +10,7 @@ import org.jetbrains.compose.storytale.gallery.compose.noCompositionLocalProvide
 @Immutable
 data class ColorScheme(
   val primaryText: Color,
+  val description: Color,
   val isLight: Boolean,
 ) {
   val isDark: Boolean inline get() = !isLight
@@ -17,11 +18,13 @@ data class ColorScheme(
   companion object {
     val Light = ColorScheme(
       primaryText = Color(0xFF252B30),
+      description = Color(0xFF9D9D9D),
       isLight = true
     )
 
     val Dark = ColorScheme(
       primaryText = Color(0xFF252B30),
+      description = Color(0xFF9D9D9D),
       isLight = false
     )
   }

@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,6 +21,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.generated.resources.Res
 import org.jetbrains.compose.storytale.gallery.generated.resources.story_widget_icon
+import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
 import org.jetbrains.compose.storytale.gallery.story.parameters.BooleanParameterField
 import org.jetbrains.compose.storytale.gallery.story.parameters.StringParameterField
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
@@ -33,8 +36,8 @@ fun StoryParameterDrawer(
   modifier = modifier.fillMaxHeight()
     .widthIn(max = 280.dp)
 ) {
-  Column(Modifier.padding(horizontal = 24.dp, vertical = 28.dp)) {
-    CenterRow {
+  Column(Modifier.padding(vertical = 28.dp)) {
+    CenterRow(Modifier.padding(horizontal = 20.dp)) {
       Icon(
         painter = painterResource(Res.drawable.story_widget_icon),
         contentDescription = null,
@@ -48,20 +51,67 @@ fun StoryParameterDrawer(
         fontWeight = FontWeight.SemiBold,
       )
     }
-    Gap(36.dp)
-    Column(
-      verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-      // fake data
-      StringParameterField(
-        parameterName = "Button Text",
-        defaultString = "My Button",
-        modifier = Modifier.fillMaxWidth()
-      )
-      BooleanParameterField(
-        parameterName = "Enabled",
-        defaultVale = true,
-        modifier = Modifier.fillMaxWidth()
+    HorizontalDivider(
+      modifier = Modifier.padding(vertical = 24.dp),
+      thickness = 0.5.dp,
+      color = Color.Black.copy(alpha = 0.4f)
+    )
+    Column(Modifier.padding(horizontal = 20.dp)) {
+      Column(Modifier.weight(1f)) {
+        Column(
+          modifier = Modifier.weight(1f),
+          verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+          // fake data
+          StringParameterField(
+            parameterName = "Button Text",
+            defaultString = "My Button",
+            description = """
+            controls the enabled state of this button. When false, 
+            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
+            """.trimIndent(),
+            modifier = Modifier.fillMaxWidth()
+          )
+          BooleanParameterField(
+            parameterName = "Enabled",
+            defaultVale = true,
+            description = """
+            controls the enabled state of this button. When false, 
+            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
+            """.trimIndent(),
+            modifier = Modifier.fillMaxWidth()
+          )
+        }
+      }
+      CodeBlock(
+        code = """
+      Column(Modifier.weight(1f)) {
+        Column(
+          modifier = Modifier.weight(1f),
+          verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+          // fake data
+          StringParameterField(
+            parameterName = "Button Text",
+            defaultString = "My Button",
+            description = ""${'"'}
+            controls the enabled state of this button. When false, 
+            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
+            ""${'"'}.trimIndent(),
+            modifier = Modifier.fillMaxWidth()
+          )
+          BooleanParameterField(
+            parameterName = "Enabled",
+            defaultVale = true,
+            description = ""${'"'}
+            controls the enabled state of this button. When false, 
+            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
+            ""${'"'}.trimIndent(),
+            modifier = Modifier.fillMaxWidth()
+          )
+        }
+      }
+        """.trimIndent(),
       )
     }
   }

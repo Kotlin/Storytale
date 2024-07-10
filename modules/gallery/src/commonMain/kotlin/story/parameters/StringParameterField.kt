@@ -1,12 +1,11 @@
 package org.jetbrains.compose.storytale.gallery.story.parameters
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,33 +19,32 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.storytale.gallery.compose.currentTextStyle
-import org.jetbrains.compose.storytale.gallery.generated.resources.Res
-import org.jetbrains.compose.storytale.gallery.generated.resources.edit
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
+import org.jetbrains.compose.storytale.gallery.ui.theme.currentTypography
 
 @Composable
 fun StringParameterField(
   parameterName: String,
   defaultString: String,
+  description: String = "",
   modifier: Modifier = Modifier
 ) = Column {
   var text by remember { mutableStateOf(defaultString) }
-  Text(
-    text = parameterName,
-    fontSize = 17.sp,
-    fontWeight = FontWeight.Medium,
-    color = currentColorScheme.primaryText.copy(.67f),
-  )
+  CenterRow {
+    Text(
+      text = parameterName,
+      style = currentTypography.parameterText,
+      modifier = Modifier.weight(1f)
+    )
+    ParameterLabel("String")
+  }
   Gap(12.dp)
   BasicTextField(
     value = text,
-    onValueChange = {
-      text = it
-    },
+    onValueChange = { text = it },
     maxLines = 1,
     modifier = modifier.clip(RoundedCornerShape(12.dp))
       .background(currentColorScheme.primaryText),
@@ -57,15 +55,15 @@ fun StringParameterField(
     ),
     cursorBrush = SolidColor(Color.White)
   ) {
-    CenterRow(Modifier.padding(12.dp)) {
-      Icon(
-        painter = painterResource(Res.drawable.edit),
-        contentDescription = null,
-        modifier = Modifier.size(18.dp),
-        tint = Color.White
-      )
-      Gap(10.dp)
+    Box(Modifier.padding(12.dp)) {
       it()
     }
+  }
+  if (description.isNotEmpty()) {
+    Gap(12.dp)
+    Text(
+      text = description,
+      style = currentTypography.parameterDescription
+    )
   }
 }

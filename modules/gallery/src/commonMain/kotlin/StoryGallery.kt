@@ -18,11 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.storytale.Story
-import org.jetbrains.compose.storytale.gallery.compose.ScreenSize
-import org.jetbrains.compose.storytale.gallery.compose.isMobile
 import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
 import org.jetbrains.compose.storytale.gallery.story.StoryParameterDrawer
 import org.jetbrains.compose.storytale.gallery.ui.component.HorizontalSplitPane
+import org.jetbrains.compose.storytale.gallery.utils.ScreenSize
+import org.jetbrains.compose.storytale.gallery.utils.isMobile
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

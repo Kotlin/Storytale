@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -23,6 +24,11 @@ class Typography(
   val parameterText = TextStyle(
     fontSize = 17.sp,
     fontWeight = FontWeight.Medium,
-    color = colorScheme.primaryText.copy(.67f),
+    color = Color.Black.copy(.9f),
+  )
+  val parameterDescription = TextStyle(
+    fontSize = 11.sp,
+    fontWeight = FontWeight.Normal,
+    color = colorScheme.description,
   )
 }
