@@ -1,4 +1,4 @@
-package org.jetbrains.compose.storytale.gallery.compose
+package org.jetbrains.compose.storytale.gallery.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
