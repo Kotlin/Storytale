@@ -43,7 +43,7 @@ open class JsSourceGeneratorTask : DefaultTask() {
       addImport("org.jetbrains.skiko.wasm", "onWasmReady")
       addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
-      function("main") {
+      function("MainViewController") {
         addAnnotation(optInExperimentalComposeUi)
         addStatement("""
           |onWasmReady {
@@ -52,6 +52,10 @@ open class JsSourceGeneratorTask : DefaultTask() {
           |   }
           |}""".trimMargin()
         )
+      }
+
+      function("main") {
+        addStatement("MainViewController()")
       }
     }.build()
 

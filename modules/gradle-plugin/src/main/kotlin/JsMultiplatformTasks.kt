@@ -53,7 +53,7 @@ fun Project.createWasmAndJsStorytaleCompilation(
     extension.project.afterEvaluate {
       val unpackSkikoTask = extension.project.tasks.withType<UnpackSkikoWasmRuntimeTask>().single()
       val aggregateResourcesTask = extension.project.tasks
-        .getByName("${storytaleCompilation.name}${target.name.capitalized()}AggregateResources") as AggregateResourcesTask
+        .getByName("${storytaleCompilation.name.lowercase()}${target.name.capitalized()}AggregateResources") as AggregateResourcesTask
 
       sourceSet.resources.srcDirs(
         "$storytaleBuildDir/resources",

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -36,6 +37,7 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
 
   private fun Project.processConfigurations(extension: StorytaleExtension) {
+    extension.multiplatformExtension.applyDefaultHierarchyTemplate()
     extension.targets.all {
       when (this) {
         is KotlinJsIrTarget ->
@@ -45,6 +47,7 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
             else -> {}
           }
         is KotlinJvmTarget -> processJvmCompilation(extension, this)
+        is KotlinNativeTarget -> processNativeCompilation(extension, this)
       }
     }
   }
@@ -57,5 +60,11 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     const val STORYTALE_GENERATE_SUFFIX = "StorytaleGenerate"
     const val STORYTALE_SOURCESET_SUFFIX = "Stories"
     const val STORYTALE_EXEC_SUFFIX = "Stories"
+    const val STORYTALE_NATIVE_APP_NAME = "StorytaleGalleryApp"
+    const val STORYTALE_NATIVE_PROJECT_NAME = "StorytaleXCode"
+    const val STORYTALE_NATIVE_PROJECT_PATH = "Compose.StorytaleXCode"
+    const val STORYTALE_DEVICE_NAME = "Storytale iOS Device"
+    const val DERIVED_DATA_DIRECTORY_NAME = "dd"
+    const val LINK_BUILD_VERSION = "Debug"
   }
 }

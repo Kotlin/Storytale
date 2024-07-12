@@ -11,9 +11,9 @@ kotlin {
   js()
   wasmJs()
   jvm()
-//  iosX64()
-//  iosArm64()
-//  iosSimulatorArm64()
+  iosX64()
+  iosArm64()
+  iosSimulatorArm64()
 
   sourceSets {
     commonMain.dependencies {
@@ -25,6 +25,7 @@ kotlin {
       implementation(compose.components.resources)
       implementation(compose.components.uiToolingPreview)
       implementation(projects.modules.runtime)
+//      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
     }
   }
 

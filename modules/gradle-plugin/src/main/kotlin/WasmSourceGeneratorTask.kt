@@ -41,7 +41,7 @@ open class WasmSourceGeneratorTask : DefaultTask() {
       addImport("kotlinx.browser", "document")
       addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
-      function("main") {
+      function("MainViewController") {
         addAnnotation(optInExperimentalComposeUi)
         addStatement(
           """
@@ -50,6 +50,10 @@ open class WasmSourceGeneratorTask : DefaultTask() {
                 |}
                 |""".trimMargin()
         )
+      }
+
+      function("main") {
+        addStatement("MainViewController()")
       }
     }.build()
 

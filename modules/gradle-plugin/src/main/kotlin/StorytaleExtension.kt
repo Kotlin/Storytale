@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 open class StorytaleExtension(internal val project: Project) {
   var buildDir: String = "storytale"
 
-  private val multiplatformExtension = run {
+  val multiplatformExtension = run {
     val multiplatformClass =
       tryGetClass<KotlinMultiplatformExtension>(
         className = "org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension"
