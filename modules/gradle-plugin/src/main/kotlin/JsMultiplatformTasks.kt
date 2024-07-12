@@ -3,16 +3,17 @@ package org.jetbrains.compose.plugin.storytale
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.AbstractCopyTask
+import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.web.tasks.UnpackSkikoWasmRuntimeTask
-import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
 
 fun Project.processJsCompilation(extension: StorytaleExtension, target: KotlinJsIrTarget) {
   project.logger.info("Configuring storytale for Kotlin/JS")
@@ -33,6 +34,7 @@ fun Project.createWasmAndJsStorytaleCompilation(
     target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX) as KotlinJsIrCompilation
 
   storytaleCompilation.associateWith(mainCompilation)
+  extension.resourcesPublicationExtension.setupResourceResolvingForTarget(target, storytaleCompilation)
 
   (mainCompilation.target as KotlinJsTargetDsl).apply {
     // force to create executable: required for IR, do nothing on Legacy
@@ -50,16 +52,20 @@ fun Project.createWasmAndJsStorytaleCompilation(
 
     extension.project.afterEvaluate {
       val unpackSkikoTask = extension.project.tasks.withType<UnpackSkikoWasmRuntimeTask>().single()
+      val aggregateResourcesTask = extension.project.tasks
+        .getByName("${storytaleCompilation.name.lowercase()}${target.name.capitalized()}AggregateResources") as AggregateResourcesTask
 
       sourceSet.resources.srcDirs(
         "$storytaleBuildDir/resources",
         unpackSkikoTask.outputDir,
-        mainCompilation.defaultSourceSet.resources
+        aggregateResourcesTask.outputDirectory,
+        mainCompilation.defaultSourceSet.resources,
       )
 
       extension.project.tasks.named(processResourcesTaskName).configure {
         dependsOn(unpackSkikoTask)
         dependsOn(generateTaskName)
+        dependsOn(aggregateResourcesTask)
 
         (this as? AbstractCopyTask)?.duplicatesStrategy = DuplicatesStrategy.INCLUDE
       }
@@ -81,10 +87,7 @@ fun Project.createWasmAndJsStorytaleCompilation(
 }
 
 private fun Kotlin2JsCompile.configureOptions() {
-  compilerOptions.apply {
-    sourceMap.set(true)
-    moduleKind.set(JsModuleKind.MODULE_ES)
-  }
+  compilerOptions.sourceMap.set(true)
 }
 
 private fun Project.createJsStorytaleGenerateSourceTask(extension: StorytaleExtension, target: KotlinJsIrTarget) {

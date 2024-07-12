@@ -16,4 +16,6 @@ To build and run storytale example:
    ./gradlew :examples:desktopStoriesRun
     # to run wasm stories
    ./gradlew :examples:wasmJsBrowserStoriesDevelopmentRun
+    # to run iOS stories
+   ./gradlew :examples:iosSimulatorArm64StoriesRun
    ```
