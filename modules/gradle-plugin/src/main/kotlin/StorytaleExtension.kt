@@ -1,14 +1,13 @@
 package org.jetbrains.compose.plugin.storytale
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 
 open class StorytaleExtension(internal val project: Project) {
   var buildDir: String = "storytale"
 
-  private val multiplatformExtension = run {
+  val multiplatformExtension = run {
     val multiplatformClass =
       tryGetClass<KotlinMultiplatformExtension>(
         className = "org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension"
@@ -16,12 +15,12 @@ open class StorytaleExtension(internal val project: Project) {
     multiplatformClass?.let { project.extensions.findByType(it) } ?: error("UNEXPECTED")
   }
 
+
   val targets = multiplatformExtension.targets
+  val resourcesPublicationExtension = multiplatformExtension.resourcesPublicationExtension!!
 
   val mainStoriesSourceSet by lazy {
-    project
-      .extensions
-      .getByType(KotlinSourceSetContainer::class)
+    multiplatformExtension
       .sourceSets
       .create("common${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}")
       .apply {
@@ -30,7 +29,7 @@ open class StorytaleExtension(internal val project: Project) {
           implementation("org.jetbrains.compose.storytale:runtime:1.0")
         }
       }
-  }
+    }
 
   private fun <T> Any.tryGetClass(className: String): Class<T>? {
     val classLoader = javaClass.classLoader

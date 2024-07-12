@@ -1,5 +1,6 @@
 package org.jetbrains.compose.plugin.storytale
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
@@ -9,7 +10,7 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 @CacheableTask
-open class JvmSourceGeneratorTask : DefaultTask() {
+open class NativeSourceGeneratorTask : DefaultTask() {
   @Input
   lateinit var title: String
 
@@ -29,29 +30,16 @@ open class JvmSourceGeneratorTask : DefaultTask() {
 
   private fun generateSources() {
     val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
-      addImport("androidx.compose.ui.window", "Window")
-      addImport("androidx.compose.ui.window", "application")
-      addImport("androidx.compose.ui.unit", "DpSize")
-      addImport("androidx.compose.ui.unit", "dp")
-      addImport("androidx.compose.ui.window", "rememberWindowState")
+      addImport("androidx.compose.ui.window", "ComposeUIViewController")
       addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
+      val uIViewControllerType = ClassName("platform.UIKit", "UIViewController")
       function("MainViewController") {
+        returns(uIViewControllerType)
         addStatement("""
-          |application {
-          |   Window(
-          |      onCloseRequest = ::exitApplication,
-          |      title = "example",
-          |      state = rememberWindowState(size = DpSize(1440.dp, 920.dp))
-          |   ) {
-          |      Gallery()
-          |   }
-          |}""".trimMargin()
-        )
-      }
-
-      function("main") {
-        addStatement("MainViewController()")
+                |return ComposeUIViewController {
+                |  Gallery()
+                |}""".trimMargin())
       }
     }.build()
 

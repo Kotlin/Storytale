@@ -11,9 +11,9 @@ kotlin {
   js()
   wasmJs()
   jvm()
-//  iosX64()
-//  iosArm64()
-//  iosSimulatorArm64()
+  iosX64()
+  iosArm64()
+  iosSimulatorArm64()
 
   sourceSets {
     commonMain.dependencies {
