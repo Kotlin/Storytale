@@ -14,14 +14,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.storytale.Story
-import org.jetbrains.compose.storytale.gallery.StoryComponentListItem
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.component.NumberChip
 
 @Composable
-fun StoryGalleryList(
-  activeStoryIndex: Int,
+fun StoryList(
+  activeStoryId: Int,
   stories: List<Story>,
   onSelectStory: (index: Int) -> Unit
 ) {
@@ -43,12 +42,12 @@ fun StoryGalleryList(
       Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)
       ) {
-        stories.forEachIndexed { index, s ->
-          StoryComponentListItem(
-            story = s,
-            selected = index == activeStoryIndex,
+        stories.forEach { item ->
+          StoryListItem(
+            story = item,
+            selected = item.id == activeStoryId,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-            onClick = { onSelectStory(index) }
+            onClick = { onSelectStory(item.id) }
           )
         }
       }

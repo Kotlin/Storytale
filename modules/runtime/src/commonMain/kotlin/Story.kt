@@ -15,9 +15,13 @@ class StoryDelegate(val content: @Composable Story.() -> Unit) {
   }
 
   operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): StoryDelegate {
-    instance = Story(property.name, content).also(storiesStorage::add)
+    instance = Story(storiesStorage.size, property.name, content).also(storiesStorage::add)
     return this
   }
 }
 
-class Story(val name: String, val content: @Composable Story.() -> Unit)
+data class Story(
+  val id: Int,
+  val name: String,
+  val content: @Composable Story.() -> Unit
+)
