@@ -16,7 +16,6 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(compose.runtime)
-//      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
     }
   }
 }

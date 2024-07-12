@@ -121,7 +121,6 @@ private fun Project.createNativeStorytaleExecTask(
         }
         if (!isBooted) {
             exec {
-                workingDir = unzipXCodeProjectTask.outputDir.get().asFile
                 commandLine("/usr/bin/xcrun", "simctl", "boot", deviceId!!)
             }
         }

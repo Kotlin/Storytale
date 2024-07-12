@@ -62,7 +62,6 @@ kotlin {
       implementation(compose.ui)
       implementation(compose.components.resources)
       implementation(compose.components.uiToolingPreview)
-      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
     }
     desktopMain.dependencies {
       implementation(compose.desktop.currentOs)
