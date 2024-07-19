@@ -138,6 +138,7 @@ private fun Project.createNativeStorytaleExecTask(
         dependsOn(linkTask)
 
         val xcodeProjectPath = unzipXCodeProjectTask.outputDir.get().asFile
+        inputs.files(linkTask.outputs.files)
         outputs.dir(xcodeProjectPath.resolve(StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME))
 
         doLast {
