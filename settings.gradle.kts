@@ -32,6 +32,23 @@ dependencyResolutionManagement {
   }
 }
 
+plugins {
+  id("com.gradle.develocity") version "3.17.5"
+}
+
+develocity {
+  buildScan {
+    termsOfUseUrl = "https://gradle.com/terms-of-service"
+    termsOfUseAgree = "yes"
+    val isOffline = providers.provider { gradle.startParameter.isOffline }.getOrElse(false)
+    val ci = System.getenv("GITHUB_ACTIONS") == "true"
+    publishing {
+      onlyIf { !isOffline && (it.buildResult.failures.isNotEmpty() || ci) }
+    }
+  }
+}
+
+
 include(":modules:gallery")
 include(":modules:gradle-plugin")
 include(":modules:compiler-plugin")

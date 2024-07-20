@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-private class MentionAllStoriesGettersInsideMainFunctionLowering(private val context: IrPluginContext) : DeclarationTransformer {
+private class MentionAllStoriesGettersInsideMainFunctionLowering(
+  private val context: IrPluginContext
+) : DeclarationTransformer {
   private val allFirstStoriesGetter = mutableListOf<IrStatement>()
   private val alreadyMentionedFiles = mutableSetOf<IrFile>()
 
@@ -81,7 +83,6 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(private val con
   private fun IrSimpleFunction.isGeneratedMainViewController() =
     isTopLevel && visibility.isPublicAPI &&
       kotlinFqName.asString() == "org.jetbrains.compose.storytale.generated.MainViewController"
-
 
   private fun IrDeclaration.addHiddenFromObjCAnnotation() {
     val annotation = IrConstructorCallImpl(

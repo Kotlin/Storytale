@@ -8,7 +8,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
-//  alias(libs.plugins.storytale)
+  alias(libs.plugins.storytale)
 }
 
 kotlin {
@@ -45,6 +45,7 @@ kotlin {
     iosTarget.binaries.framework {
       baseName = "ComposeApp"
       isStatic = true
+      binaryOption("bundleId", "Storytale Examples App")
     }
   }
 

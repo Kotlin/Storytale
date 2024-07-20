@@ -4,6 +4,7 @@ plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.serialization)
   `maven-publish`
 }
 
@@ -22,6 +23,8 @@ kotlin {
       implementation(compose.material)
       implementation(compose.material3)
       implementation(compose.ui)
+      implementation(libs.navigation.compose)
+      implementation(libs.kotlinx.serialization.json)
       implementation(compose.components.resources)
       implementation(compose.components.uiToolingPreview)
       implementation(projects.modules.runtime)
