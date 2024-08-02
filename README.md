@@ -1,4 +1,4 @@
-![Frame 482360](https://github.com/user-attachments/assets/53bdefc7-45a5-47be-9055-d079a811b7d8)
+![Frame 482360](https://github.com/user-attachments/assets/b90b5776-f2f4-4385-8b7d-94eb912eacdf)
 
 [![Incubator](https://jb.gg/badges/incubator-plastic.svg)](https://github.com/JetBrains#jetbrains-on-github)
 
@@ -14,7 +14,7 @@ Since Storytale is still in the early stages of development, the api is marked a
 
 #### Import Dependencies
 
-<details open>
+<details close>
   <summary>using <b>Version Catalog</b></summary>
 
 > **libs.versions.toml**
@@ -43,13 +43,14 @@ plugins {
 ```
 </details>
 
-Storytale is published on **Maven Central**, so if you **haven't** defined the repository yet, please do it:
-
 ```kotlin
 repositories {
   mavenCentral()
 }
 ```
+
+> [!NOTE]  
+> Storytale **has not** yet released its first version on `mavenCentral`. If you want to try it out early, please refer to the [Building and Contributing](https://github.com/Kotlin/Storytale?tab=readme-ov-file#building-and-contributing) and try it in the `examples` module.
 
 ### 2. Create Sourcesets for Storytale on the target platform (for multi-platform projects)
 
