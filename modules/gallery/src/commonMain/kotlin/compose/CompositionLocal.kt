@@ -1,6 +1,6 @@
 package org.jetbrains.compose.storytale.gallery.compose
 
-import androidx.compose.material.LocalTextStyle
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalDensity
