@@ -15,7 +15,6 @@ open class StorytaleExtension(internal val project: Project) {
     multiplatformClass?.let { project.extensions.findByType(it) } ?: error("UNEXPECTED")
   }
 
-
   val targets = multiplatformExtension.targets
   val resourcesPublicationExtension = multiplatformExtension.resourcesPublicationExtension!!
 
@@ -26,10 +25,10 @@ open class StorytaleExtension(internal val project: Project) {
       .apply {
         dependencies {
           implementation("org.jetbrains.compose.storytale:gallery:1.0")
-          implementation("org.jetbrains.compose.storytale:runtime:1.0")
+          implementation("org.jetbrains.compose.storytale:runtime-api:1.0")
         }
       }
-    }
+  }
 
   private fun <T> Any.tryGetClass(className: String): Class<T>? {
     val classLoader = javaClass.classLoader

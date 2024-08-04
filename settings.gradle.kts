@@ -35,5 +35,5 @@ dependencyResolutionManagement {
 include(":modules:gallery")
 include(":modules:gradle-plugin")
 include(":modules:compiler-plugin")
-include(":modules:runtime")
+include(":modules:runtime-api")
 include(":examples")
