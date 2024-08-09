@@ -6,7 +6,7 @@ import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -32,7 +32,7 @@ private fun Project.createNativeStorytaleCompileTask(
     target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX) as KotlinNativeCompilation
 
   storytaleCompilation.associateWith(mainCompilation)
-  extension.resourcesPublicationExtension.setupResourceResolvingForTarget(target, storytaleCompilation)
+  setupResourceResolvingForTarget(storytaleBuildDir, storytaleCompilation)
 
   storytaleCompilation.target.apply {
     binaries.framework(StorytaleGradlePlugin.STORYTALE_TASK_GROUP) {
@@ -46,18 +46,18 @@ private fun Project.createNativeStorytaleCompileTask(
     defaultSourceSet.dependsOn(extension.mainStoriesSourceSet)
     defaultSourceSet.kotlin.setSrcDirs(files("$storytaleBuildDir/sources"))
 
-    val aggregateResourcesTask = extension.project.tasks
-      .getByName("${storytaleCompilation.name.lowercase()}${target.name.capitalized()}AggregateResources") as AggregateResourcesTask
+    val resolveDependencyResourcesTask = extension.project.tasks
+      .getByName(storytaleCompilation.resolveDependencyResourcesTaskName) as ResolveResourcesFromDependenciesTask
 
     defaultSourceSet.resources.srcDirs(
       "$storytaleBuildDir/resources",
-      aggregateResourcesTask.outputDirectory,
+      resolveDependencyResourcesTask.outputDirectory,
       mainCompilation.defaultSourceSet.resources,
     )
 
     compileTaskProvider.configure {
       dependsOn(generatorTask)
-      dependsOn(aggregateResourcesTask)
+      dependsOn(resolveDependencyResourcesTask)
     }
   }
 

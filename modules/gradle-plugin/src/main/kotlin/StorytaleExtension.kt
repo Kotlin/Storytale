@@ -16,7 +16,7 @@ open class StorytaleExtension(internal val project: Project) {
   }
 
   val targets = multiplatformExtension.targets
-  val resourcesPublicationExtension = multiplatformExtension.resourcesPublicationExtension!!
+//  val resourcesPublicationExtension = multiplatformExtension.resourcesPublicationExtension!!
 
   val mainStoriesSourceSet by lazy {
     multiplatformExtension

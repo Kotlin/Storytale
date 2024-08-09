@@ -15,7 +15,7 @@ androidx-test-junit = "1.2.1"
 compose-plugin = "1.7.0-alpha02"
 compose-android = "1.7.0-beta07"
 junit = "4.13.2"
-kotlin = "2.1.0-dev-1571"
+kotlin = "2.0.20-RC"
 kotlin-poet = "1.18.1"
 
 [libraries]

@@ -1,22 +1,29 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
 package org.jetbrains.compose.plugin.storytale
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 
 fun cleanup(file: File) {
   if (file.exists()) {
@@ -76,3 +83,32 @@ abstract class UnzipResourceTask : DefaultTask() {
     }
   }
 }
+
+val KotlinCompilation<*>.resolveDependencyResourcesTaskName: String
+  get() = "${name.lowercase()}${target.name.capitalized()}ResolveDependencyResources"
+
+fun setupResourceResolvingForTarget(storytaleBuildDir: File, compilation: KotlinCompilation<*>) {
+  compilation.project.tasks.register<ResolveResourcesFromDependenciesTask>(compilation.resolveDependencyResourcesTaskName) {
+    filterResourcesByExtension.set(true)
+    archivesFromDependencies.setFrom(getArchivesFromResources(compilation))
+    outputDirectory.set(storytaleBuildDir.resolve("resolved-dependency-resources"))
+  }
+}
+
+fun getArchivesFromResources(compilation: KotlinCompilation<*>): FileCollection {
+  val dependenciesConfiguration = if (compilation.target is KotlinJsIrTarget) {
+    compilation.internal.configurations.runtimeDependencyConfiguration
+      ?: return compilation.project.files()
+  } else {
+    compilation.internal.configurations.compileDependencyConfiguration
+  }
+
+  return dependenciesConfiguration.incoming.artifactView {
+    withVariantReselection()
+    attributes {
+      configureResourcesPublicationAttributes(compilation.target)
+    }
+    isLenient = true
+  }.files
+}
+
