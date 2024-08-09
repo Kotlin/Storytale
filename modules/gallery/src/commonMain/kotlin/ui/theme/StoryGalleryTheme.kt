@@ -1,7 +1,9 @@
 package org.jetbrains.compose.storytale.gallery.ui.theme
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
@@ -20,6 +22,7 @@ fun StoryGalleryTheme(
       LocalColorScheme provides colorScheme,
       LocalTextStyle provides galleryDefaultTextStyle,
       LocalTypography provides typography,
+      LocalIndication provides ripple()
     ),
     content = content,
   )
