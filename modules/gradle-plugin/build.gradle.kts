@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
   `kotlin-dsl`
   `java-gradle-plugin`
@@ -37,4 +39,8 @@ publishing {
       artifact(emptyJavadocJar)
     }
   }
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+  friendPaths.setFrom(libraries)
 }
