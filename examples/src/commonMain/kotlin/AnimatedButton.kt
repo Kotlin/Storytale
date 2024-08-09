@@ -19,7 +19,7 @@ import org.jetbrains.storytale.example.compose_multiplatform
 fun AnimatedButton() {
   var showContent by remember { mutableStateOf(false) }
   Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-    PrimaryButton(onClick = { showContent = !showContent })
+    PrimaryButton(text = "Click Me", onClick = { showContent = !showContent })
     AnimatedVisibility(showContent) {
       val greeting = remember { Greeting().greet() }
       Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -31,8 +31,8 @@ fun AnimatedButton() {
 }
 
 @Composable
-fun PrimaryButton(onClick: () -> Unit, enabled: Boolean = true) {
+fun PrimaryButton(text: String, onClick: () -> Unit, enabled: Boolean = true) {
   Button(onClick = onClick, enabled = enabled) {
-    Text("Click me!")
+    Text(text)
   }
 }
