@@ -8,12 +8,12 @@ import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.web.tasks.UnpackSkikoWasmRuntimeTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
 
 fun Project.processJsCompilation(extension: StorytaleExtension, target: KotlinJsIrTarget) {
   project.logger.info("Configuring storytale for Kotlin/JS")

@@ -11,6 +11,7 @@ import org.jetbrains.compose.storytale.gallery.compose.noCompositionLocalProvide
 data class ColorScheme(
   val primaryText: Color,
   val description: Color,
+  val divider: Color,
   val isLight: Boolean,
 ) {
   val isDark: Boolean inline get() = !isLight
@@ -19,12 +20,14 @@ data class ColorScheme(
     val Light = ColorScheme(
       primaryText = Color(0xFF252B30),
       description = Color(0xFF9D9D9D),
+      divider = Color(0xFFD4D4D4),
       isLight = true
     )
 
     val Dark = ColorScheme(
       primaryText = Color(0xFF252B30),
       description = Color(0xFF9D9D9D),
+      divider = Color(0xFFD4D4D4),
       isLight = false
     )
   }

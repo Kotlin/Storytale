@@ -9,11 +9,12 @@ import androidx.compose.ui.Modifier
 fun Modifier.clickableWithoutRipple(
   enabled: Boolean = true,
   onClick: () -> Unit
-) = if (enabled) clickable(
+) = clickable(
   onClick = onClick,
   indication = null,
-  interactionSource = MutableInteractionSource()
-) else Modifier
+  interactionSource = MutableInteractionSource(),
+  enabled = enabled
+)
 
 inline fun Modifier.thenIf(
   condition: Boolean,

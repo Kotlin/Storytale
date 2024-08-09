@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,33 +23,31 @@ fun StoryList(
   activeStoryId: Int,
   stories: List<Story>,
   onSelectStory: (index: Int) -> Unit
+) = LazyColumn(
+  contentPadding = PaddingValues(bottom = 20.dp)
 ) {
-  LazyColumn(
-    contentPadding = PaddingValues(bottom = 20.dp)
-  ) {
-    item {
-      CenterRow(Modifier.padding(horizontal = 20.dp)) {
-        Text(
-          text = "Stories",
-          fontWeight = FontWeight.SemiBold,
-          color = Color.Black,
-          fontSize = 20.sp,
-          modifier = Modifier.weight(1f)
+  item {
+    CenterRow(Modifier.padding(horizontal = 20.dp)) {
+      Text(
+        text = "Stories",
+        fontWeight = FontWeight.SemiBold,
+        color = Color.Black,
+        fontSize = 20.sp,
+        modifier = Modifier.weight(1f)
+      )
+      NumberChip(stories.size)
+    }
+    Gap(14.dp)
+    Column(
+      verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+      stories.forEach { item ->
+        StoryListItem(
+          story = item,
+          selected = item.id == activeStoryId,
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+          onClick = { onSelectStory(item.id) }
         )
-        NumberChip(stories.size)
-      }
-      Gap(14.dp)
-      Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-      ) {
-        stories.forEach { item ->
-          StoryListItem(
-            story = item,
-            selected = item.id == activeStoryId,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-            onClick = { onSelectStory(item.id) }
-          )
-        }
       }
     }
   }
