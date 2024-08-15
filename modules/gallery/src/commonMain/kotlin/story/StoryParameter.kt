@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -41,7 +43,6 @@ fun StoryParameter(
     modifier = Modifier.fillMaxWidth()
       .padding(
         top = contentPadding.calculateTopPadding(),
-        bottom = contentPadding.calculateBottomPadding()
       )
   ) {
     if (showStoryName) {
@@ -60,62 +61,81 @@ fun StoryParameter(
         )
       }
       HorizontalDivider(
-        modifier = Modifier.padding(vertical = 24.dp),
+        modifier = Modifier.padding(top = 24.dp),
         thickness = 0.5.dp,
         color = Color.Black.copy(alpha = 0.4f)
       )
     }
     Column(
-      modifier = Modifier.padding(
-        start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-        end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
-      )
+      modifier = Modifier.verticalScroll(rememberScrollState())
+        .padding(
+          start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+          end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
+          top = if (showStoryName) 24.dp else 0.dp,
+          bottom = contentPadding.calculateBottomPadding()
+        )
     ) {
-      Column(Modifier.weight(1f)) {
-        Column(
-          modifier = Modifier.weight(1f),
-          verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-          // fake data
-          StringParameterField(
-            parameterName = "Button Text",
-            defaultString = "My Button",
-            description = """
+      Column(
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+      ) {
+        // fake data
+        StringParameterField(
+          parameterName = "Button Text",
+          defaultString = "My Button",
+          description = """
             controls the enabled state of this button. When false, 
             this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-            """.trimIndent(),
-            modifier = Modifier.fillMaxWidth()
-          )
-          BooleanParameterField(
-            parameterName = "Enabled",
-            defaultVale = true,
-            description = """
+          """.trimIndent(),
+          modifier = Modifier.fillMaxWidth()
+        )
+        BooleanParameterField(
+          parameterName = "Enabled",
+          defaultVale = true,
+          description = """
             controls the enabled state of this button. When false, 
             this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-            """.trimIndent(),
-            modifier = Modifier.fillMaxWidth()
-          )
+          """.trimIndent(),
+          modifier = Modifier.fillMaxWidth()
+        )
 
-          BooleanParameterField(
-            parameterName = "Enabled",
-            defaultVale = true,
-            description = """
+        BooleanParameterField(
+          parameterName = "Enabled",
+          defaultVale = true,
+          description = """
             controls the enabled state of this button. When false, 
             this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-            """.trimIndent(),
-            modifier = Modifier.fillMaxWidth()
-          )
+          """.trimIndent(),
+          modifier = Modifier.fillMaxWidth()
+        )
 
-          BooleanParameterField(
-            parameterName = "Enabled",
-            defaultVale = true,
-            description = """
+        BooleanParameterField(
+          parameterName = "Enabled",
+          defaultVale = true,
+          description = """
             controls the enabled state of this button. When false, 
             this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-            """.trimIndent(),
-            modifier = Modifier.fillMaxWidth()
-          )
-        }
+          """.trimIndent(),
+          modifier = Modifier.fillMaxWidth()
+        )
+        // fake data
+        StringParameterField(
+          parameterName = "Button Text",
+          defaultString = "My Button",
+          description = """
+            controls the enabled state of this button. When false, 
+            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
+          """.trimIndent(),
+          modifier = Modifier.fillMaxWidth()
+        )
+        BooleanParameterField(
+          parameterName = "Enabled",
+          defaultVale = true,
+          description = """
+            controls the enabled state of this button. When false, 
+            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
+          """.trimIndent(),
+          modifier = Modifier.fillMaxWidth()
+        )
       }
     }
   }
