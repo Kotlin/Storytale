@@ -4,19 +4,19 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 
-interface AppEvent {
-  data object CopyCode : AppEvent
+interface Event {
+  data object CopyCode : Event
 }
 
-inline fun AppEvent.send() = EventCenter.send(this)
+inline fun Event.send() = EventCenter.send(this)
 
 object EventCenter {
-  private val eventFlow = MutableSharedFlow<AppEvent>(extraBufferCapacity = Int.MAX_VALUE)
+  private val eventFlow = MutableSharedFlow<Event>(extraBufferCapacity = Int.MAX_VALUE)
   val event = eventFlow.asSharedFlow()
 
-  fun <T : AppEvent> send(event: T) = eventFlow.tryEmit(event)
+  fun <T : Event> send(event: T) = eventFlow.tryEmit(event)
 
-  suspend inline fun <reified T : AppEvent> observe(noinline block: (AppEvent) -> Unit) {
+  suspend inline fun <reified T : Event> observe(noinline block: (Event) -> Unit) {
     event.filterIsInstance<T>().collect(block)
   }
 }
