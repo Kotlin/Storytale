@@ -36,9 +36,9 @@ fun StringParameterField(
   CenterRow {
     Text(
       text = parameterName,
-      style = currentTypography.parameterText,
-      modifier = Modifier.weight(1f)
+      style = currentTypography.parameterText
     )
+    Gap(6.dp)
     ParameterLabel("String")
   }
   Gap(12.dp)

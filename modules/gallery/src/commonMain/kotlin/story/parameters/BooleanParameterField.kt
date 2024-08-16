@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
@@ -25,18 +26,21 @@ fun BooleanParameterField(
     var enabled by remember(defaultVale) {
       mutableStateOf(defaultVale)
     }
-    Text(
-      text = parameterName,
-      style = currentTypography.parameterText,
-      modifier = Modifier.weight(1f)
-    )
+    CenterRow(Modifier.weight(1f)) {
+      Text(
+        text = parameterName,
+        style = currentTypography.parameterText,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+      )
+      Gap(6.dp)
+      ParameterLabel("Boolean")
+    }
     SwitchButton(
       checked = enabled,
       onValueChange = { enabled = it }
     )
   }
-  Gap(12.dp)
-  ParameterLabel("Boolean")
   if (description.isNotEmpty()) {
     Gap(12.dp)
     Text(
