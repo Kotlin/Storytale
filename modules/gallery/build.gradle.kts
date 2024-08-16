@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
+  alias(libs.plugins.androidLibrary)
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
@@ -15,6 +16,7 @@ kotlin {
   iosX64()
   iosArm64()
   iosSimulatorArm64()
+  androidTarget()
 
   sourceSets {
     commonMain.dependencies {
@@ -52,3 +54,8 @@ group = "org.jetbrains.compose.storytale"
 version = "1.0"
 
 publishing {}
+
+android {
+  namespace = "org.jetbrains.storytale.gallery"
+  compileSdk = libs.versions.android.compileSdk.get().toInt()
+}

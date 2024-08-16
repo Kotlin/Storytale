@@ -30,6 +30,13 @@ open class StorytaleExtension(internal val project: Project) {
       }
   }
 
+  val androidStorySourceSet by lazy {
+    multiplatformExtension
+      .sourceSets
+      .getByName("android${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}")
+      .apply { dependsOn(mainStoriesSourceSet) }
+  }
+
   private fun <T> Any.tryGetClass(className: String): Class<T>? {
     val classLoader = javaClass.classLoader
     return try {
