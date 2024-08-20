@@ -59,7 +59,6 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
               .addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
               .addStatement("""
               | super.onCreate(savedInstanceState) 
-              | enableEdgeToEdge() 
               | setContent { MainViewController() }
               """.trimMargin())
               .build()
