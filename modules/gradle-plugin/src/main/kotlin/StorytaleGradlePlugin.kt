@@ -38,8 +38,7 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
 
   private fun Project.processConfigurations(extension: StorytaleExtension) {
-    extension.multiplatformExtension.applyDefaultHierarchyTemplate()
-    extension.targets.configureEach {
+    extension.targets.all {
       when (this) {
         is KotlinJsIrTarget ->
           when (wasmTargetType) {

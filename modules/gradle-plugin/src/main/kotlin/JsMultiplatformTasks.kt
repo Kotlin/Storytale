@@ -40,44 +40,46 @@ fun Project.createWasmAndJsStorytaleCompilation(
     binaries.executable(storytaleCompilation)
   }
 
-  storytaleCompilation.apply {
-    val sourceSet = kotlinSourceSets.single()
+  project.afterEvaluate {
+    storytaleCompilation.apply {
+      val sourceSet = kotlinSourceSets.single()
 
-    sourceSet.dependsOn(extension.mainStoriesSourceSet)
+      sourceSet.dependsOn(extension.mainStoriesSourceSet)
 
-    sourceSet.kotlin.setSrcDirs(files("$storytaleBuildDir/sources"))
+      sourceSet.kotlin.setSrcDirs(files("$storytaleBuildDir/sources"))
 
-    val generateTaskName = "${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}"
+      val generateTaskName = "${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}"
 
-    val unpackSkikoTask = extension.project.tasks.withType<UnpackSkikoWasmRuntimeTask>().single()
-    val resolveDependencyResourcesTask = extension.project.tasks
-      .getByName(storytaleCompilation.resolveDependencyResourcesTaskName) as ResolveResourcesFromDependenciesTask
+      val unpackSkikoTask = extension.project.tasks.withType<UnpackSkikoWasmRuntimeTask>().single()
+      val resolveDependencyResourcesTask = extension.project.tasks
+        .getByName(storytaleCompilation.resolveDependencyResourcesTaskName) as ResolveResourcesFromDependenciesTask
 
-    sourceSet.resources.srcDirs(
-      "$storytaleBuildDir/resources",
-      unpackSkikoTask.outputDir,
-      resolveDependencyResourcesTask.outputDirectory,
-      mainCompilation.defaultSourceSet.resources,
-    )
+      sourceSet.resources.srcDirs(
+        "$storytaleBuildDir/resources",
+        unpackSkikoTask.outputDir,
+        resolveDependencyResourcesTask.outputDirectory,
+        mainCompilation.defaultSourceSet.resources,
+      )
 
-    extension.project.tasks.named(processResourcesTaskName).configure {
-      dependsOn(unpackSkikoTask)
-      dependsOn(generateTaskName)
-      dependsOn(resolveDependencyResourcesTask)
+      extension.project.tasks.named(processResourcesTaskName).configure {
+        dependsOn(unpackSkikoTask)
+        dependsOn(generateTaskName)
+        dependsOn(resolveDependencyResourcesTask)
 
-      (this as? AbstractCopyTask)?.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        (this as? AbstractCopyTask)?.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+      }
+
+      compileTaskProvider.configure {
+        group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
+        description = "Compile web storytale source files for '${target.name}'"
+
+        dependsOn(generateTaskName)
+        configureOptions()
+      }
+
+      binaries.withType(JsIrBinary::class.java)
+        .configureEach { linkTask.configure { configureOptions() } }
     }
-
-    compileTaskProvider.configure {
-      group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
-      description = "Compile web storytale source files for '${target.name}'"
-
-      dependsOn(generateTaskName)
-      configureOptions()
-    }
-
-    binaries.withType(JsIrBinary::class.java)
-      .configureEach { linkTask.configure { configureOptions() } }
   }
 
   return storytaleCompilation
@@ -98,9 +100,11 @@ private fun Project.createJsStorytaleGenerateSourceTask(extension: StorytaleExte
   }
 }
 
-fun createWasmAndJsStorytaleExecTask(compilation: KotlinJsIrCompilation) {
+fun Project.createWasmAndJsStorytaleExecTask(compilation: KotlinJsIrCompilation) {
   val compilationTarget = compilation.target as KotlinJsIrTarget
 
-  compilationTarget.browser.configureBuild(compilation)
-  compilationTarget.browser.configureRun(compilation)
+  afterEvaluate {
+    compilationTarget.browser.configureBuild(compilation)
+    compilationTarget.browser.configureRun(compilation)
+  }
 }

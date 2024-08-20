@@ -87,9 +87,8 @@ private fun Project.createNativeStorytaleExecTask(
 
   var deviceId: String? = null
   val targetSuffix = target.name.capitalized()
-  val linkTask =
-    tasks.findByPath("link${StorytaleGradlePlugin.STORYTALE_TASK_GROUP.capitalized()}${StorytaleGradlePlugin.LINK_BUILD_VERSION}Framework$targetSuffix") as? KotlinNativeLink
-      ?: error("Link task was not created for target ${target.name}")
+  val linkTask = tasks.findByPath("link${StorytaleGradlePlugin.STORYTALE_TASK_GROUP.capitalized()}${StorytaleGradlePlugin.LINK_BUILD_VERSION}Framework$targetSuffix") as? KotlinNativeLink
+    ?: error("Link task was not created for target ${target.name}")
 
   val unzipXCodeProjectTask =
     task<UnzipResourceTask>("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}UnzipXCodeProject") {
@@ -121,8 +120,7 @@ private fun Project.createNativeStorytaleExecTask(
     if (existingDeviceId == null) {
       val createOutput = ByteArrayOutputStream()
       exec {
-        commandLine(
-          "/usr/bin/xcrun", "simctl", "create", simulatorName,
+        commandLine("/usr/bin/xcrun", "simctl", "create", simulatorName,
           "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max",
           "com.apple.CoreSimulator.SimRuntime.iOS-17-5"
         )
@@ -206,8 +204,7 @@ private fun Project.createNativeStorytaleExecTask(
     doLast {
       exec {
         workingDir = unzipXCodeProjectTask.outputDir.get().asFile
-        val appPath =
-          "${StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME}/Build/Products/${StorytaleGradlePlugin.LINK_BUILD_VERSION}-$platform/${StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME}.app"
+        val appPath = "${StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME}/Build/Products/${StorytaleGradlePlugin.LINK_BUILD_VERSION}-$platform/${StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME}.app"
         commandLine(
           "/usr/bin/xcrun",
           "simctl",
