@@ -90,7 +90,8 @@ fun PrimaryButton(onClick: () -> Unit, enabled: Boolean = true) {
 import org.jetbrains.compose.storytale.story
 
 val `PrimaryButton default state` by story {
-   PrimaryButton(onClick = {})
+   val enabled by parameter(true)
+   PrimaryButton(onClick = {}, enabled = enabled)
 }
 ```
 
@@ -117,7 +118,7 @@ At this point, if you see these Storytale `Gradle tasks`, it means you’ve succ
 
 <img width="453" alt="image" src="https://github.com/user-attachments/assets/e9cfa634-27f2-4613-9579-194c3e6c09a4">
 
-Before running `XXXXStoryRun`, you need to run `./gradlew publishToMavenLocal` to deploy the latest changes if you've modified any part of the code (except for examples module)
+Before running `XXXXStoriesRun`, you need to run `./gradlew publishToMavenLocal` to deploy the latest changes if you've modified any part of the code (except for examples module)
 
 #### About project structure
 
