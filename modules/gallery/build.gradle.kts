@@ -26,17 +26,33 @@ kotlin {
     }
   }
 
+  applyDefaultHierarchyTemplate()
+
   sourceSets {
-    commonMain.dependencies {
-      implementation(compose.runtime)
-      implementation(compose.foundation)
-      implementation(compose.material3)
-      implementation(compose.ui)
-      implementation(compose.components.resources)
-      implementation(compose.components.uiToolingPreview)
-      implementation(libs.navigation.compose)
-      implementation(libs.kotlinx.serialization.json)
-      implementation(projects.modules.runtimeApi)
+    val commonMain by getting {
+      dependencies {
+        implementation(compose.runtime)
+        implementation(compose.foundation)
+        implementation(compose.material3)
+        implementation(compose.ui)
+        implementation(compose.components.resources)
+        implementation(compose.components.uiToolingPreview)
+        implementation(libs.navigation.compose)
+        implementation(libs.kotlinx.serialization.json)
+        implementation(projects.modules.runtimeApi)
+      }
+    }
+
+    val mobileMain by creating {
+      dependsOn(commonMain)
+    }
+
+    val androidMain by getting {
+      dependsOn(mobileMain)
+    }
+
+    val iosMain by getting {
+      dependsOn(mobileMain)
     }
   }
 
