@@ -16,6 +16,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -78,64 +79,27 @@ fun StoryParameter(
       Column(
         verticalArrangement = Arrangement.spacedBy(24.dp),
       ) {
-        // fake data
-        StringParameterField(
-          parameterName = "Button Text",
-          defaultString = "My Button",
-          description = """
-            controls the enabled state of this button. When false, 
-            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-          """.trimIndent(),
-          modifier = Modifier.fillMaxWidth()
-        )
-        BooleanParameterField(
-          parameterName = "Enabled",
-          defaultVale = true,
-          description = """
-            controls the enabled state of this button. When false, 
-            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-          """.trimIndent(),
-          modifier = Modifier.fillMaxWidth()
-        )
+        @Suppress("UNCHECKED_CAST")
+        activeStory.parameters.forEach { parameter ->
+          when (parameter.type) {
+            String::class ->
+              StringParameterField(
+                parameterName = parameter.name,
+                state = parameter.state as MutableState<String>,
+                modifier = Modifier.fillMaxWidth()
+              )
 
-        BooleanParameterField(
-          parameterName = "Enabled",
-          defaultVale = true,
-          description = """
-            controls the enabled state of this button. When false, 
-            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-          """.trimIndent(),
-          modifier = Modifier.fillMaxWidth()
-        )
+            Boolean::class ->
+              BooleanParameterField(
+                parameterName = parameter.name,
+                state = parameter.state as MutableState<Boolean>,
+                modifier = Modifier.fillMaxWidth()
+              )
 
-        BooleanParameterField(
-          parameterName = "Enabled",
-          defaultVale = true,
-          description = """
-            controls the enabled state of this button. When false, 
-            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-          """.trimIndent(),
-          modifier = Modifier.fillMaxWidth()
-        )
-        // fake data
-        StringParameterField(
-          parameterName = "Button Text",
-          defaultString = "My Button",
-          description = """
-            controls the enabled state of this button. When false, 
-            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-          """.trimIndent(),
-          modifier = Modifier.fillMaxWidth()
-        )
-        BooleanParameterField(
-          parameterName = "Enabled",
-          defaultVale = true,
-          description = """
-            controls the enabled state of this button. When false, 
-            this component will not respond to user input, and it will appear visually disabled and disabled to accessibility services.
-          """.trimIndent(),
-          modifier = Modifier.fillMaxWidth()
-        )
+            else ->
+              error("Unsupported parameter type ${parameter.type}")
+          }
+        }
       }
     }
   }

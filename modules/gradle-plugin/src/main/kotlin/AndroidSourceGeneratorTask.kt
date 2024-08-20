@@ -6,10 +6,8 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.cfg.pseudocode.and
 import java.io.File
 import java.nio.file.Files
-import kotlin.io.path.createDirectories
 
 @CacheableTask
 open class AndroidSourceGeneratorTask : DefaultTask() {
@@ -35,16 +33,16 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
   }
 
   private fun generateSources() {
-      FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController").apply {
-        addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
+    FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController").apply {
+      addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
-        function("MainViewController") {
-          addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
-          addStatement("Gallery()")
-        }
+      function("MainViewController") {
+        addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
+        addStatement("Gallery()")
       }
-        .build()
-        .writeTo(outputSourcesDir)
+    }
+      .build()
+      .writeTo(outputSourcesDir)
 
     FileSpec.builder(appPackageName, "StorytaleAppActivity").apply {
       addImport("androidx.activity", "enableEdgeToEdge")
@@ -54,14 +52,16 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
       TypeSpec.classBuilder("StorytaleAppActivity")
         .superclass(ClassName("androidx.activity", "ComponentActivity"))
         .addFunction(
-            FunSpec.builder("onCreate")
-              .addModifiers(KModifier.OVERRIDE)
-              .addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
-              .addStatement("""
+          FunSpec.builder("onCreate")
+            .addModifiers(KModifier.OVERRIDE)
+            .addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
+            .addStatement(
+              """
               | super.onCreate(savedInstanceState) 
               | setContent { MainViewController() }
-              """.trimMargin())
-              .build()
+              """.trimMargin()
+            )
+            .build()
         )
         .build()
         .also(::addType)
@@ -72,9 +72,9 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
   }
 
   private fun generateAndroidManifest() {
-     val androidManifestFile = File(outputResourcesDir, "AndroidManifest.xml")
-     Files.createDirectories(androidManifestFile.parentFile.toPath())
-     androidManifestFile.writeText(
+    val androidManifestFile = File(outputResourcesDir, "AndroidManifest.xml")
+    Files.createDirectories(androidManifestFile.parentFile.toPath())
+    androidManifestFile.writeText(
       """
         <?xml version="1.0" encoding="utf-8"?>
         <manifest 
@@ -99,7 +99,7 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
             </application>
         
         </manifest>
-    """.trimIndent()
+      """.trimIndent()
     )
 
   }
