@@ -1,13 +1,8 @@
 package org.jetbrains.compose.plugin.storytale
 
-import com.android.build.api.dsl.AndroidSourceSet
-import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeCInteropMetadataDependencyClasspathResolver.dependencies
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 
 open class StorytaleExtension(internal val project: Project) {
   var buildDir: String = "storytale"
