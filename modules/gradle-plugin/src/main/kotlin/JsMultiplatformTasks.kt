@@ -49,25 +49,23 @@ fun Project.createWasmAndJsStorytaleCompilation(
 
     val generateTaskName = "${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}"
 
-    extension.project.afterEvaluate {
-      val unpackSkikoTask = extension.project.tasks.withType<UnpackSkikoWasmRuntimeTask>().single()
-      val resolveDependencyResourcesTask = extension.project.tasks
-        .getByName(storytaleCompilation.resolveDependencyResourcesTaskName) as ResolveResourcesFromDependenciesTask
+    val unpackSkikoTask = extension.project.tasks.withType<UnpackSkikoWasmRuntimeTask>().single()
+    val resolveDependencyResourcesTask = extension.project.tasks
+      .getByName(storytaleCompilation.resolveDependencyResourcesTaskName) as ResolveResourcesFromDependenciesTask
 
-      sourceSet.resources.srcDirs(
-        "$storytaleBuildDir/resources",
-        unpackSkikoTask.outputDir,
-        resolveDependencyResourcesTask.outputDirectory,
-        mainCompilation.defaultSourceSet.resources,
-      )
+    sourceSet.resources.srcDirs(
+      "$storytaleBuildDir/resources",
+      unpackSkikoTask.outputDir,
+      resolveDependencyResourcesTask.outputDirectory,
+      mainCompilation.defaultSourceSet.resources,
+    )
 
-      extension.project.tasks.named(processResourcesTaskName).configure {
-        dependsOn(unpackSkikoTask)
-        dependsOn(generateTaskName)
-        dependsOn(resolveDependencyResourcesTask)
+    extension.project.tasks.named(processResourcesTaskName).configure {
+      dependsOn(unpackSkikoTask)
+      dependsOn(generateTaskName)
+      dependsOn(resolveDependencyResourcesTask)
 
-        (this as? AbstractCopyTask)?.duplicatesStrategy = DuplicatesStrategy.INCLUDE
-      }
+      (this as? AbstractCopyTask)?.duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
     compileTaskProvider.configure {

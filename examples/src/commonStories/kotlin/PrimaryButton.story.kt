@@ -1,9 +1,9 @@
 import org.jetbrains.compose.storytale.story
 
-val `PrimaryButton default state` by story {
+val `Primary Button Default State` by story {
    PrimaryButton(onClick = {})
 }
 
-val `PrimaryButton disabled` by story {
+val `Primary Button Disabled` by story {
    PrimaryButton(onClick = {}, enabled = false)
-}
+} 

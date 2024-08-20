@@ -1,5 +1,5 @@
 import org.jetbrains.compose.storytale.story
 
-val `AnimatedButton default state` by story {
-   AnimatedButton()
+val `Animated Button Default State` by story {
+    AnimatedButton()
 }

@@ -56,12 +56,10 @@ fun Project.createJvmStorytaleCompileTask(
 
     val generateTaskName = "${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}"
 
-    extension.project.afterEvaluate {
-      sourceSet.resources.srcDirs("$storytaleBuildDir/resources", mainCompilation.defaultSourceSet.resources)
+    sourceSet.resources.srcDirs("$storytaleBuildDir/resources", mainCompilation.defaultSourceSet.resources)
 
-      extension.project.tasks.named(processResourcesTaskName).configure {
-        dependsOn(generateTaskName)
-      }
+    extension.project.tasks.named(processResourcesTaskName).configure {
+      dependsOn(generateTaskName)
     }
 
     compileTaskProvider.configure {

@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
+  alias(libs.plugins.androidLibrary)
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
@@ -15,18 +17,42 @@ kotlin {
   iosX64()
   iosArm64()
   iosSimulatorArm64()
+  androidTarget {
+    publishLibraryVariants("release")
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_11)
+    }
+  }
+
+  applyDefaultHierarchyTemplate()
 
   sourceSets {
-    commonMain.dependencies {
-      implementation(compose.runtime)
-      implementation(compose.foundation)
-      implementation(compose.material3)
-      implementation(compose.ui)
-      implementation(compose.components.resources)
-      implementation(compose.components.uiToolingPreview)
-      implementation(libs.navigation.compose)
-      implementation(libs.kotlinx.serialization.json)
-      implementation(projects.modules.runtimeApi)
+    val commonMain by getting {
+      dependencies {
+        implementation(compose.runtime)
+        implementation(compose.foundation)
+        implementation(compose.material3)
+        implementation(compose.ui)
+        implementation(compose.components.resources)
+        implementation(compose.components.uiToolingPreview)
+        implementation(libs.navigation.compose)
+        implementation(libs.kotlinx.serialization.json)
+        implementation(projects.modules.runtimeApi)
+      }
+    }
+
+    val mobileMain by creating {
+      dependsOn(commonMain)
+    }
+
+    val androidMain by getting {
+      dependsOn(mobileMain)
+    }
+
+    val iosMain by getting {
+      dependsOn(mobileMain)
     }
   }
 
@@ -52,3 +78,9 @@ group = "org.jetbrains.compose.storytale"
 version = "1.0"
 
 publishing {}
+
+android {
+  namespace = "org.jetbrains.storytale.gallery"
+  compileSdk = libs.versions.android.compileSdk.get().toInt()
+  sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+}
