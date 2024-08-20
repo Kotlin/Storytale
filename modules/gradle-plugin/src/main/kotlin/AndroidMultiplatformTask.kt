@@ -1,66 +1,98 @@
 package org.jetbrains.compose.plugin.storytale
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.api.ApplicationVariant
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.task
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-
-fun Project.processAndroidCompilation(extension: StorytaleExtension, target: KotlinAndroidTarget) {
-    project.logger.info("Configuring storytale for Kotlin on Android")
-    val generatorTask = createAndroidStorytaleGenerateSourceTask(extension, target)
-    createAndroidExecTask(target, extension, generatorTask)
-}
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.sourceSetTreeClassifier
+import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
+import java.io.File
 
 val androidGradlePlugins = listOf(
     "com.android.application",
     "com.android.library",
 )
 
-fun createAndroidExecTask(
+fun Project.processAndroidCompilation(extension: StorytaleExtension, target: KotlinAndroidTarget) {
+    project.logger.info("Configuring storytale for Kotlin on Android")
+    createAndroidExecTask(target, extension)
+}
+
+fun Project.createAndroidExecTask(
     target: KotlinAndroidTarget,
     extension: StorytaleExtension,
-    generatorTask: AndroidSourceGeneratorTask
 ) {
-    androidGradlePlugins.forEach {
-        extension.project.plugins.withId(it) {
+    androidGradlePlugins.forEach { pluginId ->
+        extension.project.plugins.withId(pluginId) {
+            val storytaleBuildDir = extension.getBuildDirectory(target)
+            val storytaleBuildSourcesDir = file("$storytaleBuildDir/sources")
+            val storytaleBuildResourcesDir = file("$storytaleBuildDir/resources")
             val applicationExtension = extension.project.extensions.findByType(AppExtension::class)
 //                ?: extension.project.extensions.findByType(LibraryExtension::class)
                 ?: error("!!!")
 
             applicationExtension.buildTypes.create(StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX)
-                .apply { initWith(applicationExtension.buildTypes.getByName("debug")) }
+                .apply {
+                    initWith(applicationExtension.buildTypes.getByName("debug"))
+                    applicationIdSuffix = ".${StorytaleGradlePlugin.STORYTALE_EXEC_PREFIX}"
+                }
 
-            applicationExtension.applicationVariants.configureEach {
-                if (name != StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX) return@configureEach
+            applicationExtension.sourceSets
+                .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX }
+                .configureEach {
+                    manifest.srcFile(storytaleBuildResourcesDir.resolve("AndroidManifest.xml"))
+                }
 
-                applicationExtension.sourceSets.getByName(StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX) {
-                    this@getByName.kotlin.setSrcDirs(
-                        extension.mainStoriesSourceSet.kotlin.srcDirs +
-                        extension.androidStorySourceSet.kotlin.srcDirs +
-                        listOf(generatorTask.outputSourcesDir)
+            project.kotlinExtension.sourceSets
+                .matching { it.name == "android${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}" }
+                .configureEach {
+                    dependsOn(extension.mainStoriesSourceSet)
+                    kotlin.srcDir(storytaleBuildSourcesDir)
+                }
+
+            applicationExtension.applicationVariants
+                .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX  }
+                .configureEach {
+                    val generatorTask = createAndroidStorytaleGenerateSourceTask(
+                        target,
+                        this,
+                        storytaleBuildSourcesDir,
+                        storytaleBuildResourcesDir
                     )
-                    manifest.srcFile(generatorTask.outputResourcesDir.resolve("AndroidManifest.xml"))
+
+                    extension.project.tasks
+                        .matching { it.name == "process${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}MainManifest" }
+                        .configureEach { dependsOn(generatorTask) }
+
+                    target.compilations
+                        .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX }
+                        .configureEach {
+                            associateWith(target.compilations.getByName("debug"))
+                            compileTaskProvider.configure { dependsOn(generatorTask) }
+                        }
                 }
 
-                target.compilations.getByName(StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX).apply {
-                    associateWith(target.compilations.getByName("debug"))
-                }
-            }
         }
     }
 }
 
 private fun Project.createAndroidStorytaleGenerateSourceTask(
-    extension: StorytaleExtension,
-    target: KotlinAndroidTarget
-): AndroidSourceGeneratorTask {
-    val storytaleBuildDir = extension.getBuildDirectory(target)
-    return task<AndroidSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
-        group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
-        description = "Generate Android source files for '${target.name}'"
-        title = target.name
-        outputResourcesDir = file("$storytaleBuildDir/resources")
-        outputSourcesDir = file("$storytaleBuildDir/sources")
-    }
+    target: KotlinAndroidTarget,
+    applicationVariant: ApplicationVariant,
+    buildSourcesDir: File,
+    buildResourcesDir: File,
+) = task<AndroidSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
+    group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
+    description = "Generate Android source files for '${target.name}'"
+    title = target.name
+    appPackageName = applicationVariant.applicationId
+    outputSourcesDir = buildSourcesDir
+    outputResourcesDir = buildResourcesDir
 }

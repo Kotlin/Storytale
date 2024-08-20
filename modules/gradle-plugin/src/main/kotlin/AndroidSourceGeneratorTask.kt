@@ -8,11 +8,16 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cfg.pseudocode.and
 import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.createDirectories
 
 @CacheableTask
 open class AndroidSourceGeneratorTask : DefaultTask() {
   @Input
   lateinit var title: String
+
+  @Input
+  lateinit var appPackageName: String
 
   @OutputDirectory
   lateinit var outputResourcesDir: File
@@ -30,21 +35,28 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
   }
 
   private fun generateSources() {
-    val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
-      addImport("androidx.activity", "ComponentActivity")
+      FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController").apply {
+        addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
+
+        function("MainViewController") {
+          addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
+          addStatement("Gallery()")
+        }
+      }
+        .build()
+        .writeTo(outputSourcesDir)
+
+    FileSpec.builder(appPackageName, "StorytaleAppActivity").apply {
       addImport("androidx.activity", "enableEdgeToEdge")
       addImport("androidx.activity.compose", "setContent")
+      addImport(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController")
 
-      addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
-      function("MainViewController") {
-        addStatement("Gallery()")
-      }
-
-      TypeSpec.classBuilder("AppActivity")
+      TypeSpec.classBuilder("StorytaleAppActivity")
+        .superclass(ClassName("androidx.activity", "ComponentActivity"))
         .addFunction(
             FunSpec.builder("onCreate")
               .addModifiers(KModifier.OVERRIDE)
-              .addParameter("savedInstanceState", ClassName("android.os", "Bundle"))
+              .addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
               .addStatement("""
               | super.onCreate(savedInstanceState) 
               | enableEdgeToEdge() 
@@ -54,23 +66,28 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
         )
         .build()
         .also(::addType)
-    }.build()
+    }
+      .build()
+      .writeTo(outputSourcesDir)
 
-    file.writeTo(outputSourcesDir)
   }
 
   private fun generateAndroidManifest() {
      val androidManifestFile = File(outputResourcesDir, "AndroidManifest.xml")
+     Files.createDirectories(androidManifestFile.parentFile.toPath())
      androidManifestFile.writeText(
       """
         <?xml version="1.0" encoding="utf-8"?>
-        <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+        <manifest 
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            >
             <application
-                android:icon="@android:drawable/ic_menu_compass"
+                tools:replace="label, theme"
                 android:label="${StorytaleGradlePlugin.STORYTALE_NATIVE_APP_NAME}"
                 android:theme="@android:style/Theme.Material.NoActionBar">
                 <activity
-                    android:name="${StorytaleGradlePlugin.STORYTALE_PACKAGE}.AppActivity"
+                    android:name=".stories.StorytaleAppActivity"
                     android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
                     android:launchMode="singleInstance"
                     android:windowSoftInputMode="adjustPan"
