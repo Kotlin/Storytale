@@ -6,4 +6,4 @@ val `Primary Button Default State` by story {
 
 val `Primary Button Disabled` by story {
    PrimaryButton(onClick = {}, enabled = false)
-}
+} 

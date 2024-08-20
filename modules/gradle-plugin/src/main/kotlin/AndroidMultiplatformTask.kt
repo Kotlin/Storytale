@@ -2,11 +2,13 @@ package org.jetbrains.compose.plugin.storytale
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 val androidGradlePlugins = listOf("com.android.application")
@@ -70,8 +72,47 @@ fun Project.createAndroidCompilationTasks(
                             associateWith(target.compilations.getByName("debug"))
                             compileTaskProvider.configure { dependsOn(generatorTask) }
                         }
-                }
 
+                    val startEmulatorTask = task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}StartEmulator") {
+                        doLast {
+                            val output = ByteArrayOutputStream()
+                            val emulatorPath = applicationExtension.sdkDirectory.resolve("emulator/emulator")
+                            exec {
+                                commandLine(emulatorPath, "-list-avds")
+                                standardOutput = output
+                            }
+
+                            val emulatorName = output.toString().trim().lineSequence().lastOrNull()
+
+                            if (emulatorName != null) {
+                                project.logger.info("Starting emulator: $emulatorName")
+                                Thread {
+                                    exec {
+                                        commandLine(emulatorPath, "-avd", emulatorName, "-no-snapshot-load")
+                                    }
+                                }.start()
+                            } else {
+                                throw GradleException("No available Android emulators.")
+                            }
+                        }
+                    }
+
+                    task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}Run") {
+                        val adbPath = applicationExtension.adbExecutable.absolutePath
+                        val activityPath = "${applicationId}.StorytaleAppActivity"
+
+                        dependsOn(startEmulatorTask)
+                        dependsOn("install${this@configureEach.name}")
+
+                        group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
+
+                        doLast {
+                            exec {
+                                commandLine(adbPath, "shell", "am", "start", "-n", "$applicationId/$activityPath")
+                            }
+                        }
+                    }
+                }
         }
     }
 }
