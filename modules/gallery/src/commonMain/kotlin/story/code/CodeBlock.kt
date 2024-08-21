@@ -17,10 +17,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.snipme.highlights.Highlights
+import dev.snipme.highlights.model.BoldHighlight
+import dev.snipme.highlights.model.ColorHighlight
+import dev.snipme.highlights.model.SyntaxLanguage
+import dev.snipme.highlights.model.SyntaxThemes
+import org.jetbrains.compose.storytale.gallery.compose.text
 
 @Composable
 fun CodeBlock(
@@ -31,6 +39,12 @@ fun CodeBlock(
 ) {
   var codeLines by remember { mutableIntStateOf(0) }
   val codeVerticalScrollState = rememberScrollState()
+  val codeHighlights = Highlights.Builder()
+    .code(code)
+    .theme(SyntaxThemes.monokai())
+    .language(SyntaxLanguage.KOTLIN)
+    .build()
+
   Column(
     modifier = Modifier.background(Color(0xFFEEF0F5))
       .verticalScroll(codeVerticalScrollState)
@@ -50,7 +64,27 @@ fun CodeBlock(
   }
   SelectionContainer(Modifier.fillMaxSize()) {
     Text(
-      text = code,
+      text = buildAnnotatedString {
+        text(codeHighlights.getCode())
+        codeHighlights.getHighlights()
+          .filterIsInstance<ColorHighlight>()
+          .forEach {
+            addStyle(
+              SpanStyle(color = Color(it.rgb).copy(alpha = 1f)),
+              start = it.location.start,
+              end = it.location.end,
+            )
+          }
+        codeHighlights.getHighlights()
+          .filterIsInstance<BoldHighlight>()
+          .forEach {
+            addStyle(
+              SpanStyle(fontWeight = FontWeight.Bold),
+              start = it.location.start,
+              end = it.location.end,
+            )
+          }
+      },
       color = Color(0xFF252B30),
       fontSize = 16.sp,
       lineHeight = 28.sp,
