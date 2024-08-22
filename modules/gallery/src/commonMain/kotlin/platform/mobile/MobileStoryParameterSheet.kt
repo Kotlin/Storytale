@@ -115,37 +115,7 @@ fun MobileStoryParameterSheet(
           contentPadding = PaddingValues(horizontal = 20.dp)
         )
         1 -> MobileCodeBlock(
-          code = """
-            @Composable
-            fun MobileStoryParameterSheet(
-              sheetState: StoryBottomSheetState,
-              story: Story
-            ) {
-              val pagerState = rememberPagerState(pageCount = 2)
-              StoryBottomSheet(
-                sheetState = sheetState,
-                onDismissRequest = sheetState::hide,
-                containerColor = Color.White,
-                modifier = Modifier.statusBarsPadding()
-                  .padding(top = 24.dp),
-                contentPadding = PaddingValues(horizontal = 20.dp)
-              ) {
-                HorizontalPager(
-                  state = pagerState
-                ) {
-                  when (it) {
-                    0 -> StoryParameter(
-                      activeStory = story,
-                      showStoryName = false
-                    )
-                    1 -> CodeBlock(
-      
-                    )
-                  }
-                }
-              }
-            }
-          """.trimIndent(),
+          code = story.code,
         )
       }
     }

@@ -42,7 +42,6 @@ import org.jetbrains.compose.storytale.gallery.ui.component.SwitchButton
 import org.jetbrains.compose.storytale.gallery.ui.component.rememberStoryToastState
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
-
 @Composable
 actual fun StoryGallery(
   stories: List<Story>,
@@ -59,7 +58,7 @@ actual fun StoryGallery(
     targetValue = if (sourceCodeMode) 0.dp else 36.dp
   )
   val widthAnimation by animateDpAsState(
-    targetValue = if (sourceCodeMode) 350.dp else 280.dp
+    targetValue = if (sourceCodeMode) 450.dp else 280.dp
   )
 
   val onSelectStory = { id: Int -> activeStoryId = id }
@@ -107,16 +106,7 @@ actual fun StoryGallery(
         ) {
           when (it) {
             true -> DesktopCodeBlock(
-              code = """
-            @Composable
-            fun MobileStoryParameterSheet(
-              sheetState: StoryBottomSheetState,
-              story: Story
-            ) {
-                }
-              }
-            }
-              """.trimIndent(),
+              code = activeStory.code,
               storyName = activeStory.name,
               modifier = Modifier.fillMaxSize()
             )

@@ -6,9 +6,12 @@ import kotlin.reflect.KProperty
 
 val storiesStorage = mutableListOf<Story>()
 
-fun story(content: @Composable Story.() -> Unit) = StoryDelegate(content)
+fun story(code: String = "", content: @Composable Story.() -> Unit) = StoryDelegate(content, code)
 
-class StoryDelegate(val content: @Composable Story.() -> Unit) {
+class StoryDelegate(
+  private val content: @Composable Story.() -> Unit,
+  private val code: String = ""
+) {
   private lateinit var instance: Story
 
   operator fun getValue(thisRef: Any?, property: KProperty<*>): Story {
@@ -16,7 +19,7 @@ class StoryDelegate(val content: @Composable Story.() -> Unit) {
   }
 
   operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): StoryDelegate {
-    instance = Story(storiesStorage.size, property.name, content).also(storiesStorage::add)
+    instance = Story(storiesStorage.size, property.name, code, content).also(storiesStorage::add)
     return this
   }
 }
@@ -24,6 +27,7 @@ class StoryDelegate(val content: @Composable Story.() -> Unit) {
 data class Story(
   val id: Int,
   val name: String,
+  val code: String,
   val content: @Composable Story.() -> Unit
 ) {
   internal val nameToParameterMapping = hashMapOf<String, StoryParameter<*>>()

@@ -43,6 +43,22 @@ kotlin {
       }
     }
 
+    val desktopMain by creating {
+      dependsOn(commonMain)
+    }
+
+    val jsMain by getting {
+      dependsOn(desktopMain)
+    }
+
+    val wasmJsMain by getting {
+      dependsOn(desktopMain)
+    }
+
+    val jvmMain by getting {
+      dependsOn(desktopMain)
+    }
+
     val mobileMain by creating {
       dependsOn(commonMain)
     }
