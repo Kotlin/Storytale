@@ -77,6 +77,7 @@ fun Project.createAndroidCompilationTasks(
             task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}StartEmulator") {
               doLast {
                 val output = ByteArrayOutputStream()
+                val adbPath = applicationExtension.adbExecutable.absolutePath
                 val emulatorPath = applicationExtension.sdkDirectory.resolve("emulator/emulator")
                 exec {
                   commandLine(emulatorPath, "-list-avds")
@@ -92,6 +93,10 @@ fun Project.createAndroidCompilationTasks(
                       commandLine(emulatorPath, "-avd", emulatorName, "-no-snapshot-load")
                     }
                   }.start()
+
+                  exec {
+                    commandLine(adbPath, "wait-for-device")
+                  }
                 } else {
                   throw GradleException("No available Android emulators.")
                 }
