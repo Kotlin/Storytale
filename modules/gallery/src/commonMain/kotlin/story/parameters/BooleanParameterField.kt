@@ -20,7 +20,7 @@ fun BooleanParameterField(
 ) = Column(modifier = modifier) {
   var checked by state
 
-  CenterRow(Modifier.weight(1f)) {
+  CenterRow {
     Text(
       text = parameterName,
       style = currentTypography.parameterText,
@@ -30,6 +30,7 @@ fun BooleanParameterField(
     Gap(6.dp)
     ParameterLabel("Boolean")
   }
+  Gap(12.dp)
   SwitchButton(
     checked = checked,
     onValueChange = { checked = it }

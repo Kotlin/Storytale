@@ -1,5 +1,6 @@
 package org.jetbrains.compose.plugin.storytale
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.task
@@ -106,6 +107,32 @@ private fun Project.createNativeStorytaleExecTask(
     group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
     dependsOn(unzipXCodeProjectTask)
 
+    // Get available device types
+    val outputDevices = ByteArrayOutputStream()
+    exec {
+      commandLine("/usr/bin/xcrun", "simctl", "list", "devicetypes")
+      standardOutput = outputDevices
+    }
+    val availableDeviceTypes = outputDevices.toString()
+    val deviceTypeMatches = Regex("""(com.apple.CoreSimulator.SimDeviceType.iPhone-[0-9A-Z\-]+)""").findAll(availableDeviceTypes).toList()
+    val deviceType = deviceTypeMatches.lastOrNull()?.groups?.get(1)?.value ?: throw GradleException("""
+      No iPhone device found. Please download any iPhone simulator.
+      Refer to the official documentation: https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
+    """.trimIndent())
+
+    // Get available runtimes
+    val outputRuntimes = ByteArrayOutputStream()
+    exec {
+      commandLine("/usr/bin/xcrun", "simctl", "list", "runtimes")
+      standardOutput = outputRuntimes
+    }
+    val availableRuntimes = outputRuntimes.toString()
+    val runtimeMatches = Regex("""(com.apple.CoreSimulator.SimRuntime.iOS-[0-9\-]+)""").findAll(availableRuntimes).toList()
+    val runtime = runtimeMatches.lastOrNull()?.groups?.get(1)?.value ?: throw GradleException("""
+      No iOS runtime found. Please download any iOS runtimes.
+      Refer to the official documentation: https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
+    """.trimIndent())
+
     val output = ByteArrayOutputStream()
     val simulatorName = StorytaleGradlePlugin.STORYTALE_DEVICE_NAME
     exec {
@@ -120,10 +147,7 @@ private fun Project.createNativeStorytaleExecTask(
     if (existingDeviceId == null) {
       val createOutput = ByteArrayOutputStream()
       exec {
-        commandLine("/usr/bin/xcrun", "simctl", "create", simulatorName,
-          "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max",
-          "com.apple.CoreSimulator.SimRuntime.iOS-17-5"
-        )
+        commandLine("/usr/bin/xcrun", "simctl", "create", simulatorName, deviceType, runtime)
         standardOutput = createOutput
       }
       deviceId = createOutput.toString().trim()
