@@ -6,7 +6,7 @@ import kotlin.reflect.KProperty
 
 val storiesStorage = mutableListOf<Story>()
 
-fun story(code: String = "", content: @Composable Story.() -> Unit) = StoryDelegate(content, code)
+inline fun story(code: String = "", crossinline content: @Composable Story.() -> Unit) = StoryDelegate({ content() }, code)
 
 class StoryDelegate(
   private val content: @Composable Story.() -> Unit,

@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -24,8 +23,7 @@ import org.jetbrains.kotlin.text
 private val STORYTALE_FQN = FqName("org.jetbrains.compose.storytale")
 
 private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLoweringPass {
-  private val transformer = ReplaceStoryCallWithItsSuccessorWithCodeParameter(context)
-
+  val transformer = ReplaceStoryCallWithItsSuccessorWithCodeParameter(context)
   override fun lower(irBody: IrBody, container: IrDeclaration) {
     container.transform(transformer, null)
   }
@@ -39,19 +37,21 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
 
       val callee = expression.getValueArgument(1)
       val storyDescriber = when (callee) {
-        is IrCall -> callee.symbol.owner
+        is IrFunctionExpression -> callee.function
         else -> error("Unexpected callee: $callee")
       }
 
-      // TODO: Generalize this thing
-      val codeSnippet = (storyDescriber.file.metadata as FirMetadataSource).fir.source.text ?: error("No code snippet")
-      val lambdaHolder = storyDescriber.correspondingPropertySymbol!!.owner.backingField!!.initializer!!
-      val storyCodeSnippet = codeSnippet.substring(lambdaHolder.startOffset + 1, lambdaHolder.endOffset - 1).trimIndent()
+      val sourceCode = storyDescriber.getFileSourceCode() ?: return super.visitCall(expression)
+      val storyCodeSnippet = sourceCode.substring(storyDescriber.startOffset + 1, storyDescriber.endOffset - 1).trimIndent()
 
       expression.putValueArgument(0, storyCodeSnippet.toIrConst(context.irBuiltIns.stringType))
       expression.putValueArgument(1, callee)
 
       return super.visitCall(expression)
+    }
+
+    private fun IrDeclaration.getFileSourceCode(): CharSequence? {
+      return (file.metadata as FirMetadataSource).fir.source.text
     }
   }
 }

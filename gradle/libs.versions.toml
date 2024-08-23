@@ -12,10 +12,10 @@ androidx-core-ktx = "1.13.1"
 androidx-espresso-core = "3.6.1"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
-compose-plugin = "1.7.0-alpha02"
+compose-plugin = "1.7.0-alpha03"
 compose-android = "1.7.0-beta07"
 junit = "4.13.2"
-kotlin = "2.0.20-RC"
+kotlin = "2.0.20"
 kotlin-poet = "1.18.1"
 
 [libraries]
