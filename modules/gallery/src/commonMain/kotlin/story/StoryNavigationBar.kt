@@ -26,7 +26,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.generated.resources.Res
 import org.jetbrains.compose.storytale.gallery.generated.resources.compose_multiplatform
-import org.jetbrains.compose.storytale.gallery.platform.StoryEmptyStatus
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 

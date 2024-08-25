@@ -1,5 +1,3 @@
-package org.jetbrains.compose.storytale.gallery.platform.desktop
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
