@@ -114,7 +114,7 @@ private fun Project.createNativeStorytaleExecTask(
       standardOutput = outputDevices
     }
     val availableDeviceTypes = outputDevices.toString()
-    val deviceTypeMatches = Regex("""(com.apple.CoreSimulator.SimDeviceType.iPhone-[0-9A-Z\-]+)""").findAll(availableDeviceTypes).toList()
+    val deviceTypeMatches = Regex("""(com.apple.CoreSimulator.SimDeviceType.iPhone-[A-Za-z0-9\-]+)""").findAll(availableDeviceTypes).toList()
     val deviceType = deviceTypeMatches.lastOrNull()?.groups?.get(1)?.value ?: throw GradleException("""
       No iPhone device found. Please download any iPhone simulator.
       Refer to the official documentation: https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
