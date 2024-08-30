@@ -1,6 +1,9 @@
 package org.jetbrains.compose.storytale
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -30,8 +33,9 @@ data class Story(
   val code: String,
   val content: @Composable Story.() -> Unit
 ) {
+  @PublishedApi
   internal val nameToParameterMapping = hashMapOf<String, StoryParameter<*>>()
-  val parameters: Iterable<StoryParameter<*>> get() = nameToParameterMapping.values
+  val parameters inline get() = nameToParameterMapping.values.toList()
 
   @Composable
   inline fun <reified T> parameter(defaultValue: T) =
@@ -62,7 +66,6 @@ class StoryParameterDelegate<T>(
 ) {
   @Composable
   operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-    @Suppress("UNCHECKED_CAST")
     story.nameToParameterMapping.getValue(property.name).state.value as T
 
   @Composable

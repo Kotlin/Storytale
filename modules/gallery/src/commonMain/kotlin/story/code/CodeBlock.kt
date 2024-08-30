@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -27,23 +28,30 @@ import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.BoldHighlight
 import dev.snipme.highlights.model.ColorHighlight
 import dev.snipme.highlights.model.SyntaxLanguage
+import dev.snipme.highlights.model.SyntaxTheme
 import dev.snipme.highlights.model.SyntaxThemes
+import org.jetbrains.compose.storytale.gallery.compose.remembering
 import org.jetbrains.compose.storytale.gallery.compose.text
 
 @Composable
 fun CodeBlock(
   code: String,
+  theme: SyntaxTheme = SyntaxThemes.pastel(),
   modifier: Modifier = Modifier
 ) = Row(
   modifier = modifier.background(Color.White)
 ) {
   var codeLines by remember { mutableIntStateOf(0) }
   val codeVerticalScrollState = rememberScrollState()
-  val codeHighlights = Highlights.Builder()
-    .code(code)
-    .theme(SyntaxThemes.monokai())
-    .language(SyntaxLanguage.KOTLIN)
-    .build()
+  val codeHighlights by remembering(theme) {
+    derivedStateOf {
+      Highlights.Builder()
+        .code(code)
+        .theme(it)
+        .language(SyntaxLanguage.KOTLIN)
+        .build()
+    }
+  }
 
   Column(
     modifier = Modifier.background(Color(0xFFEEF0F5))
