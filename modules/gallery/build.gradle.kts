@@ -43,6 +43,18 @@ kotlin {
       }
     }
 
+    val mobileMain by creating {
+      dependsOn(commonMain)
+    }
+
+    val androidMain by getting {
+      dependsOn(mobileMain)
+    }
+
+    val iosMain by getting {
+      dependsOn(mobileMain)
+    }
+
     val desktopMain by creating {
       dependsOn(commonMain)
     }
@@ -57,18 +69,6 @@ kotlin {
 
     val jvmMain by getting {
       dependsOn(desktopMain)
-    }
-
-    val mobileMain by creating {
-      dependsOn(commonMain)
-    }
-
-    val androidMain by getting {
-      dependsOn(mobileMain)
-    }
-
-    val iosMain by getting {
-      dependsOn(mobileMain)
     }
   }
 
