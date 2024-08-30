@@ -39,6 +39,7 @@ kotlin-poet = { module = "com.squareup:kotlinpoet", version.ref = "kotlin-poet" 
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 navigation-compose = "org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha08"
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1"
+compose-highlights = "dev.snipme:highlights:0.9.1"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
