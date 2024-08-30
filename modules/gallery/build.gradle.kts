@@ -38,9 +38,22 @@ kotlin {
         implementation(compose.components.resources)
         implementation(compose.components.uiToolingPreview)
         implementation(libs.navigation.compose)
+        implementation(libs.compose.highlights)
         implementation(libs.kotlinx.serialization.json)
         implementation(projects.modules.runtimeApi)
       }
+    }
+
+    val mobileMain by creating {
+      dependsOn(commonMain)
+    }
+
+    val androidMain by getting {
+      dependsOn(mobileMain)
+    }
+
+    val iosMain by getting {
+      dependsOn(mobileMain)
     }
 
     val desktopMain by creating {
@@ -57,18 +70,6 @@ kotlin {
 
     val jvmMain by getting {
       dependsOn(desktopMain)
-    }
-
-    val mobileMain by creating {
-      dependsOn(commonMain)
-    }
-
-    val androidMain by getting {
-      dependsOn(mobileMain)
-    }
-
-    val iosMain by getting {
-      dependsOn(mobileMain)
     }
   }
 
@@ -99,4 +100,7 @@ android {
   namespace = "org.jetbrains.storytale.gallery"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+  defaultConfig {
+    minSdk = 24
+  }
 }

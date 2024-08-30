@@ -1,5 +1,6 @@
 package org.jetbrains.compose.storytale.gallery.platform
 
+import DesktopCodeBlock
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
 import androidx.compose.animation.core.animateDpAsState
@@ -32,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.event.Event
 import org.jetbrains.compose.storytale.gallery.event.EventCenter
-import org.jetbrains.compose.storytale.gallery.platform.desktop.DesktopCodeBlock
 import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
 import org.jetbrains.compose.storytale.gallery.story.StoryParameter
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow

@@ -1,5 +1,6 @@
 package org.jetbrains.compose.storytale.gallery.platform
 
+import MobileGallery
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.End
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
 import androidx.compose.animation.core.tween
@@ -14,7 +15,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.navigation.Route
-import org.jetbrains.compose.storytale.gallery.platform.mobile.MobileGallery
 import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
 
 private const val defaultSlideAnimationTween = 350

@@ -105,7 +105,7 @@ fun Project.createAndroidCompilationTasks(
 
           task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}Run") {
             val adbPath = applicationExtension.adbExecutable.absolutePath
-            val activityPath = "${applicationId}.StorytaleAppActivity"
+            val activityPath = "$applicationId.StorytaleAppActivity"
 
             dependsOn(startEmulatorTask)
             dependsOn("install${this@configureEach.name}")

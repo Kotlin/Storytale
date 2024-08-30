@@ -1,4 +1,4 @@
-package org.jetbrains.compose.storytale.gallery.platform
+package org.jetbrains.compose.storytale.gallery.story
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
