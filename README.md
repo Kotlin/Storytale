@@ -8,6 +8,8 @@ Storytale is a Compose Multiplatform library designed to help developers more ea
 
 Since Storytale is still in the early stages of development, the api is marked as unstable, but this section will also show you how to use `Storytale` to write code for your components, so let's get started! 🌟
 
+<img width="1604" alt="All platforms" src="https://github.com/user-attachments/assets/b9a3d08f-7ff5-4a55-a0fc-904b4279e116">
+
 ## ⚙️ Getting Started
 
 ### 1. Setup
