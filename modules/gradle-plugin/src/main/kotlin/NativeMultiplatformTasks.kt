@@ -3,7 +3,11 @@ package org.jetbrains.compose.plugin.storytale
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.property
+import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -86,25 +90,27 @@ private fun Project.createNativeStorytaleExecTask(
 ): Task? {
   if (!target.name.contains("Simulator")) return null
 
-  var deviceId: String? = null
+  val deviceId = objects.property<String>()
   val targetSuffix = target.name.capitalized()
   val linkTask = tasks.findByPath("link${StorytaleGradlePlugin.STORYTALE_TASK_GROUP.capitalized()}${StorytaleGradlePlugin.LINK_BUILD_VERSION}Framework$targetSuffix") as? KotlinNativeLink
     ?: error("Link task was not created for target ${target.name}")
 
   val unzipXCodeProjectTask = createUnzipResourceTask(extension)
-  val simulatorRegistrationTask = createSimulatorRegistrationTask(unzipXCodeProjectTask, targetSuffix) { deviceId = it }
+  val simulatorRegistrationTask = createSimulatorRegistrationTask(unzipXCodeProjectTask, targetSuffix, deviceId)
 
-  val simulatorId = deviceId!!
-  val buildTask = createBuildTask(targetSuffix, simulatorId, unzipXCodeProjectTask, simulatorRegistrationTask, linkTask)
+  val buildTask = createBuildTask(targetSuffix, deviceId, unzipXCodeProjectTask, simulatorRegistrationTask, linkTask)
   val platform = if (target.konanTarget === KonanTarget.IOS_SIMULATOR_ARM64) "iphonesimulator" else "iphoneos"
 
   val copyResourcesTask = createCopyNativeResourcesTask(platform, target, targetSuffix, compilation, unzipXCodeProjectTask, buildTask)
-  val installAppTask = createInstallApplicationToSimulatorTask(simulatorId, targetSuffix, platform, unzipXCodeProjectTask, buildTask, copyResourcesTask)
+  val installAppTask = createInstallApplicationToSimulatorTask(deviceId, targetSuffix, platform, unzipXCodeProjectTask, buildTask, copyResourcesTask)
 
   return task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}Run") {
     group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
     dependsOn(unzipXCodeProjectTask)
     dependsOn(installAppTask)
+
+    inputs.property("deviceId", deviceId)
+
     doLast {
       exec {
         workingDir = unzipXCodeProjectTask.outputDir.get().asFile
@@ -112,7 +118,7 @@ private fun Project.createNativeStorytaleExecTask(
           "/usr/bin/xcrun",
           "simctl",
           "launch",
-          simulatorId,
+          deviceId.get(),
           StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_PATH
         )
       }
@@ -136,31 +142,34 @@ private fun Project.createUnzipResourceTask(extension: StorytaleExtension): Unzi
   }
 }
 
-private fun Project.createSimulatorRegistrationTask(unzipResourceTask: UnzipResourceTask, targetSuffix: String, updateDeviceId: (String) -> Unit): Task {
+private fun Project.createSimulatorRegistrationTask(unzipResourceTask: UnzipResourceTask, targetSuffix: String, deviceIdProperty: Property<String>): Task {
   return task("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}Register$targetSuffix") {
-    val deviceId: String
     group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
     dependsOn(unzipResourceTask)
 
-    val simulatorName = StorytaleGradlePlugin.STORYTALE_DEVICE_NAME
-    val deviceList = execute("/usr/bin/xcrun", "simctl", "list", "devices")
-    val matches = Regex("""$simulatorName \(([0-9A-F-]+)\) \((\w+)\)""").find(deviceList)
+    doLast {
+      val deviceId: String
 
-    val existingDeviceId = matches?.groups?.get(1)?.value
-    val isBooted = matches?.groups?.get(2)?.value == "Booted"
+      val simulatorName = StorytaleGradlePlugin.STORYTALE_DEVICE_NAME
+      val deviceList = execute("/usr/bin/xcrun", "simctl", "list", "devices")
+      val matches = Regex("""$simulatorName \(([0-9A-F-]+)\) \((\w+)\)""").find(deviceList)
 
-    if (existingDeviceId == null) {
-      val availableSimulator = findAvailableIPhoneSimulator()
-      val availableRuntime = findAvailableIOsRuntime()
+      val existingDeviceId = matches?.groups?.get(1)?.value
+      val isBooted = matches?.groups?.get(2)?.value == "Booted"
 
-      deviceId = execute("/usr/bin/xcrun", "simctl", "create", simulatorName, availableSimulator, availableRuntime).trim()
-    } else {
-      deviceId = existingDeviceId
+      if (existingDeviceId == null) {
+        val availableSimulator = findAvailableIPhoneSimulator()
+        val availableRuntime = findAvailableIOsRuntime()
+
+        deviceId = execute("/usr/bin/xcrun", "simctl", "create", simulatorName, availableSimulator, availableRuntime).trim()
+      } else {
+        deviceId = existingDeviceId
+      }
+
+      if (!isBooted) exec { commandLine("/usr/bin/xcrun", "simctl", "boot", deviceId) }
+
+      deviceIdProperty.set(deviceId)
     }
-
-    updateDeviceId(deviceId)
-
-    if (!isBooted) exec { commandLine("/usr/bin/xcrun", "simctl", "boot", deviceId) }
   }
 }
 
@@ -186,7 +195,7 @@ private fun Project.findAvailableIOsRuntime(): String {
 
 private fun Project.createBuildTask(
   targetSuffix: String,
-  deviceId: String,
+  deviceId: Property<String>,
   unzipResourceTask: UnzipResourceTask,
   simulatorRegistrationTask: Task,
   linkTask: KotlinNativeLink
@@ -196,6 +205,8 @@ private fun Project.createBuildTask(
     dependsOn(unzipResourceTask)
     dependsOn(simulatorRegistrationTask)
     dependsOn(linkTask)
+
+    inputs.property("deviceId", deviceId)
 
     val xcodeProjectPath = unzipResourceTask.outputDir.get().asFile
     inputs.files(linkTask.outputs.files)
@@ -214,7 +225,7 @@ private fun Project.createBuildTask(
           "-scheme",
           StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME,
           "-destination",
-          "id=${deviceId}",
+          "id=${deviceId.get()}",
           "-derivedDataPath",
           StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME,
           "FRAMEWORK_SEARCH_PATHS=$frameworkPath"
@@ -256,7 +267,7 @@ private fun Project.createCopyNativeResourcesTask(
 }
 
 private fun Project.createInstallApplicationToSimulatorTask(
-  deviceId: String,
+  deviceId: Property<String>,
   targetSuffix: String,
   platform: String,
   unzipResourceTask: UnzipResourceTask,
@@ -269,6 +280,8 @@ private fun Project.createInstallApplicationToSimulatorTask(
     dependsOn(buildTask)
     dependsOn(copyResourcesTask)
 
+    inputs.property("deviceId", deviceId)
+
     doLast {
       exec {
         workingDir = unzipResourceTask.outputDir.get().asFile
@@ -277,7 +290,7 @@ private fun Project.createInstallApplicationToSimulatorTask(
           "/usr/bin/xcrun",
           "simctl",
           "install",
-          deviceId,
+          deviceId.get(),
           appPath
         )
       }
