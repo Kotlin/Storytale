@@ -22,7 +22,7 @@ jobs:
       - name: Run Gradle Tasks
         run: |
           cd examples
-          ../gradlew :examples:wasmJsBrowserStoriesProductionExecutableDistribution
+          ../gradlew wasmJsBrowserStoriesProductionExecutableDistribution
 
       - name: Fix permissions
         run: |
