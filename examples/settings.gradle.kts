@@ -1,4 +1,4 @@
-rootProject.name = "Storytale"
+rootProject.name = "StorytaleUsageExamples"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -31,8 +31,3 @@ dependencyResolutionManagement {
     mavenLocal()
   }
 }
-
-include(":modules:gallery")
-include(":modules:gradle-plugin")
-include(":modules:compiler-plugin")
-include(":modules:runtime-api")

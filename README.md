@@ -110,11 +110,7 @@ If you can't find all Gradle tasks containing `Storytale` after syncing, check i
 
 ## Building and Contributing
 
-For your first build of Storytale, you need to comment out `alias(libs.plugins.storytale)` in both the root-level `build.gradle.kts` file as well as `build.gradle.kts` under the `examples` module (if they are not already commented). Then, sync Gradle.
-
 Once the sync is successful, run `./gradlew publishToMavenLocal`.
-
-After publishing, uncomment the previous `build.gradle.kts` lines and sync again.
 
 At this point, if you see these Storytale `Gradle tasks`, it means you’ve successfully set up the project and can start contributing! :)
 
