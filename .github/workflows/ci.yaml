@@ -1,6 +1,6 @@
 name: Publish Application on GitHub Pages
 # Don't add something here until the plugin is available on Maven, the CI is quite long :(
-on: []
+on: [workflow_dispatch]
 jobs:
   # Build job
   build:
