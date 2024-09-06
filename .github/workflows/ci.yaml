@@ -20,9 +20,9 @@ jobs:
         run: ./gradlew publishToMavenLocal
 
       - name: Run Gradle Tasks
-        run:
-          - cd examples
-          - ../gradlew :examples:wasmJsBrowserStoriesProductionExecutableDistribution
+        run: |
+          cd examples
+          ../gradlew :examples:wasmJsBrowserStoriesProductionExecutableDistribution
 
       - name: Fix permissions
         run: |
