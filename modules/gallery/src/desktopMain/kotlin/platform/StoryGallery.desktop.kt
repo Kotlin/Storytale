@@ -78,8 +78,10 @@ actual fun StoryGallery(
       Box(
         modifier = Modifier.weight(1f).fillMaxSize()
       ) {
-        with(activeStory) {
-          content()
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+          with(activeStory) {
+            content()
+          }
         }
         StoryToast(
           toastState = toast,

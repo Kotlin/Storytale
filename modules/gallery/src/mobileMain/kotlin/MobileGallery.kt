@@ -8,6 +8,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -68,9 +69,11 @@ fun MobileGallery(
       }
     }
     HorizontalDivider(thickness = 0.5.dp, color = currentColorScheme.divider)
-    with(story!!) {
-      content()
+    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+      with(story!!) {
+        content()
+      }
     }
-    MobileStoryParameterSheet(sheetState, story)
+    MobileStoryParameterSheet(sheetState, story!!)
   }
 }

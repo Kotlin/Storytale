@@ -3,7 +3,7 @@ agp = "8.2.2"
 android-compileSdk = "34"
 android-minSdk = "30"
 android-targetSdk = "34"
-storytale = "1.0"
+storytale = "1.1"
 
 androidx-activityCompose = "1.9.1"
 androidx-appcompat = "1.7.0"

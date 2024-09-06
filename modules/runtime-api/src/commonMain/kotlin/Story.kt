@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 data class Story(
   val id: Int,
   val name: String,
+  val group: String,
   val code: String,
   val content: @Composable Story.() -> Unit
 ) {

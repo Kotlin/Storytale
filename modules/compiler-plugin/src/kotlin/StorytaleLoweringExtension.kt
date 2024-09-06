@@ -35,7 +35,7 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
       val owner = expression.symbol.owner
       if (!owner.isTopLevel || owner.callableId != STORY_FUNCTION) return super.visitCall(expression)
 
-      val callee = expression.getValueArgument(1)
+      val callee = expression.getValueArgument(2)
       val storyDescriber = when (callee) {
         is IrFunctionExpression -> callee.function
         else -> error("Unexpected callee: $callee")
@@ -44,8 +44,11 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
       val sourceCode = storyDescriber.getFileSourceCode() ?: return super.visitCall(expression)
       val storyCodeSnippet = sourceCode.substring(storyDescriber.startOffset + 1, storyDescriber.endOffset - 1).trimIndent()
 
+      val storyTitle = storyDescriber.file.name.substringAfterLast("/").substringBeforeLast(".story.kt")
+
       expression.putValueArgument(0, storyCodeSnippet.toIrConst(context.irBuiltIns.stringType))
-      expression.putValueArgument(1, callee)
+      expression.putValueArgument(1, storyTitle.toIrConst(context.irBuiltIns.stringType))
+      expression.putValueArgument(2, callee)
 
       return super.visitCall(expression)
     }

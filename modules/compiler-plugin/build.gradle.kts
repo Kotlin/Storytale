@@ -18,7 +18,7 @@ sourceSets {
 }
 
 group = "org.jetbrains.compose"
-version = libs.versions.storytale
+version = libs.versions.storytale.get()
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
   archiveClassifier.set("javadoc")
