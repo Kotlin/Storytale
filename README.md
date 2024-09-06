@@ -4,7 +4,8 @@
 
 # Storytale
 
-Storytale is a Compose Multiplatform library designed to help developers more easily test their written @Composable components. It offers convenient and concise APIs, along with a well-designed editor to simplify the testing process.
+Storytale is a Gradle Plugin designed to help developers to show their composables and develop them isolated by generating a gallery of the project components.
+Check the `examples` and their generated web gallery [here](https://kotlin.github.io/Storytale)
 
 Since Storytale is still in the early stages of development, the api is marked as unstable, but this section will also show you how to use `Storytale` to write code for your components, so let's get started! 🌟
 
