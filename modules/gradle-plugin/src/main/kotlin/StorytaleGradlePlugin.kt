@@ -28,11 +28,7 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
   override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
 
   override fun getPluginArtifact() =
-    SubpluginArtifact(
-      "org.jetbrains.compose",
-      "storytale-compiler-plugin",
-      "1.0"
-    )
+    SubpluginArtifact("org.jetbrains.compose", "storytale-compiler-plugin", VERSION)
 
   override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>) =
     kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
@@ -68,5 +64,7 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     const val STORYTALE_DEVICE_NAME = "Storytale iOS Device"
     const val DERIVED_DATA_DIRECTORY_NAME = "dd"
     const val LINK_BUILD_VERSION = "Debug"
+
+    val VERSION = BuildTimeConfig.PROJECT_VERSION
   }
 }

@@ -4,6 +4,7 @@ plugins {
   `kotlin-dsl`
   `java-gradle-plugin`
   `maven-publish`
+  alias(libs.plugins.buildTimeConfig)
 }
 
 gradlePlugin {
@@ -24,7 +25,7 @@ dependencies {
 }
 
 group = "org.jetbrains.compose"
-version = "1.0"
+version = libs.versions.storytale
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
   archiveClassifier.set("javadoc")
@@ -44,4 +45,16 @@ publishing {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
   friendPaths.setFrom(libraries)
+}
+
+buildTimeConfig {
+  config {
+    packageName.set("org.jetbrains.compose.plugin.storytale")
+    objectName.set("BuildTimeConfig")
+    destination.set(project.layout.buildDirectory.get().asFile)
+
+    configProperties {
+      val PROJECT_VERSION: String by string(libs.versions.storytale.get())
+    }
+  }
 }

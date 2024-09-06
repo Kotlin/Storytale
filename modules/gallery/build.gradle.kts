@@ -92,7 +92,7 @@ kotlin {
 }
 
 group = "org.jetbrains.compose.storytale"
-version = "1.0"
+version = libs.versions.storytale
 
 publishing {}
 

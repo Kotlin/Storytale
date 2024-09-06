@@ -32,7 +32,9 @@ fun AnimatedButton() {
 
 @Composable
 fun PrimaryButton(text: String, onClick: () -> Unit, enabled: Boolean = true) {
-  Button(onClick = onClick, enabled = enabled) {
-    Text(text)
+  Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Button(onClick = onClick, enabled = enabled) {
+      Text(text)
+    }
   }
 }

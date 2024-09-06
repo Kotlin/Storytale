@@ -3,7 +3,10 @@ package org.jetbrains.compose.plugin.storytale
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.MemberSpecHolder
+import com.squareup.kotlinpoet.TypeSpec
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
@@ -24,6 +27,7 @@ import java.util.zip.ZipInputStream
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
+import java.io.ByteArrayOutputStream
 
 fun cleanup(file: File) {
   if (file.exists()) {
@@ -37,12 +41,21 @@ fun cleanup(file: File) {
   }
 }
 
-inline fun FileSpec.Builder.function(
+inline fun MemberSpecHolder.Builder<*>.function(
   name: String,
   builderAction: FunSpec.Builder.() -> Unit
 ): FunSpec {
   return FunSpec.builder(name).apply(builderAction).build().also {
     addFunction(it)
+  }
+}
+
+inline fun FileSpec.Builder.klass(
+  name: String,
+  builderAction: TypeSpec.Builder.() -> Unit
+): TypeSpec {
+  return TypeSpec.classBuilder(name).apply(builderAction).build().also {
+    addType(it)
   }
 }
 
@@ -112,3 +125,10 @@ fun getArchivesFromResources(compilation: KotlinCompilation<*>): FileCollection 
   }.files
 }
 
+fun Project.execute(vararg args: String): String =
+  ByteArrayOutputStream().apply {
+    exec {
+      commandLine(*args)
+      standardOutput = this@apply
+    }
+  }.toString()

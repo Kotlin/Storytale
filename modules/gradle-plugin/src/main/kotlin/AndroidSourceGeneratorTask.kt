@@ -49,22 +49,19 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
       addImport("androidx.activity.compose", "setContent")
       addImport(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController")
 
-      TypeSpec.classBuilder("StorytaleAppActivity")
-        .superclass(ClassName("androidx.activity", "ComponentActivity"))
-        .addFunction(
-          FunSpec.builder("onCreate")
-            .addModifiers(KModifier.OVERRIDE)
-            .addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
-            .addStatement(
-              """
+      klass("StorytaleAppActivity") {
+        superclass(ClassName("androidx.activity", "ComponentActivity"))
+        function("onCreate") {
+          addModifiers(KModifier.OVERRIDE)
+          addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
+          addStatement(
+            """
               | super.onCreate(savedInstanceState) 
               | setContent { MainViewController() }
               """.trimMargin()
-            )
-            .build()
-        )
-        .build()
-        .also(::addType)
+          )
+        }
+      }
     }
       .build()
       .writeTo(outputSourcesDir)
