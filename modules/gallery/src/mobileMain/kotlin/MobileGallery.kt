@@ -1,9 +1,5 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -69,7 +65,7 @@ fun MobileGallery(
       }
     }
     HorizontalDivider(thickness = 0.5.dp, color = currentColorScheme.divider)
-    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
       with(story!!) {
         content()
       }
