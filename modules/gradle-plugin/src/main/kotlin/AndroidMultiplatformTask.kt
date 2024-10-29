@@ -113,29 +113,52 @@ private fun Project.createAndroidStorytaleGenerateSourceTask(
 private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applicationExtension: AppExtension): Task {
   return task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}StartEmulator") {
     doLast {
-      val output = ByteArrayOutputStream()
       val adbPath = applicationExtension.adbExecutable.absolutePath
-      val emulatorPath = applicationExtension.sdkDirectory.resolve("emulator/emulator")
-      exec {
-        commandLine(emulatorPath, "-list-avds")
-        standardOutput = output
+
+      // First check whether any physical devices are connected
+      val connectedDevices = ByteArrayOutputStream().use { output ->
+        exec {
+          commandLine(adbPath, "devices")
+          standardOutput = output
+        }
+        output.toString().trim().lines()
+          .drop(1) // skip "List of devices attached"
+          .filter { it.isNotBlank() }
+          .map { it.split("\t")[0] } // get device ID
       }
 
-      val emulatorName = output.toString().trim().lineSequence().lastOrNull()
+      // find the physical device
+      val physicalDevice = connectedDevices.firstOrNull { !it.startsWith("emulator-") }
 
-      if (emulatorName != null) {
-        project.logger.info("Starting emulator: $emulatorName")
-        Thread {
-          exec {
-            commandLine(emulatorPath, "-avd", emulatorName, "-no-snapshot-load")
-          }
-        }.start()
-
+      if (physicalDevice != null) {
+        project.logger.info("Using physical device: $physicalDevice")
         exec {
-          commandLine(adbPath, "wait-for-device")
+          commandLine(adbPath, "-s", physicalDevice, "wait-for-device")
         }
       } else {
-        throw GradleException("No available Android emulators.")
+        val output = ByteArrayOutputStream()
+        val emulatorPath = applicationExtension.sdkDirectory.resolve("emulator/emulator")
+        exec {
+          commandLine(emulatorPath, "-list-avds")
+          standardOutput = output
+        }
+
+        val emulatorName = output.toString().trim().lineSequence().lastOrNull()
+
+        if (emulatorName != null) {
+          project.logger.info("Starting emulator: $emulatorName")
+          Thread {
+            exec {
+              commandLine(emulatorPath, "-avd", emulatorName, "-no-snapshot-load")
+            }
+          }.start()
+
+          exec {
+            commandLine(adbPath, "wait-for-device")
+          }
+        } else {
+          throw GradleException("No available Android emulators.")
+        }
       }
     }
   }
