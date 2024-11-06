@@ -1,19 +1,15 @@
 package org.jetbrains.compose.storytale.gallery.navigation
 
-// TODO Prepare for a type-safe approach later
-// @kotlinx.serialization.Serializable
-// data object Route {
-//  @Serializable
-//  data object MobileHome
-//
-//  @kotlinx.serialization.Serializable
-//  data class MobileGallery(val storyId: Int)
-//
-//  @kotlinx.serialization.Serializable
-//  data class DesktopGallery(val storyId: Int?)
-// }
+import kotlinx.serialization.Serializable
 
-enum class Route(val route: String) {
-  MobileHome("mobile_home"),
-  MobileGallery("mobile/gallery/{storyId}")
+ @Serializable
+ data object Route {
+  @Serializable
+  data object MobileHome
+
+  @Serializable
+  data class MobileGallery(val storyId: Int)
+
+  @Serializable
+  data class DesktopGallery(val storyId: Int?)
 }
