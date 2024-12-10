@@ -118,7 +118,7 @@ private fun Project.createNativeStorytaleExecTask(
           "simctl",
           "launch",
           deviceId.get(),
-            StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_PATH
+          StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_PATH
         )
       }
       exec {
@@ -222,11 +222,11 @@ private fun Project.createBuildTask(
           "-project",
           "${StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME}/${StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME}.xcodeproj",
           "-scheme",
-            StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME,
+          StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME,
           "-destination",
           "id=${deviceId.get()}",
           "-derivedDataPath",
-            StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME,
+          StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME,
           "FRAMEWORK_SEARCH_PATHS=$frameworkPath"
         )
       }
