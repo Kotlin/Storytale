@@ -1,4 +1,4 @@
-package org.jetbrains.compose.plugin.storytale
+package org.jetbrains.compose.storytale.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension

@@ -1,4 +1,5 @@
-package org.jetbrains.compose.plugin.storytale
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+package org.jetbrains.compose.storytale.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy

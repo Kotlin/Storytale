@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-  implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:2.0.0")
+  implementation(kotlin("compiler-embeddable"))
 }
 
 sourceSets {
@@ -17,8 +17,8 @@ sourceSets {
   }
 }
 
-group = "org.jetbrains.compose"
-version = libs.versions.storytale.get()
+group = "org.jetbrains.compose.storytale"
+version = project.properties["storytale.deploy.version"] as String
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
   archiveClassifier.set("javadoc")
@@ -27,7 +27,7 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
 publishing {
   publications {
     create<MavenPublication>("maven") {
-      artifactId = "storytale-compiler-plugin"
+      artifactId = "compiler-plugin"
       from(components["kotlin"])
     }
     withType<MavenPublication> {

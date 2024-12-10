@@ -1,4 +1,4 @@
-package org.jetbrains.compose.plugin.storytale
+package org.jetbrains.compose.storytale.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -23,12 +23,12 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     }
   }
 
-  override fun getCompilerPluginId() = PLUGIN_ID
+  override fun getCompilerPluginId() = COMPILER_PLUGIN_ID
 
   override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
 
   override fun getPluginArtifact() =
-    SubpluginArtifact("org.jetbrains.compose", "storytale-compiler-plugin", VERSION)
+    SubpluginArtifact("org.jetbrains.compose.storytale", "compiler-plugin", VERSION)
 
   override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>) =
     kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
@@ -50,7 +50,7 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
   }
 
   companion object {
-    const val PLUGIN_ID = "org.jetbrains.compose.storytale"
+    const val COMPILER_PLUGIN_ID = "org.jetbrains.compose.storytale.compiler-plugin"
     const val STORYTALE_TASK_GROUP = "storytale"
     const val STORYTALE_EXTENSION_NAME = "storytale"
     const val STORYTALE_PACKAGE = "org.jetbrains.compose.storytale.generated"

@@ -1,4 +1,4 @@
-package org.jetbrains.compose.plugin.storytale
+package org.jetbrains.compose.storytale.plugin
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant

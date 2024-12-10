@@ -11,7 +11,7 @@ gradlePlugin {
   plugins {
     create("storytale") {
       id = "org.jetbrains.compose.storytale"
-      implementationClass = "org.jetbrains.compose.plugin.storytale.StorytaleGradlePlugin"
+      implementationClass = "org.jetbrains.compose.storytale.plugin.StorytaleGradlePlugin"
     }
   }
 }
@@ -24,8 +24,8 @@ dependencies {
   implementation(libs.kotlin.poet)
 }
 
-group = "org.jetbrains.compose"
-version = libs.versions.storytale.get()
+group = "org.jetbrains.compose.storytale"
+version = project.properties["storytale.deploy.version"] as String
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
   archiveClassifier.set("javadoc")
@@ -34,7 +34,7 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
 publishing {
   publications {
     create<MavenPublication>("maven") {
-      artifactId = "storytale"
+      artifactId = "gradle-plugin"
       from(components["kotlin"])
     }
     withType<MavenPublication> {
@@ -49,12 +49,12 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 buildTimeConfig {
   config {
-    packageName.set("org.jetbrains.compose.plugin.storytale")
+    packageName.set("org.jetbrains.compose.storytale.plugin")
     objectName.set("BuildTimeConfig")
     destination.set(project.layout.buildDirectory.get().asFile)
 
     configProperties {
-      val PROJECT_VERSION: String by string(libs.versions.storytale.get())
+      val PROJECT_VERSION: String by string(version as String)
     }
   }
 }

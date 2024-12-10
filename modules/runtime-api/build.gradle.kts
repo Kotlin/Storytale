@@ -33,12 +33,12 @@ kotlin {
 }
 
 group = "org.jetbrains.compose.storytale"
-version = libs.versions.storytale.get()
+version = project.properties["storytale.deploy.version"] as String
 
 publishing {}
 
 android {
-  namespace = "org.jetbrains.storytale.runtime"
+  namespace = "org.jetbrains.compose.storytale.runtime"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 }

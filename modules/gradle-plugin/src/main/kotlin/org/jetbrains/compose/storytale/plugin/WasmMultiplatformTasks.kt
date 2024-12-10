@@ -1,7 +1,6 @@
-package org.jetbrains.compose.plugin.storytale
+package org.jetbrains.compose.storytale.plugin
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 
 fun Project.processWasmCompilation(extension: StorytaleExtension, target: KotlinJsIrTarget) {
@@ -15,7 +14,7 @@ fun Project.processWasmCompilation(extension: StorytaleExtension, target: Kotlin
 
 private fun Project.createWasmStorytaleGenerateSourceTask(extension: StorytaleExtension, target: KotlinJsIrTarget) {
   val storytaleBuildDir = extension.getBuildDirectory(target)
-  task<WasmSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
+  tasks.register("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}", WasmSourceGeneratorTask::class.java) {
     group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
     description = "Generate Wasm source files for '${target.name}'"
     title = target.name

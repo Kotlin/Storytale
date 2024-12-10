@@ -1,4 +1,4 @@
-package org.jetbrains.compose.plugin.storytale
+package org.jetbrains.compose.storytale.plugin
 
 import com.squareup.kotlinpoet.FileSpec
 import org.gradle.api.DefaultTask

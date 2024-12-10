@@ -1,10 +1,12 @@
 @file:OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
-package org.jetbrains.compose.plugin.storytale
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+package org.jetbrains.compose.storytale.plugin
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.MemberSpecHolder
 import com.squareup.kotlinpoet.TypeSpec
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -14,7 +16,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -101,11 +102,11 @@ val KotlinCompilation<*>.resolveDependencyResourcesTaskName: String
   get() = "${name.lowercase()}${target.name.capitalized()}ResolveDependencyResources"
 
 fun setupResourceResolvingForTarget(storytaleBuildDir: File, compilation: KotlinCompilation<*>) {
-  compilation.project.tasks.register<ResolveResourcesFromDependenciesTask>(compilation.resolveDependencyResourcesTaskName) {
+  compilation.project.tasks.register(compilation.resolveDependencyResourcesTaskName, ResolveResourcesFromDependenciesTask::class.java, Action {
     filterResourcesByExtension.set(true)
     archivesFromDependencies.setFrom(getArchivesFromResources(compilation))
     outputDirectory.set(storytaleBuildDir.resolve("resolved-dependency-resources"))
-  }
+  })
 }
 
 fun getArchivesFromResources(compilation: KotlinCompilation<*>): FileCollection {

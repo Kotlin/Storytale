@@ -90,8 +90,8 @@ fun StoryParameter(
 
 @Composable
 private fun StoryParameterContent(
-  parameters: List<StoryParameter<*>>,
-  modifier: Modifier = Modifier
+    parameters: List<StoryParameter<*>>,
+    modifier: Modifier = Modifier
 ) = when (parameters.isEmpty()) {
   true -> Box(
     modifier = modifier.fillMaxSize(),

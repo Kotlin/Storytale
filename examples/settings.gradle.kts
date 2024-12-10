@@ -3,7 +3,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
   repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
     google {
       mavenContent {
         includeGroupAndSubgroups("androidx")
@@ -14,6 +13,10 @@ pluginManagement {
     mavenCentral()
     gradlePluginPortal()
     mavenLocal()
+  }
+
+  plugins {
+    id("org.jetbrains.compose.storytale").version(extra["storytale.deploy.version"] as String)
   }
 }
 
@@ -26,7 +29,6 @@ dependencyResolutionManagement {
         includeGroupAndSubgroups("com.google")
       }
     }
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
     mavenCentral()
     mavenLocal()
   }

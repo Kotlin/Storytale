@@ -1,4 +1,4 @@
-package org.jetbrains.compose.plugin.storytale
+package org.jetbrains.compose.storytale.plugin
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.incremental.createDirectory
 import java.io.File
 
 @CacheableTask
-open class WasmSourceGeneratorTask : DefaultTask() {
+open class JsSourceGeneratorTask : DefaultTask() {
+
   @Input
   lateinit var title: String
 
@@ -39,16 +40,17 @@ open class WasmSourceGeneratorTask : DefaultTask() {
     val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
       addImport("androidx.compose.ui.window", "ComposeViewport")
       addImport("kotlinx.browser", "document")
+      addImport("org.jetbrains.skiko.wasm", "onWasmReady")
       addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
       function("MainViewController") {
         addAnnotation(optInExperimentalComposeUi)
-        addStatement(
-          """
-                |ComposeViewport(document.body!!) {
-                |    Gallery()    
-                |}
-                |""".trimMargin()
+        addStatement("""
+          |onWasmReady {
+          |   ComposeViewport(document.body!!) {
+          |      Gallery()    
+          |   }
+          |}""".trimMargin()
         )
       }
 
@@ -66,20 +68,23 @@ open class WasmSourceGeneratorTask : DefaultTask() {
     }
 
     val index = File(outputResourcesDir, "index.html")
-    index.writeText(
-      """
-            |<!DOCTYPE html>
-            |<html lang="en">
-            |  <head>
-            |    <meta charset="UTF-8">
-            |    <title>Gallery</title>
-            |    <script type="application/javascript" src="skiko.js"></script>
-            |    <script type="application/javascript" src="${JsSourceGeneratorTask.SCRIPT_FILE_NAME}"></script>
-            |  </head>
-            |  <body style="height: 100vh; width: 100vw;">
-            |  </body>
-            |</html>   
-      """.trimMargin()
+    index.writeText("""
+      |<!DOCTYPE html>
+      |<html lang="en">
+      |  <head>
+      |    <meta charset="UTF-8">
+      |    <title>Gallery</title>
+      |    <script type="application/javascript" src="skiko.js"></script>
+      |    <script type="application/javascript" src="$SCRIPT_FILE_NAME"></script>
+      |  </head>
+      |  <body style="height: 100vh; width: 100vw;">
+      |  </body>
+      |</html>   
+      | """.trimMargin()
     )
+  }
+
+  companion object {
+    internal const val SCRIPT_FILE_NAME = "composeApp.js"
   }
 }
