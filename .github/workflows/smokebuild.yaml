@@ -1,0 +1,35 @@
+name: Smoke build
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    name: Publish to MavenLocal and Build Examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Publish to Maven Local
+        run: ./gradlew publishToMavenLocal
+
+      - name: Build Stories for Wasm target
+        run: |
+          cd examples
+          ../gradlew wasmJsBrowserStoriesProductionExecutableDistribution
+
+      - name: Build Stories for Desktop target
+        run: |
+          cd examples
+          ../gradlew desktopStorytaleGenerate
