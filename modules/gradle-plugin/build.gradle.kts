@@ -25,7 +25,7 @@ dependencies {
 }
 
 group = "org.jetbrains.compose.storytale"
-version = project.properties["storytale.deploy.version"] as String
+version = libs.versions.storytale.get()
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
   archiveClassifier.set("javadoc")

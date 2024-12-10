@@ -1,6 +1,9 @@
 rootProject.name = "StorytaleUsageExamples"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+val storytaleVersion =
+  providers.gradleProperty("storytale.deploy.version").orNull?.takeIf(String::isNotBlank)
+
 pluginManagement {
   repositories {
     google {
@@ -13,10 +16,6 @@ pluginManagement {
     mavenCentral()
     gradlePluginPortal()
     mavenLocal()
-  }
-
-  plugins {
-    id("org.jetbrains.compose.storytale").version(extra["storytale.deploy.version"] as String)
   }
 }
 
@@ -31,5 +30,11 @@ dependencyResolutionManagement {
     }
     mavenCentral()
     mavenLocal()
+  }
+
+  if (storytaleVersion != null) {
+    versionCatalogs.register("libs") {
+      version("storytale", storytaleVersion)
+    }
   }
 }

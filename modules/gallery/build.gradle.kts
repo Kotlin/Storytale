@@ -92,7 +92,7 @@ kotlin {
 }
 
 group = "org.jetbrains.compose.storytale"
-version = project.properties["storytale.deploy.version"] as String
+version = libs.versions.storytale.get()
 
 publishing {}
 

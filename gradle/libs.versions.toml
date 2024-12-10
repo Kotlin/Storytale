@@ -3,6 +3,7 @@ agp = "8.7.1"
 android-compileSdk = "35"
 android-minSdk = "26"
 android-targetSdk = "35"
+storytale = "0.0.1"
 
 androidx-activityCompose = "1.9.3"
 androidx-appcompat = "1.7.0"
@@ -52,4 +53,5 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 buildTimeConfig = { id = "dev.limebeck.build-time-config", version.ref = "build-time-config" }
+storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
 kotlinDsl = { id = "kotlin-dsl" }
