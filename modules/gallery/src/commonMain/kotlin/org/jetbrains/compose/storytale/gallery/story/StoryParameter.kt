@@ -37,7 +37,7 @@ import org.jetbrains.compose.storytale.gallery.story.parameters.StringParameterF
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
-import utils.cast
+import org.jetbrains.compose.storytale.gallery.utils.cast
 
 @Composable
 fun StoryParameter(

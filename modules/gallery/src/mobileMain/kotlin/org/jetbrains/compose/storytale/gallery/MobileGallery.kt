@@ -1,3 +1,5 @@
+package org.jetbrains.compose.storytale.gallery
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider

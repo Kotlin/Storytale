@@ -1,3 +1,5 @@
+package org.jetbrains.compose.storytale.gallery
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition

@@ -1,6 +1,6 @@
 package org.jetbrains.compose.storytale.gallery.platform
 
-import DesktopCodeBlock
+import org.jetbrains.compose.storytale.gallery.DesktopCodeBlock
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
 import androidx.compose.animation.core.animateDpAsState

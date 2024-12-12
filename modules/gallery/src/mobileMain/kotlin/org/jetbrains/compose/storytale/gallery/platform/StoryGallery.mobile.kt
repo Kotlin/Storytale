@@ -1,6 +1,6 @@
 package org.jetbrains.compose.storytale.gallery.platform
 
-import MobileGallery
+import org.jetbrains.compose.storytale.gallery.MobileGallery
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.End
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
 import androidx.compose.animation.core.tween
