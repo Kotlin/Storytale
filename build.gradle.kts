@@ -9,6 +9,9 @@ plugins {
 }
 
 subprojects {
+  version = findProperty("storytale.deploy.version")
+    ?: error("'storytale.deploy.version' was not set")
+
   plugins.withId("maven-publish") {
     configureIfExists<PublishingExtension> {
       repositories {
