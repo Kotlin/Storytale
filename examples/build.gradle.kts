@@ -73,7 +73,7 @@ kotlin {
 }
 
 android {
-  namespace = "org.jetbrains.storytale.example"
+  namespace = "org.jetbrains.compose.storytale.example"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -81,7 +81,7 @@ android {
   sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
   defaultConfig {
-    applicationId = "org.jetbrains.storytale.example"
+    applicationId = "org.jetbrains.compose.storytale.example"
     minSdk = libs.versions.android.minSdk.get().toInt()
     targetSdk = libs.versions.android.targetSdk.get().toInt()
     versionCode = 1
@@ -111,7 +111,7 @@ android {
 
 compose.resources {
   publicResClass = true
-  packageOfResClass = "org.jetbrains.storytale.example"
+  packageOfResClass = "org.jetbrains.compose.storytale.example"
 }
 
 compose.desktop {
@@ -120,7 +120,7 @@ compose.desktop {
 
     nativeDistributions {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-      packageName = "org.jetbrains.storytale"
+      packageName = "org.jetbrains.compose.storytale"
       packageVersion = "1.0.0"
     }
   }

@@ -92,12 +92,11 @@ kotlin {
 }
 
 group = "org.jetbrains.compose.storytale"
-version = libs.versions.storytale.get()
 
 publishing {}
 
 android {
-  namespace = "org.jetbrains.storytale.gallery"
+  namespace = "org.jetbrains.compose.storytale.gallery"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
   defaultConfig {

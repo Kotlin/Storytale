@@ -1,9 +1,11 @@
 rootProject.name = "StorytaleUsageExamples"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+val storytaleVersion =
+  providers.gradleProperty("storytale.deploy.version").orNull?.takeIf(String::isNotBlank)
+
 pluginManagement {
   repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
     google {
       mavenContent {
         includeGroupAndSubgroups("androidx")
@@ -26,8 +28,13 @@ dependencyResolutionManagement {
         includeGroupAndSubgroups("com.google")
       }
     }
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
     mavenCentral()
     mavenLocal()
+  }
+
+  if (storytaleVersion != null) {
+    versionCatalogs.register("libs") {
+      version("storytale", storytaleVersion)
+    }
   }
 }
