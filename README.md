@@ -24,7 +24,7 @@ Since Storytale is still in the early stages of development, the api is marked a
 
 ```toml
 [versions]
-storytale = "1.0"
+storytale = "0.0.1+dev3"
 
 [plugins]
 storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
@@ -49,11 +49,12 @@ plugins {
 ```kotlin
 repositories {
   mavenCentral()
+  maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 ```
 
 > [!NOTE]  
-> Storytale **has not** yet released its first version on `mavenCentral`. If you want to try it out early, please refer to the [Building and Contributing](https://github.com/Kotlin/Storytale?tab=readme-ov-file#building-and-contributing) and try it in the `examples` module.
+> Storytale **has not** yet released its first version on `mavenCentral`. Currently, we publish dev builds to maven("https://maven.pkg.jetbrains.space/public/p/compose/dev"), so it's required to add this repository as shown above.
 
 ### 2. Create Sourcesets for Storytale on the target platform (for multi-platform projects)
 
