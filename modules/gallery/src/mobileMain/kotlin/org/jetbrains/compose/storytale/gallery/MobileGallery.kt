@@ -1,14 +1,22 @@
 package org.jetbrains.compose.storytale.gallery
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,9 +75,14 @@ fun MobileGallery(
       }
     }
     HorizontalDivider(thickness = 0.5.dp, color = currentColorScheme.divider)
-    Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Box(
+      modifier = Modifier.weight(1f).fillMaxWidth(),
+      contentAlignment = Alignment.Center
+    ) {
       with(story!!) {
-        content()
+        CompositionLocalProvider(LocalTextStyle provides TextStyle.Default) {
+          content()
+        }
       }
     }
     MobileStoryParameterSheet(sheetState, story!!)
