@@ -24,11 +24,13 @@ Since Storytale is still in the early stages of development, the api is marked a
 
 ```toml
 [versions]
-storytale = "0.0.1+dev3"
+storytale = "0.0.1+dev5"
 
 [plugins]
 storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
 ```
+
+For the latest version check out the [Releases page](https://github.com/Kotlin/Storytale/releases)
 
 > **build.gradle.kts** `root level`
 ```kotlin
