@@ -154,7 +154,9 @@ private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applica
           }.start()
 
           exec {
-            commandLine(adbPath, "wait-for-device")
+            commandLine(
+              adbPath, "wait-for-device", "shell", "while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;"
+            )
           }
         } else {
           throw GradleException("No available Android emulators.")
