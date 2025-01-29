@@ -32,13 +32,9 @@ import org.jetbrains.compose.storytale.gallery.compose.thenIf
 import org.jetbrains.compose.storytale.gallery.generated.resources.Res
 import org.jetbrains.compose.storytale.gallery.generated.resources.info
 import org.jetbrains.compose.storytale.gallery.generated.resources.story_widget_icon
-import org.jetbrains.compose.storytale.gallery.story.parameters.BooleanParameterField
-import org.jetbrains.compose.storytale.gallery.story.parameters.IntParameterField
-import org.jetbrains.compose.storytale.gallery.story.parameters.StringParameterField
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
-import org.jetbrains.compose.storytale.gallery.utils.cast
 
 @Composable
 fun StoryParameter(
@@ -116,29 +112,5 @@ private fun StoryParameterContent(
       )
     }
   }
-  false -> Column(
-    modifier = modifier,
-    verticalArrangement = Arrangement.spacedBy(24.dp)
-  ) {
-    parameters.forEach { parameter ->
-      when (parameter.type) {
-        String::class -> StringParameterField(
-          parameterName = parameter.name,
-          state = parameter.state.cast(),
-          modifier = Modifier.fillMaxWidth()
-        )
-        Boolean::class -> BooleanParameterField(
-          parameterName = parameter.name,
-          state = parameter.state.cast(),
-          modifier = Modifier.fillMaxWidth()
-        )
-        Int::class -> IntParameterField(
-          parameterName = parameter.name,
-          state = parameter.state.cast(),
-          modifier = Modifier.fillMaxWidth()
-        )
-        else -> error("Unsupported parameter type ${parameter.type}")
-      }
-    }
-  }
+  false -> StoryParametersList(parameters, modifier)
 }

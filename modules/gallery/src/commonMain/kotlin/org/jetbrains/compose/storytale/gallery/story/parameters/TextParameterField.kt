@@ -25,44 +25,46 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentTypography
 
 @Composable
-fun StringParameterField(
-  parameterName: String,
-  state: MutableState<String>,
-  description: String = "",
-  modifier: Modifier = Modifier
+fun <T> TextParameterField(
+    parameterName: String,
+    state: MutableState<T>,
+    toTypeOrNull: String.() -> T?,
+    label: String = "",
+    description: String = "",
+    modifier: Modifier = Modifier,
 ) = Column {
-  var text by state
-  CenterRow {
-    Text(
-      text = parameterName,
-      style = currentTypography.parameterText
-    )
-    Gap(6.dp)
-    ParameterLabel("String")
-  }
-  Gap(12.dp)
-  BasicTextField(
-    value = text,
-    onValueChange = { text = it },
-    maxLines = 1,
-    modifier = modifier.clip(RoundedCornerShape(12.dp))
-      .background(currentColorScheme.primaryText),
-    textStyle = currentTextStyle.copy(
-      fontSize = 14.sp,
-      fontWeight = FontWeight.SemiBold,
-      color = Color.White
-    ),
-    cursorBrush = SolidColor(Color.White)
-  ) {
-    Box(Modifier.padding(12.dp)) {
-      it()
+    var number by state
+    CenterRow {
+        Text(
+            text = parameterName,
+            style = currentTypography.parameterText,
+        )
+        Gap(6.dp)
+        ParameterLabel(label)
     }
-  }
-  if (description.isNotEmpty()) {
     Gap(12.dp)
-    Text(
-      text = description,
-      style = currentTypography.parameterDescription
-    )
-  }
+    BasicTextField(
+        value = number.toString(),
+        onValueChange = { newValue -> newValue.toTypeOrNull()?.also { number = it } },
+        maxLines = 1,
+        modifier = modifier.clip(RoundedCornerShape(12.dp))
+            .background(currentColorScheme.primaryText),
+        textStyle = currentTextStyle.copy(
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White,
+        ),
+        cursorBrush = SolidColor(Color.White),
+    ) {
+        Box(Modifier.padding(12.dp)) {
+            it()
+        }
+    }
+    if (description.isNotEmpty()) {
+        Gap(12.dp)
+        Text(
+            text = description,
+            style = currentTypography.parameterDescription,
+        )
+    }
 }
