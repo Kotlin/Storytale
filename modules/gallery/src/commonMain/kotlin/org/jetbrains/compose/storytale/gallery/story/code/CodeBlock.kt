@@ -36,10 +36,10 @@ import org.jetbrains.compose.storytale.gallery.compose.text
 @Composable
 fun CodeBlock(
   code: String,
+  modifier: Modifier = Modifier,
   theme: SyntaxTheme = SyntaxThemes.pastel(),
-  modifier: Modifier = Modifier
 ) = Row(
-  modifier = modifier.background(Color.White)
+  modifier = modifier.background(Color.White),
 ) {
   var codeLines by remember { mutableIntStateOf(0) }
   val codeVerticalScrollState = rememberScrollState()
@@ -54,9 +54,10 @@ fun CodeBlock(
   }
 
   Column(
-    modifier = Modifier.background(Color(0xFFEEF0F5))
+    modifier = Modifier
+      .background(Color(0xFFEEF0F5))
       .verticalScroll(codeVerticalScrollState)
-      .padding(bottom = 6.dp)
+      .padding(bottom = 6.dp),
   ) {
     repeat(codeLines) {
       Text(
@@ -66,7 +67,7 @@ fun CodeBlock(
         lineHeight = 28.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
-        modifier = Modifier.padding(horizontal = 12.dp)
+        modifier = Modifier.padding(horizontal = 12.dp),
       )
     }
   }
@@ -104,7 +105,7 @@ fun CodeBlock(
         .padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
       onTextLayout = {
         codeLines = it.lineCount
-      }
+      },
     )
   }
 }

@@ -27,11 +27,9 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
   override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
 
-  override fun getPluginArtifact() =
-    SubpluginArtifact("org.jetbrains.compose.storytale", "compiler-plugin", VERSION)
+  override fun getPluginArtifact() = SubpluginArtifact("org.jetbrains.compose.storytale", "compiler-plugin", VERSION)
 
-  override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>) =
-    kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
+  override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>) = kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
 
   private fun Project.processConfigurations(extension: StorytaleExtension) {
     extension.targets.all {

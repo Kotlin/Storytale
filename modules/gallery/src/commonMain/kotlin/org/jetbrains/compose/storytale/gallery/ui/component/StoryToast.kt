@@ -69,30 +69,30 @@ fun StoryToast(
       ContentTransform(
         targetContentEnter = slideInVertically { it } + fadeIn(tween(if (isSwitching) 300 else 400)),
         initialContentExit = slideOutVertically(tween(260), targetOffsetY = { it }) + fadeOut(),
-        sizeTransform = null
+        sizeTransform = null,
       )
     },
-    modifier = modifier.padding(horizontal = 70.dp)
+    modifier = modifier.padding(horizontal = 70.dp),
   ) { message ->
     if (message.isNotEmpty()) {
       Box(
         modifier = Modifier
           .clip(RoundedCornerShape(12.dp))
           .background(currentColorScheme.primaryText),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
       ) {
         CenterRow(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
           Icon(
             painter = painterResource(Res.drawable.story_widget_icon),
             contentDescription = null,
             modifier = Modifier.size(18.dp),
-            tint = Color.White
+            tint = Color.White,
           )
           Gap(6.dp)
           Text(
             text = message,
             fontSize = 16.sp,
-            color = Color.White
+            color = Color.White,
           )
         }
       }

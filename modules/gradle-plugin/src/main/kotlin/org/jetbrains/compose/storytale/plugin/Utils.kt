@@ -1,11 +1,19 @@
 @file:OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package org.jetbrains.compose.storytale.plugin
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.MemberSpecHolder
 import com.squareup.kotlinpoet.TypeSpec
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.util.zip.ZipInputStream
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -18,17 +26,10 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
-import java.util.zip.ZipInputStream
+import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 
 fun cleanup(file: File) {
   if (file.exists()) {
@@ -44,7 +45,7 @@ fun cleanup(file: File) {
 
 inline fun MemberSpecHolder.Builder<*>.function(
   name: String,
-  builderAction: FunSpec.Builder.() -> Unit
+  builderAction: FunSpec.Builder.() -> Unit,
 ): FunSpec {
   return FunSpec.builder(name).apply(builderAction).build().also {
     addFunction(it)
@@ -53,7 +54,7 @@ inline fun MemberSpecHolder.Builder<*>.function(
 
 inline fun FileSpec.Builder.klass(
   name: String,
-  builderAction: TypeSpec.Builder.() -> Unit
+  builderAction: TypeSpec.Builder.() -> Unit,
 ): TypeSpec {
   return TypeSpec.classBuilder(name).apply(builderAction).build().also {
     addType(it)
@@ -102,11 +103,15 @@ val KotlinCompilation<*>.resolveDependencyResourcesTaskName: String
   get() = "${name.lowercase()}${target.name.capitalized()}ResolveDependencyResources"
 
 fun setupResourceResolvingForTarget(storytaleBuildDir: File, compilation: KotlinCompilation<*>) {
-  compilation.project.tasks.register(compilation.resolveDependencyResourcesTaskName, ResolveResourcesFromDependenciesTask::class.java, Action {
-    filterResourcesByExtension.set(true)
-    archivesFromDependencies.setFrom(getArchivesFromResources(compilation))
-    outputDirectory.set(storytaleBuildDir.resolve("resolved-dependency-resources"))
-  })
+  compilation.project.tasks.register(
+    compilation.resolveDependencyResourcesTaskName,
+    ResolveResourcesFromDependenciesTask::class.java,
+    Action {
+      filterResourcesByExtension.set(true)
+      archivesFromDependencies.setFrom(getArchivesFromResources(compilation))
+      outputDirectory.set(storytaleBuildDir.resolve("resolved-dependency-resources"))
+    },
+  )
 }
 
 fun getArchivesFromResources(compilation: KotlinCompilation<*>): FileCollection {
@@ -126,10 +131,9 @@ fun getArchivesFromResources(compilation: KotlinCompilation<*>): FileCollection 
   }.files
 }
 
-fun Project.execute(vararg args: String): String =
-  ByteArrayOutputStream().apply {
-    exec {
-      commandLine(*args)
-      standardOutput = this@apply
-    }
-  }.toString()
+fun Project.execute(vararg args: String): String = ByteArrayOutputStream().apply {
+  exec {
+    commandLine(*args)
+    standardOutput = this@apply
+  }
+}.toString()

@@ -22,16 +22,17 @@ import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 
 @Composable
 fun StoryEmptyStatus(
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) = Column(
-  modifier = modifier.fillMaxWidth()
+  modifier = modifier
+    .fillMaxWidth()
     .padding(top = 72.dp)
     .padding(horizontal = 36.dp),
-  horizontalAlignment = Alignment.CenterHorizontally
+  horizontalAlignment = Alignment.CenterHorizontally,
 ) {
   Icon(
     painter = painterResource(Res.drawable.empty_status),
-    contentDescription = null
+    contentDescription = null,
   )
   Gap(38.dp)
   Text(
@@ -41,17 +42,17 @@ fun StoryEmptyStatus(
         style = SpanStyle(
           color = Color(0xFF2B2F33).copy(.5f),
           fontSize = 15.sp,
-          fontWeight = FontWeight.Medium
-        )
+          fontWeight = FontWeight.Medium,
+        ),
       )
       text(
         text = " 🤔",
         style = SpanStyle(
           color = Color(0xFF2B2F33),
           fontSize = 15.sp,
-          fontWeight = FontWeight.Medium
-        )
+          fontWeight = FontWeight.Medium,
+        ),
       )
-    }
+    },
   )
 }

@@ -19,7 +19,7 @@ val currentTypography: Typography
 
 @Stable
 class Typography(
-  colorScheme: ColorScheme
+  colorScheme: ColorScheme,
 ) {
   val parameterText = TextStyle(
     fontSize = 17.sp,

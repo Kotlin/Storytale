@@ -41,13 +41,14 @@ fun StoryParameter(
   activeStory: Story,
   modifier: Modifier = Modifier,
   contentPadding: PaddingValues = PaddingValues(0.dp),
-  showStoryName: Boolean = true
+  showStoryName: Boolean = true,
 ) = Box(modifier = modifier.fillMaxHeight()) {
   Column(
-    modifier = Modifier.fillMaxWidth()
+    modifier = Modifier
+      .fillMaxWidth()
       .padding(
         top = contentPadding.calculateTopPadding(),
-      )
+      ),
   ) {
     if (showStoryName) {
       CenterRow(Modifier.padding(horizontal = 20.dp)) {
@@ -67,7 +68,7 @@ fun StoryParameter(
       HorizontalDivider(
         modifier = Modifier.padding(top = 24.dp),
         thickness = 0.5.dp,
-        color = Color.Black.copy(alpha = 0.4f)
+        color = Color.Black.copy(alpha = 0.4f),
       )
     }
     StoryParameterContent(
@@ -78,37 +79,37 @@ fun StoryParameter(
           start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
           end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
           top = if (showStoryName) 24.dp else 0.dp,
-          bottom = contentPadding.calculateBottomPadding()
+          bottom = contentPadding.calculateBottomPadding(),
         )
-      }
+      },
     )
   }
 }
 
 @Composable
 private fun StoryParameterContent(
-    parameters: List<StoryParameter<*>>,
-    modifier: Modifier = Modifier
+  parameters: List<StoryParameter<*>>,
+  modifier: Modifier = Modifier,
 ) = when (parameters.isEmpty()) {
   true -> Box(
     modifier = modifier.fillMaxSize(),
-    contentAlignment = Alignment.Center
+    contentAlignment = Alignment.Center,
   ) {
     CenterRow(
       modifier = Modifier.fillMaxSize(),
-      horizontalArrangement = Arrangement.Center
+      horizontalArrangement = Arrangement.Center,
     ) {
       Image(
         painter = painterResource(Res.drawable.info),
         contentDescription = null,
-        modifier = Modifier.size(24.dp)
+        modifier = Modifier.size(24.dp),
       )
       Gap(8.dp)
       Text(
         text = "No configurable parameters",
         fontSize = 16.sp,
         fontWeight = FontWeight.Medium,
-        color = Color(0xFFA1A1A1)
+        color = Color(0xFFA1A1A1),
       )
     }
   }

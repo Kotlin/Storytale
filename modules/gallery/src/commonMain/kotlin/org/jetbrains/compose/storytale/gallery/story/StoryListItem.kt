@@ -29,36 +29,36 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 fun StoryListItem(
   story: Story,
   selected: Boolean,
+  onClick: () -> Unit,
   modifier: Modifier = Modifier,
   shape: Shape = RoundedCornerShape(12.dp),
-  onClick: () -> Unit,
 ) {
   val animatedBackgroundColor by animateColorAsState(
     targetValue = when (selected) {
       true -> currentColorScheme.primaryText
       false -> Color.Transparent
-    }
+    },
   )
   val animatedIconColor by animateColorAsState(
     targetValue = when (selected) {
       true -> Color.White
       else -> currentColorScheme.primaryText
-    }
+    },
   )
   val animatedTextColor by animateColorAsState(
     targetValue = when (selected) {
       true -> Color.White
       else -> currentColorScheme.primaryText
-    }
+    },
   )
   Box(
     modifier = modifier
       .clip(shape)
       .background(
         color = animatedBackgroundColor,
-        shape = shape
+        shape = shape,
       )
-      .clickable { onClick() }
+      .clickable { onClick() },
   ) {
     CenterRow(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
       Icon(
@@ -71,7 +71,7 @@ fun StoryListItem(
       Text(
         text = story.name,
         color = animatedTextColor,
-        fontSize = 15.sp
+        fontSize = 15.sp,
       )
     }
   }

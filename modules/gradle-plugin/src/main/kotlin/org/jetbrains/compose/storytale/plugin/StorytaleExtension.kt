@@ -10,7 +10,7 @@ open class StorytaleExtension(internal val project: Project) {
   val multiplatformExtension = run {
     val multiplatformClass =
       tryGetClass<KotlinMultiplatformExtension>(
-        className = "org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension"
+        className = "org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension",
       )
     multiplatformClass?.let { project.extensions.findByType(it) } ?: error("UNEXPECTED")
   }

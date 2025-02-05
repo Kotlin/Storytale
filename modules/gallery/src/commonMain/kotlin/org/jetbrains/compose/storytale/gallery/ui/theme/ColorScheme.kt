@@ -21,14 +21,14 @@ data class ColorScheme(
       primaryText = Color(0xFF252B30),
       description = Color(0xFF9D9D9D),
       divider = Color(0xFFD4D4D4),
-      isLight = true
+      isLight = true,
     )
 
     val Dark = ColorScheme(
       primaryText = Color(0xFF252B30),
       description = Color(0xFF9D9D9D),
       divider = Color(0xFFD4D4D4),
-      isLight = false
+      isLight = false,
     )
   }
 }

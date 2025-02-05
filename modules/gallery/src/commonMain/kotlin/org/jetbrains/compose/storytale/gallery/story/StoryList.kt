@@ -23,9 +23,11 @@ import org.jetbrains.compose.storytale.gallery.ui.component.NumberChip
 fun StoryList(
   activeStoryId: Int,
   stories: List<Story>,
-  onSelectStory: (index: Int) -> Unit
+  onSelectStory: (index: Int) -> Unit,
+  modifier: Modifier = Modifier,
 ) = LazyColumn(
-  contentPadding = PaddingValues(bottom = 20.dp)
+  modifier = modifier,
+  contentPadding = PaddingValues(bottom = 20.dp),
 ) {
   item {
     CenterRow(Modifier.padding(horizontal = 20.dp)) {
@@ -34,13 +36,13 @@ fun StoryList(
         fontWeight = FontWeight.SemiBold,
         color = Color.Black,
         fontSize = 20.sp,
-        modifier = Modifier.weight(1f)
+        modifier = Modifier.weight(1f),
       )
       NumberChip(stories.size)
     }
     Gap(14.dp)
     Column(
-      verticalArrangement = Arrangement.spacedBy(9.dp)
+      verticalArrangement = Arrangement.spacedBy(9.dp),
     ) {
       val groupedStories = remember { stories.groupBy { it.group } }
 
@@ -50,7 +52,7 @@ fun StoryList(
           fontWeight = FontWeight.Normal,
           color = Color.Gray,
           fontSize = 14.sp,
-          modifier = Modifier.padding(start = 5.dp)
+          modifier = Modifier.padding(start = 5.dp),
         )
 
         Column(modifier = Modifier.padding(start = 10.dp)) {
@@ -59,7 +61,7 @@ fun StoryList(
               story = item,
               selected = item.id == activeStoryId,
               modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-              onClick = { onSelectStory(item.id) }
+              onClick = { onSelectStory(item.id) },
             )
           }
         }

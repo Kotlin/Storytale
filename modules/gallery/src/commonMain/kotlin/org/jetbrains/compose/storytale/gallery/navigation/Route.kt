@@ -2,8 +2,8 @@ package org.jetbrains.compose.storytale.gallery.navigation
 
 import kotlinx.serialization.Serializable
 
- @Serializable
- data object Route {
+@Serializable
+data object Route {
   @Serializable
   data object MobileHome
 

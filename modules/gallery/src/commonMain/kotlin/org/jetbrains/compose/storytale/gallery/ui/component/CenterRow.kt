@@ -11,11 +11,11 @@ import androidx.compose.ui.Modifier
 fun CenterRow(
   modifier: Modifier = Modifier,
   horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-  content: @Composable RowScope.() -> Unit
+  content: @Composable RowScope.() -> Unit,
 ) = Row(
   verticalAlignment = Alignment.CenterVertically,
   horizontalArrangement = horizontalArrangement,
-  modifier = modifier
+  modifier = modifier,
 ) {
   content()
 }

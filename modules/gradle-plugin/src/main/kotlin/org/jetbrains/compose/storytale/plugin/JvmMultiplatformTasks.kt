@@ -24,7 +24,7 @@ fun Project.processJvmCompilation(extension: StorytaleExtension, target: KotlinJ
 
 private fun Project.createJvmStorytaleGenerateSourceTask(
   extension: StorytaleExtension,
-  target: KotlinJvmTarget
+  target: KotlinJvmTarget,
 ) {
   val storytaleBuildDir = extension.getBuildDirectory(target)
   task<JvmSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
@@ -38,7 +38,7 @@ private fun Project.createJvmStorytaleGenerateSourceTask(
 
 fun Project.createJvmStorytaleCompileTask(
   extension: StorytaleExtension,
-  target: KotlinJvmTarget
+  target: KotlinJvmTarget,
 ): KotlinJvmCompilation {
   val mainCompilation = target.compilations.named(KotlinCompilation.MAIN_COMPILATION_NAME).get()
   val storytaleBuildDir = extension.getBuildDirectory(target)
@@ -76,7 +76,7 @@ private fun Project.createJvmStorytaleExecTask(
   extension: StorytaleExtension,
   compilation: KotlinJvmCompilation,
   target: KotlinJvmTarget,
-  runtimeClasspath: FileCollection
+  runtimeClasspath: FileCollection,
 ) {
   task<JavaExec>("${target.name}${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}Run") {
     dependsOn(compilation.compileTaskProvider)
@@ -89,7 +89,7 @@ private fun Project.createJvmStorytaleExecTask(
     classpath(
       file("$storiesBuildDir/classes"),
       file("$storiesBuildDir/resources"),
-      runtimeClasspath
+      runtimeClasspath,
     )
 
     javaLauncher.set(javaLauncherProvider())

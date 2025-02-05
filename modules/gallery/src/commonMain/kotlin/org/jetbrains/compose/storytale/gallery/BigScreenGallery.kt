@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.DesktopCodeBlock
 import org.jetbrains.compose.storytale.gallery.event.Event
 import org.jetbrains.compose.storytale.gallery.event.EventCenter
 import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
@@ -48,20 +49,20 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 @Composable
 fun BigScreenGallery(
   stories: List<Story>,
-  modifier: Modifier
+  modifier: Modifier,
 ) = HorizontalSplitPane(
   modifier = modifier,
-  initialFirstPlaceableWith = 350.dp
+  initialFirstPlaceableWith = 350.dp,
 ) {
   val toast = rememberStoryToastState()
   var activeStoryId by remember { mutableIntStateOf(-1) }
   var sourceCodeMode by remember(activeStoryId) { mutableStateOf(false) }
 
   val cornerAnimation by animateDpAsState(
-    targetValue = if (sourceCodeMode) 0.dp else 36.dp
+    targetValue = if (sourceCodeMode) 0.dp else 36.dp,
   )
   val widthAnimation by animateDpAsState(
-    targetValue = if (sourceCodeMode) 450.dp else 280.dp
+    targetValue = if (sourceCodeMode) 450.dp else 280.dp,
   )
 
   val onSelectStory = { id: Int -> activeStoryId = id }
@@ -70,31 +71,33 @@ fun BigScreenGallery(
   StoryNavigationBar(
     activeStoryId = activeStoryId,
     stories = stories,
-    onSelectStory = onSelectStory
+    onSelectStory = onSelectStory,
   )
 
   Row(
-    modifier = Modifier.fillMaxSize()
-      .background(Color(0xFFFAFAFA))
+    modifier = Modifier
+      .fillMaxSize()
+      .background(Color(0xFFFAFAFA)),
   ) {
     if (activeStory != null) {
       GalleryContent(
         activeStory = activeStory,
         toast = toast,
-        modifier = Modifier.weight(1f)
+        modifier = Modifier.weight(1f),
       )
       GalleryConfiguration(
         activeStory = activeStory,
         sourceCodeMode = sourceCodeMode,
         onSourceCodeModeChange = { sourceCodeMode = it },
-        modifier = Modifier.widthIn(max = widthAnimation)
+        modifier = Modifier
+          .widthIn(max = widthAnimation)
           .border(
             width = 1.dp,
             color = Color.Black.copy(.11f),
-            shape = RoundedCornerShape(topStart = cornerAnimation, bottomStart = cornerAnimation)
+            shape = RoundedCornerShape(topStart = cornerAnimation, bottomStart = cornerAnimation),
           )
           .clip(RoundedCornerShape(topStart = cornerAnimation, bottomStart = cornerAnimation))
-          .background(Color.White)
+          .background(Color.White),
       )
     }
   }
@@ -111,11 +114,11 @@ private fun GalleryContent(
   toast: StoryToastState,
   modifier: Modifier = Modifier,
 ) = Box(
-  modifier = modifier
+  modifier = modifier,
 ) {
   Box(
     modifier = Modifier.fillMaxSize(),
-    contentAlignment = Alignment.Center
+    contentAlignment = Alignment.Center,
   ) {
     with(activeStory) {
       CompositionLocalProvider(LocalTextStyle provides TextStyle.Default) {
@@ -126,7 +129,7 @@ private fun GalleryContent(
   StoryToast(
     toastState = toast,
     modifier = Modifier.align(Alignment.BottomCenter)
-      .padding(bottom = 24.dp)
+      .padding(bottom = 24.dp),
   )
 }
 
@@ -134,27 +137,27 @@ private fun GalleryContent(
 private fun GalleryConfiguration(
   activeStory: Story,
   sourceCodeMode: Boolean,
-  modifier: Modifier = Modifier,
   onSourceCodeModeChange: (Boolean) -> Unit,
+  modifier: Modifier = Modifier,
 ) = Column(
-  modifier = modifier
+  modifier = modifier,
 ) {
   AnimatedContent(
     targetState = sourceCodeMode,
     transitionSpec = {
       slideIntoContainer(Start) togetherWith slideOutOfContainer(Start)
     },
-    modifier = Modifier.weight(1f)
+    modifier = Modifier.weight(1f),
   ) {
     when (it) {
       true -> DesktopCodeBlock(
         code = activeStory.code,
         storyName = activeStory.name,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
       )
       false -> StoryParameter(
         activeStory = activeStory,
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 28.dp)
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 28.dp),
       )
     }
   }
@@ -164,11 +167,11 @@ private fun GalleryConfiguration(
       color = currentColorScheme.primaryText,
       modifier = Modifier.weight(1f),
       fontWeight = FontWeight.SemiBold,
-      fontSize = 14.sp
+      fontSize = 14.sp,
     )
     SwitchButton(
       checked = sourceCodeMode,
-      onValueChange = onSourceCodeModeChange
+      onValueChange = onSourceCodeModeChange,
     )
   }
 }

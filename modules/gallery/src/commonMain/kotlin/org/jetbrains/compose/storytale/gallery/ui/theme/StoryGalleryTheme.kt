@@ -15,14 +15,14 @@ fun StoryGalleryTheme(
   val colorScheme = if (useDarkMode) ColorScheme.Dark else ColorScheme.Light
   val typography = Typography(colorScheme)
   val galleryDefaultTextStyle = LocalTextStyle.current.copy(
-    color = colorScheme.primaryText
+    color = colorScheme.primaryText,
   )
   CompositionLocalProvider(
     values = arrayOf(
       LocalColorScheme provides colorScheme,
       LocalTextStyle provides galleryDefaultTextStyle,
       LocalTypography provides typography,
-      LocalIndication provides ripple()
+      LocalIndication provides ripple(),
     ),
     content = content,
   )

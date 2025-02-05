@@ -2,6 +2,8 @@ package org.jetbrains.compose.storytale.plugin
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
+import java.io.ByteArrayOutputStream
+import java.io.File
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -9,8 +11,6 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import java.io.ByteArrayOutputStream
-import java.io.File
 
 val androidGradlePlugins = listOf("com.android.application")
 
@@ -60,7 +60,7 @@ fun Project.createAndroidCompilationTasks(
             target,
             this,
             storytaleBuildSourcesDir,
-            storytaleBuildResourcesDir
+            storytaleBuildResourcesDir,
           )
 
           extension.project.tasks
@@ -158,7 +158,10 @@ private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applica
 
           exec {
             commandLine(
-              adbPath, "wait-for-device", "shell", "while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;"
+              adbPath,
+              "wait-for-device",
+              "shell",
+              "while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;",
             )
           }
         } else {

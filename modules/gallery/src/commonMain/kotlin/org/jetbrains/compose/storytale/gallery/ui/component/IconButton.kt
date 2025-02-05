@@ -24,12 +24,12 @@ fun IconButton(
     color = Color.Unspecified,
   ),
   enabled: Boolean = true,
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) = Box(
   modifier = modifier.clickable(
     enabled = enabled,
     onClick = onClick,
     indication = indication,
-    interactionSource = interactionSource
-  )
+    interactionSource = interactionSource,
+  ),
 ) { content() }

@@ -85,7 +85,7 @@ kotlin {
       "-opt-in=kotlinx.coroutines.FlowPreview",
       "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
       "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
-      "-Xexpect-actual-classes"
+      "-Xexpect-actual-classes",
     )
   }
 }

@@ -8,19 +8,38 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.callableId
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isTopLevel
+import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.text
 
-private val STORYTALE_FQN = FqName("org.jetbrains.compose.storytale")
+private val storytaleFqn = FqName("org.jetbrains.compose.storytale")
 
 private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLoweringPass {
   val transformer = ReplaceStoryCallWithItsSuccessorWithCodeParameter(context)
@@ -29,11 +48,12 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
   }
 
   class ReplaceStoryCallWithItsSuccessorWithCodeParameter(private val context: IrPluginContext) : IrElementTransformerVoidWithContext() {
-    private val STORY_FUNCTION = CallableId(STORYTALE_FQN, Name.identifier("story"))
+    private val storyFunction = CallableId(storytaleFqn, Name.identifier("story"))
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitCall(expression: IrCall): IrExpression {
       val owner = expression.symbol.owner
-      if (!owner.isTopLevel || owner.callableId != STORY_FUNCTION) return super.visitCall(expression)
+      if (!owner.isTopLevel || owner.callableId != storyFunction) return super.visitCall(expression)
 
       val callee = expression.getValueArgument(2)
       val storyDescriber = when (callee) {
@@ -60,20 +80,20 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
 }
 
 private class MentionAllStoriesGettersInsideMainFunctionLowering(
-  private val context: IrPluginContext
+  private val context: IrPluginContext,
 ) : DeclarationTransformer {
   private val allFirstStoriesGetter = mutableListOf<IrStatement>()
   private val alreadyMentionedFiles = mutableSetOf<IrFile>()
 
-  private val STORY_FACTORY_ID = ClassId(STORYTALE_FQN, Name.identifier("StoryDelegate"))
+  private val storyFactoryId = ClassId(storytaleFqn, Name.identifier("StoryDelegate"))
 
-  private val KOTLIN_NATIVE_FQN = FqName("kotlin.native")
-  private val HIDE_FROM_OBJC_ID = ClassId(KOTLIN_NATIVE_FQN, Name.identifier("HiddenFromObjC"))
+  private val kotlinNativeFqn = FqName("kotlin.native")
+  private val hideFromObjcId = ClassId(kotlinNativeFqn, Name.identifier("HiddenFromObjC"))
 
   private val anyType = context.irBuiltIns.anyType
   private val unitType = context.irBuiltIns.unitType
-  private val storyFactory = context.referenceClass(STORY_FACTORY_ID)
-  private val hiddenFromObjCAnnotation = context.referenceConstructors(HIDE_FROM_OBJC_ID).single()
+  private val storyFactory = context.referenceClass(storyFactoryId)
+  private val hiddenFromObjCAnnotation = context.referenceConstructors(hideFromObjcId).single()
 
   override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
     val factoryType = storyFactory?.defaultType ?: return null
@@ -82,7 +102,6 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
       declaration.addHiddenFromObjCAnnotation()
       declaration.mentionGetterInsideMainFunction()
     }
-
 
     if (declaration is IrSimpleFunction && declaration.isGeneratedMainViewController()) {
       declaration.addAllMentionedGettersIntoBody()
@@ -104,25 +123,26 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
         getter.returnType,
         getter.symbol,
         0,
-      )
+      ),
     )
   }
 
   private fun IrSimpleFunction.addAllMentionedGettersIntoBody() {
     (body as? IrBlockBody)?.statements?.add(
       0,
-      IrObservableBlockImpl(unitType, allFirstStoriesGetter)
+      IrObservableBlockImpl(unitType, allFirstStoriesGetter),
     )
   }
 
-  private fun IrProperty.isStory(factoryType: IrType) =
-    isTopLevel && isDelegated && backingField?.let {
+  private fun IrProperty.isStory(factoryType: IrType) = isTopLevel &&
+    isDelegated &&
+    backingField?.let {
       it.origin == IrDeclarationOrigin.PROPERTY_DELEGATE && it.type == factoryType
     } ?: false
 
-  private fun IrSimpleFunction.isGeneratedMainViewController() =
-    isTopLevel && visibility.isPublicAPI &&
-      kotlinFqName.asString() == "org.jetbrains.compose.storytale.generated.MainViewController"
+  private fun IrSimpleFunction.isGeneratedMainViewController() = isTopLevel &&
+    visibility.isPublicAPI &&
+    kotlinFqName.asString() == "org.jetbrains.compose.storytale.generated.MainViewController"
 
   private fun IrDeclaration.addHiddenFromObjCAnnotation() {
     val annotation = IrConstructorCallImpl(
@@ -138,7 +158,7 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
 
   private class IrObservableBlockImpl(
     override var type: IrType,
-    override val statements: MutableList<IrStatement>
+    override val statements: MutableList<IrStatement>,
   ) : IrBlock() {
     override val startOffset = UNDEFINED_OFFSET
     override val endOffset = UNDEFINED_OFFSET

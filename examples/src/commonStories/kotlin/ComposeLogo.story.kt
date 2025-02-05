@@ -1,6 +1,5 @@
 import org.jetbrains.compose.storytale.story
 
-
 val `ComposeLogo Default State` by story {
   ComposeLogo()
 }

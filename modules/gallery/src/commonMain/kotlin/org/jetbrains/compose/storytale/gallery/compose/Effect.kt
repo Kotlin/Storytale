@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 @NonRestartableComposable
 fun <T : Any?> LaunchedValueEffect(
   key: T,
-  block: suspend CoroutineScope.(T) -> Unit
-) = LaunchedEffect(key) {
+  block: suspend CoroutineScope.(T) -> Unit,
+) = LaunchedEffect(key, block) {
   block(key)
 }

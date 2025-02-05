@@ -34,28 +34,29 @@ fun StoryNavigationBar(
   activeStoryId: Int,
   stories: List<Story>,
   onSelectStory: (Int) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) = Column(
-  modifier = Modifier.fillMaxHeight()
+  modifier = Modifier
+    .fillMaxHeight()
     .background(Color.White)
-    .then(modifier)
+    .then(modifier),
 ) {
   var searchQuery by remember { mutableStateOf("") }
   Column(
-    modifier = Modifier.padding(20.dp)
+    modifier = Modifier.padding(20.dp),
   ) {
     CenterRow {
       Image(
         painter = painterResource(Res.drawable.compose_multiplatform),
         contentDescription = null,
-        modifier = Modifier.size(36.dp)
+        modifier = Modifier.size(36.dp),
       )
       Gap(14.dp)
       Text(
         text = "Storytale",
         fontWeight = FontWeight.Medium,
         color = Color(0xFF1E1E1E),
-        fontSize = 24.sp
+        fontSize = 24.sp,
       )
     }
     if (stories.isNotEmpty()) {
@@ -63,7 +64,7 @@ fun StoryNavigationBar(
       StorySearchBar(
         text = searchQuery,
         onValueChange = { searchQuery = it },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
       )
     }
   }
@@ -73,10 +74,10 @@ fun StoryNavigationBar(
       ContentTransform(
         targetContentEnter = fadeIn(),
         initialContentExit = fadeOut(),
-        sizeTransform = null
+        sizeTransform = null,
       )
     },
-    modifier = Modifier.fillMaxHeight()
+    modifier = Modifier.fillMaxHeight(),
   ) {
     when (it) {
       true -> {
@@ -90,7 +91,7 @@ fun StoryNavigationBar(
           story.name.contains(searchQuery, ignoreCase = true)
         },
         activeStoryIndex = activeStoryId,
-        onSelectStory = onSelectStory
+        onSelectStory = onSelectStory,
       )
     }
   }

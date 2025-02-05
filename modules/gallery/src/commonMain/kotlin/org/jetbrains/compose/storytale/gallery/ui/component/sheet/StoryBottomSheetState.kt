@@ -23,7 +23,7 @@ import org.jetbrains.compose.storytale.gallery.compose.currentDensity
 @Stable
 class StoryBottomSheetState(
   val sheetState: SheetState,
-  private val scope: CoroutineScope
+  private val scope: CoroutineScope,
 ) {
   var visible by mutableStateOf(false)
     private set
@@ -42,7 +42,7 @@ class StoryBottomSheetState(
       confirmValueChange: (SheetValue) -> Boolean,
       density: Density,
       skipHiddenState: Boolean,
-      scope: CoroutineScope
+      scope: CoroutineScope,
     ) = Saver<StoryBottomSheetState, SheetValue>(
       save = {
         it.sheetState.currentValue
@@ -55,11 +55,11 @@ class StoryBottomSheetState(
             skipPartiallyExpanded = skipPartiallyExpanded,
             positionalThreshold = { density.density },
             velocityThreshold = { density.density },
-            skipHiddenState = skipHiddenState
+            skipHiddenState = skipHiddenState,
           ),
-          scope = scope
+          scope = scope,
         )
-      }
+      },
     )
   }
 }
@@ -68,7 +68,7 @@ class StoryBottomSheetState(
 fun rememberStoryBottomSheetState(
   skipPartiallyExpanded: Boolean = false,
   confirmValueChange: (SheetValue) -> Boolean = { true },
-  sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded)
+  sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded),
 ): StoryBottomSheetState {
   val scope = rememberCoroutineScope()
   val density = currentDensity
@@ -78,8 +78,8 @@ fun rememberStoryBottomSheetState(
       confirmValueChange = confirmValueChange,
       density = density,
       skipHiddenState = false,
-      scope = scope
-    )
+      scope = scope,
+    ),
   ) {
     StoryBottomSheetState(sheetState, scope)
   }
