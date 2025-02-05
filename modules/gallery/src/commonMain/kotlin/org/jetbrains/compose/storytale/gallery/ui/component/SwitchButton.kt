@@ -34,7 +34,7 @@ fun SwitchButton(
     .background(
       color = animateColorAsState(
         targetValue = if (checked) Color(0xFF00AF54) else Color(0xFFABABAB),
-        animationSpec = tween(delayMillis = 10)
+        animationSpec = tween(delayMillis = 10),
       ).value,
       shape = RoundedCornerShape(percent = 50),
     )
@@ -45,7 +45,7 @@ fun SwitchButton(
   val thumbSize = 24.dp
   val thumbOffset by animateDpAsState(
     targetValue = if (checked) maxWidth - thumbSize - padding else padding,
-    animationSpec = spring(dampingRatio = 0.58f, stiffness = 620f)
+    animationSpec = spring(dampingRatio = 0.58f, stiffness = 620f),
   )
   Spacer(
     modifier = Modifier
@@ -57,7 +57,7 @@ fun SwitchButton(
       )
       .background(
         color = Color.White,
-        shape = CircleShape
+        shape = CircleShape,
       )
       .align(Alignment.CenterStart),
   )

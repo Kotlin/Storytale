@@ -25,7 +25,7 @@ import org.jetbrains.compose.storytale.gallery.compose.currentDensity
 fun HorizontalSplitPane(
   modifier: Modifier = Modifier,
   initialFirstPlaceableWith: Dp = 350.dp,
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) {
   var dividerOffset by remember { mutableStateOf(0.dp) }
   Layout(
@@ -33,9 +33,9 @@ fun HorizontalSplitPane(
     content = {
       content()
       VerticalSplitDivider(
-        onDrag = { dividerOffset += it }
+        onDrag = { dividerOffset += it },
       )
-    }
+    },
   ) { measurables, constraints ->
     require(measurables.size == 3) {
       "HorizontalSplitPane only supports plays with two @Composable content, " +
@@ -47,9 +47,9 @@ fun HorizontalSplitPane(
       constraints.copy(
         maxWidth = (initialFirstPlaceableWith + dividerOffset).coerceIn(
           minimumValue = dividerWidth.toDp(),
-          maximumValue = constraints.maxWidth.toDp() - dividerWidth.toDp()
-        ).roundToPx()
-      )
+          maximumValue = constraints.maxWidth.toDp() - dividerWidth.toDp(),
+        ).roundToPx(),
+      ),
     )
 
     val secondWidth = (constraints.maxWidth - firstPlaceable.width - dividerWidth)
@@ -59,15 +59,15 @@ fun HorizontalSplitPane(
         minWidth = secondWidth,
         maxWidth = secondWidth,
         minHeight = constraints.maxHeight,
-        maxHeight = constraints.maxHeight
-      )
+        maxHeight = constraints.maxHeight,
+      ),
     )
     val splitterPlaceable = measurables[2].measure(constraints)
     layout(constraints.maxWidth, constraints.maxHeight) {
       firstPlaceable.place(0, 0)
       secondPlaceable.place(
         x = firstPlaceable.width + dividerWidth,
-        y = 0
+        y = 0,
       )
       splitterPlaceable.place(firstPlaceable.width, 0)
     }
@@ -76,15 +76,16 @@ fun HorizontalSplitPane(
 
 @Composable
 private fun VerticalSplitDivider(
+  onDrag: (Dp) -> Unit,
   modifier: Modifier = Modifier,
   shape: Shape = CircleShape,
   color: Color = Color(0xFFDADADA),
   width: Dp = 4.dp,
-  onDrag: (Dp) -> Unit
 ) {
   val density = currentDensity
   VerticalDivider(
-    modifier = modifier.fillMaxHeight()
+    modifier = modifier
+      .fillMaxHeight()
       .clip(shape)
       .draggable(
         state = rememberDraggableState { offset ->
@@ -93,9 +94,9 @@ private fun VerticalSplitDivider(
           }
         },
         orientation = Orientation.Horizontal,
-        startDragImmediately = true
+        startDragImmediately = true,
       ),
     color = color,
-    thickness = width
+    thickness = width,
   )
 }

@@ -1,4 +1,5 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package org.jetbrains.compose.storytale.plugin
 
 import org.gradle.api.GradleException
@@ -17,8 +18,9 @@ import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 fun Project.processNativeCompilation(extension: StorytaleExtension, target: KotlinNativeTarget) {
-  if (target.konanTarget !in setOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64))
+  if (target.konanTarget !in setOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64)) {
     return
+  }
   project.logger.info("Configuring storytale for Kotlin/Native")
   val generatorTask = createNativeStorytaleGenerateSourceTask(extension, target)
   val compilation = createNativeStorytaleCompileTask(extension, target, generatorTask)
@@ -26,9 +28,9 @@ fun Project.processNativeCompilation(extension: StorytaleExtension, target: Kotl
 }
 
 private fun Project.createNativeStorytaleCompileTask(
-    extension: StorytaleExtension,
-    target: KotlinNativeTarget,
-    generatorTask: NativeSourceGeneratorTask
+  extension: StorytaleExtension,
+  target: KotlinNativeTarget,
+  generatorTask: NativeSourceGeneratorTask,
 ): KotlinNativeCompilation {
   val storytaleBuildDir = extension.getBuildDirectory(target)
   val mainCompilation = target.compilations.named(KotlinCompilation.MAIN_COMPILATION_NAME).get()
@@ -69,8 +71,8 @@ private fun Project.createNativeStorytaleCompileTask(
 }
 
 private fun Project.createNativeStorytaleGenerateSourceTask(
-    extension: StorytaleExtension,
-    target: KotlinNativeTarget
+  extension: StorytaleExtension,
+  target: KotlinNativeTarget,
 ): NativeSourceGeneratorTask {
   val storytaleBuildDir = extension.getBuildDirectory(target)
   return task<NativeSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
@@ -83,9 +85,9 @@ private fun Project.createNativeStorytaleGenerateSourceTask(
 }
 
 private fun Project.createNativeStorytaleExecTask(
-    compilation: KotlinNativeCompilation,
-    extension: StorytaleExtension,
-    target: KotlinNativeTarget
+  compilation: KotlinNativeCompilation,
+  extension: StorytaleExtension,
+  target: KotlinNativeTarget,
 ): Task? {
   if (!target.name.contains("Simulator")) return null
 
@@ -118,7 +120,7 @@ private fun Project.createNativeStorytaleExecTask(
           "simctl",
           "launch",
           deviceId.get(),
-          StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_PATH
+          StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_PATH,
         )
       }
       exec {
@@ -135,8 +137,8 @@ private fun Project.createUnzipResourceTask(extension: StorytaleExtension): Unzi
       file(
         layout.buildDirectory.get().asFile
           .resolve(extension.buildDir)
-          .resolve(StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME)
-      )
+          .resolve(StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME),
+      ),
     )
   }
 }
@@ -176,28 +178,32 @@ private fun Project.findAvailableIPhoneSimulator(): String {
   val availableDeviceTypes = execute("/usr/bin/xcrun", "simctl", "list", "devicetypes")
   val deviceTypeMatches = Regex("""(com.apple.CoreSimulator.SimDeviceType.iPhone-[A-Za-z0-9\-]+)""").findAll(availableDeviceTypes).toList()
 
-  return deviceTypeMatches.lastOrNull()?.groups?.get(1)?.value ?: throw GradleException("""
+  return deviceTypeMatches.lastOrNull()?.groups?.get(1)?.value ?: throw GradleException(
+    """
       No iPhone device found. Please download any iPhone simulator.
       Refer to the official documentation: https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
-    """.trimIndent())
+    """.trimIndent(),
+  )
 }
 
 private fun Project.findAvailableIOsRuntime(): String {
   val availableRuntimes = execute("/usr/bin/xcrun", "simctl", "list", "runtimes")
   val runtimeMatches = Regex("""(com.apple.CoreSimulator.SimRuntime.iOS-[0-9\-]+)""").findAll(availableRuntimes).toList()
 
-  return runtimeMatches.lastOrNull()?.groups?.get(1)?.value ?: throw GradleException("""
+  return runtimeMatches.lastOrNull()?.groups?.get(1)?.value ?: throw GradleException(
+    """
       No iOS runtime found. Please download any iOS runtimes.
       Refer to the official documentation: https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
-    """.trimIndent())
+    """.trimIndent(),
+  )
 }
 
 private fun Project.createBuildTask(
-    targetSuffix: String,
-    deviceId: Property<String>,
-    unzipResourceTask: UnzipResourceTask,
-    simulatorRegistrationTask: Task,
-    linkTask: KotlinNativeLink
+  targetSuffix: String,
+  deviceId: Property<String>,
+  unzipResourceTask: UnzipResourceTask,
+  simulatorRegistrationTask: Task,
+  linkTask: KotlinNativeLink,
 ): Task {
   return task("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}Build$targetSuffix") {
     group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
@@ -227,7 +233,7 @@ private fun Project.createBuildTask(
           "id=${deviceId.get()}",
           "-derivedDataPath",
           StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME,
-          "FRAMEWORK_SEARCH_PATHS=$frameworkPath"
+          "FRAMEWORK_SEARCH_PATHS=$frameworkPath",
         )
       }
     }
@@ -235,12 +241,12 @@ private fun Project.createBuildTask(
 }
 
 private fun Project.createCopyNativeResourcesTask(
-    platform: String,
-    target: KotlinNativeTarget,
-    targetSuffix: String,
-    compilation: KotlinNativeCompilation,
-    unzipResourceTask: UnzipResourceTask,
-    buildTask: Task
+  platform: String,
+  target: KotlinNativeTarget,
+  targetSuffix: String,
+  compilation: KotlinNativeCompilation,
+  unzipResourceTask: UnzipResourceTask,
+  buildTask: Task,
 ): NativeCopyResourcesTask {
   val frameworkResources = files().apply {
     compilation.allKotlinSourceSets.forAll { from(it.resources.sourceDirectories) }
@@ -266,12 +272,12 @@ private fun Project.createCopyNativeResourcesTask(
 }
 
 private fun Project.createInstallApplicationToSimulatorTask(
-    deviceId: Property<String>,
-    targetSuffix: String,
-    platform: String,
-    unzipResourceTask: UnzipResourceTask,
-    buildTask: Task,
-    copyResourcesTask: Task
+  deviceId: Property<String>,
+  targetSuffix: String,
+  platform: String,
+  unzipResourceTask: UnzipResourceTask,
+  buildTask: Task,
+  copyResourcesTask: Task,
 ): Task {
   return task("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}InstallApp$targetSuffix") {
     group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
@@ -290,7 +296,7 @@ private fun Project.createInstallApplicationToSimulatorTask(
           "simctl",
           "install",
           deviceId.get(),
-          appPath
+          appPath,
         )
       }
     }

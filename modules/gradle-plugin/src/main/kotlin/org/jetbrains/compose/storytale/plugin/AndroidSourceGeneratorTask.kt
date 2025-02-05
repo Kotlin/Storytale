@@ -1,13 +1,15 @@
 package org.jetbrains.compose.storytale.plugin
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.KModifier
+import java.io.File
+import java.nio.file.Files
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import java.io.File
-import java.nio.file.Files
 
 @CacheableTask
 open class AndroidSourceGeneratorTask : DefaultTask() {
@@ -56,16 +58,15 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
           addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
           addStatement(
             """
-              | super.onCreate(savedInstanceState) 
+              | super.onCreate(savedInstanceState)
               | setContent { MainViewController() }
-              """.trimMargin()
+            """.trimMargin(),
           )
         }
       }
     }
       .build()
       .writeTo(outputSourcesDir)
-
   }
 
   private fun generateAndroidManifest() {
@@ -74,7 +75,7 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
     androidManifestFile.writeText(
       """
         <?xml version="1.0" encoding="utf-8"?>
-        <manifest 
+        <manifest
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             >
@@ -94,10 +95,9 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
                     </intent-filter>
                 </activity>
             </application>
-        
-        </manifest>
-      """.trimIndent()
-    )
 
+        </manifest>
+      """.trimIndent(),
+    )
   }
 }

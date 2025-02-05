@@ -8,7 +8,10 @@ import org.jetbrains.compose.storytale.example.Res
 import org.jetbrains.compose.storytale.example.compose_multiplatform
 
 @Composable
-fun ComposeLogo(size: LogoSize = LogoSize.MEDIUM) {
+fun ComposeLogo(
+  modifier: Modifier = Modifier,
+  size: LogoSize = LogoSize.MEDIUM,
+) {
   val widthAndHeight = when (size) {
     LogoSize.SMALL -> 300
     LogoSize.MEDIUM -> 600
@@ -17,13 +20,13 @@ fun ComposeLogo(size: LogoSize = LogoSize.MEDIUM) {
 
   Image(
     painter = painterResource(Res.drawable.compose_multiplatform),
-    contentDescription =  "Compose Multiplatform Logo",
-    modifier = Modifier.size(widthAndHeight.dp)
+    contentDescription = "Compose Multiplatform Logo",
+    modifier = modifier.size(widthAndHeight.dp),
   )
 }
 
 enum class LogoSize {
   SMALL,
   MEDIUM,
-  LARGE
+  LARGE,
 }

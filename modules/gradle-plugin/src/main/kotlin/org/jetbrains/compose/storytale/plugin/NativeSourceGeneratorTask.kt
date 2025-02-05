@@ -2,12 +2,12 @@ package org.jetbrains.compose.storytale.plugin
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
+import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 @CacheableTask
 open class NativeSourceGeneratorTask : DefaultTask() {
@@ -36,10 +36,13 @@ open class NativeSourceGeneratorTask : DefaultTask() {
       val uIViewControllerType = ClassName("platform.UIKit", "UIViewController")
       function("MainViewController") {
         returns(uIViewControllerType)
-        addStatement("""
+        addStatement(
+          """
                 |return ComposeUIViewController {
                 |  Gallery()
-                |}""".trimMargin())
+                |}
+          """.trimMargin(),
+        )
       }
     }.build()
 
