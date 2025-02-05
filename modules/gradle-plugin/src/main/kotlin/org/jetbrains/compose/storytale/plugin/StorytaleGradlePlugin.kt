@@ -63,6 +63,6 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     const val DERIVED_DATA_DIRECTORY_NAME = "dd"
     const val LINK_BUILD_VERSION = "Debug"
 
-    val VERSION = BuildTimeConfig.PROJECT_VERSION
+    val VERSION = BuildTimeConfig.projectVersion
   }
 }
