@@ -30,7 +30,7 @@ dependencyResolutionManagement {
   }
 }
 
-include(":examples")
+// include(":examples")
 include(":modules:gallery")
 include(":modules:gradle-plugin")
 include(":modules:compiler-plugin")
