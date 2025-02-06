@@ -104,7 +104,6 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
         getter.returnType,
         getter.symbol,
         0,
-        0,
       )
     )
   }
@@ -133,7 +132,6 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
       hiddenFromObjCAnnotation,
       0,
       0,
-      0
     )
     context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(this, annotation)
   }

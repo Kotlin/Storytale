@@ -71,7 +71,10 @@ fun Project.createAndroidCompilationTasks(
             .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX }
             .configureEach {
               associateWith(target.compilations.getByName("debug"))
-              compileTaskProvider.configure { dependsOn(generatorTask) }
+              compileTaskProvider.configure {
+                dependsOn(generatorTask)
+                dependsOn(":generateResourceAccessorsForCommonStories")
+              }
             }
 
           val startEmulatorTask = createStartEmulatorTask(target, applicationExtension)
