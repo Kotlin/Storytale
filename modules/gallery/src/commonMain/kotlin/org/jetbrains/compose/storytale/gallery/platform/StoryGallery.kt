@@ -7,5 +7,5 @@ import org.jetbrains.compose.storytale.Story
 @Composable
 expect fun StoryGallery(
   stories: List<Story>,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 )

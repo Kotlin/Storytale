@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 class StoryParameter<T>(
   val name: String,
   val type: KClass<*>,
-  private val initializeMutableState: @Composable () -> MutableState<T>
+  private val initializeMutableState: @Composable () -> MutableState<T>,
 ) {
   private var _state: MutableState<T>? = null
   val state: MutableState<T>
@@ -20,4 +20,3 @@ class StoryParameter<T>(
       return state
     }
 }
-

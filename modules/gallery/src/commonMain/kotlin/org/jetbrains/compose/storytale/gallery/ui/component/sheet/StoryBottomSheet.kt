@@ -101,7 +101,7 @@ fun StoryBottomSheet(
       properties = properties,
       content = {
         Column(Modifier.padding(contentPadding)) { content() }
-      }
+      },
     )
   }
 }
@@ -121,11 +121,11 @@ private fun StoryBottomSheetDragHandle(
         color = color,
         topLeft = Offset(x, y),
         size = Size(barWidthPx, barHeightPx),
-        cornerRadius = CornerRadius(barHeightPx / 2)
+        cornerRadius = CornerRadius(barHeightPx / 2),
       )
     }
     .fillMaxWidth()
-    .height(height)
+    .height(height),
 )
 
 private val height: Dp = 24.dp

@@ -1,3 +1,5 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
+
 plugins {
   // this is necessary to avoid the plugins to be loaded multiple times
   // in each subproject's classloader
@@ -6,6 +8,7 @@ plugins {
   alias(libs.plugins.jetbrainsCompose) apply false
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.compose.compiler) apply false
+  alias(libs.plugins.spotless) apply false
 }
 
 subprojects {
@@ -24,6 +27,24 @@ subprojects {
           }
         }
       }
+    }
+  }
+  plugins.apply(rootProject.libs.plugins.spotless.get().pluginId)
+  extensions.configure<SpotlessExtension> {
+    kotlin {
+      target("src/**/*.kt")
+      targetExclude("src/test/resources/**")
+      ktlint(libs.ktlint.get().version)
+        .editorConfigOverride(
+          mapOf(
+            "ktlint_compose_modifier-missing-check" to "disabled",
+            "ktlint_compose_compositionlocal-allowlist" to "disabled",
+          ),
+        )
+        .customRuleSets(listOf(libs.composeRules.get().toString()))
+    }
+    kotlinGradle {
+      ktlint(libs.ktlint.get().version)
     }
   }
 }

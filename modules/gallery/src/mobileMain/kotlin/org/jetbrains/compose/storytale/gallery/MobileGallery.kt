@@ -36,10 +36,10 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 fun MobileGallery(
   story: Story?,
   modifier: Modifier = Modifier,
-  back: () -> Unit
+  back: () -> Unit,
 ) = Box(
   modifier = modifier.fillMaxSize()
-    .background(Color.White)
+    .background(Color.White),
 ) {
   val sheetState = rememberStoryBottomSheetState(skipPartiallyExpanded = true)
   Column {
@@ -49,7 +49,7 @@ fun MobileGallery(
           painter = painterResource(Res.drawable.arrow_back),
           contentDescription = "back",
           modifier = Modifier.size(20.dp),
-          tint = currentColorScheme.primaryText
+          tint = currentColorScheme.primaryText,
         )
       }
       Gap(width = 14.dp)
@@ -60,24 +60,24 @@ fun MobileGallery(
         fontWeight = FontWeight.Bold,
         modifier = Modifier.weight(1f),
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
       )
       IconButton(
         onClick = sheetState::show,
-        modifier = Modifier.padding(start = 6.dp)
+        modifier = Modifier.padding(start = 6.dp),
       ) {
         Icon(
           painter = painterResource(Res.drawable.wrench),
           contentDescription = null,
           modifier = Modifier.size(24.dp),
-          tint = currentColorScheme.primaryText
+          tint = currentColorScheme.primaryText,
         )
       }
     }
     HorizontalDivider(thickness = 0.5.dp, color = currentColorScheme.divider)
     Box(
       modifier = Modifier.weight(1f).fillMaxWidth(),
-      contentAlignment = Alignment.Center
+      contentAlignment = Alignment.Center,
     ) {
       with(story!!) {
         CompositionLocalProvider(LocalTextStyle provides TextStyle.Default) {

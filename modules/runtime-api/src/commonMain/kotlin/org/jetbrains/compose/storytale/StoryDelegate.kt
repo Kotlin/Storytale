@@ -8,13 +8,13 @@ val storiesStorage = mutableListOf<Story>()
 inline fun story(
   code: String = "",
   group: String = "",
-  crossinline content: @Composable Story.() -> Unit
+  crossinline content: @Composable Story.() -> Unit,
 ) = StoryDelegate({ content() }, group, code)
 
 class StoryDelegate(
   private val content: @Composable Story.() -> Unit,
   private val group: String = "",
-  private val code: String = ""
+  private val code: String = "",
 ) {
   private lateinit var instance: Story
 
@@ -27,4 +27,3 @@ class StoryDelegate(
     return this
   }
 }
-

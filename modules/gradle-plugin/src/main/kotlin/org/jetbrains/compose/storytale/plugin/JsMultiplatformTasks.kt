@@ -1,4 +1,5 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package org.jetbrains.compose.storytale.plugin
 
 import org.gradle.api.Project
@@ -8,12 +9,12 @@ import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.web.tasks.UnpackSkikoWasmRuntimeTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 
 fun Project.processJsCompilation(extension: StorytaleExtension, target: KotlinJsIrTarget) {
   project.logger.info("Configuring storytale for Kotlin/JS")
@@ -26,7 +27,7 @@ fun Project.processJsCompilation(extension: StorytaleExtension, target: KotlinJs
 
 fun Project.createWasmAndJsStorytaleCompilation(
   extension: StorytaleExtension,
-  target: KotlinJsIrTarget
+  target: KotlinJsIrTarget,
 ): KotlinJsIrCompilation {
   val mainCompilation = target.compilations.named(KotlinCompilation.MAIN_COMPILATION_NAME).get()
   val storytaleBuildDir = extension.getBuildDirectory(target)

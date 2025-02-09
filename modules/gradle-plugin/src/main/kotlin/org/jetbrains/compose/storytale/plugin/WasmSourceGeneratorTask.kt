@@ -3,13 +3,13 @@ package org.jetbrains.compose.storytale.plugin
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
+import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.incremental.createDirectory
-import java.io.File
 
 @CacheableTask
 open class WasmSourceGeneratorTask : DefaultTask() {
@@ -33,7 +33,7 @@ open class WasmSourceGeneratorTask : DefaultTask() {
 
   private fun generateSources() {
     val optInExperimentalComposeUi = AnnotationSpec.builder(ClassName("kotlin", "OptIn")).addMember(
-      "androidx.compose.ui.ExperimentalComposeUiApi::class"
+      "androidx.compose.ui.ExperimentalComposeUiApi::class",
     ).build()
 
     val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
@@ -48,7 +48,8 @@ open class WasmSourceGeneratorTask : DefaultTask() {
                 |ComposeViewport(document.body!!) {
                 |    Gallery()    
                 |}
-                |""".trimMargin()
+                |
+          """.trimMargin(),
         )
       }
 
@@ -79,7 +80,7 @@ open class WasmSourceGeneratorTask : DefaultTask() {
             |  <body style="height: 100vh; width: 100vw;">
             |  </body>
             |</html>   
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

@@ -53,7 +53,7 @@ buildTimeConfig {
     destination.set(project.layout.buildDirectory.get().asFile)
 
     configProperties {
-      val PROJECT_VERSION: String by string(version as String)
+      val projectVersion: String by string(version as String)
     }
   }
 }

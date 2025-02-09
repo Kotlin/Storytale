@@ -12,8 +12,7 @@ class StoryParameterDelegate<T>(
   private val defaultValue: T,
 ) {
   @Composable
-  operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-    story.nameToParameterMapping.getValue(property.name).state.value as T
+  operator fun getValue(thisRef: Any?, property: KProperty<*>): T = story.nameToParameterMapping.getValue(property.name).state.value as T
 
   @Composable
   operator fun provideDelegate(thisRef: Any?, property: KProperty<*>) = also {

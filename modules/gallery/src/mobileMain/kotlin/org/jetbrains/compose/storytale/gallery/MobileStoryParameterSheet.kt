@@ -57,13 +57,14 @@ import org.jetbrains.compose.storytale.gallery.ui.component.sheet.StoryBottomShe
 
 private enum class StoryPage {
   Properties,
-  SourceCode
+  SourceCode,
 }
 
 @Composable
 fun MobileStoryParameterSheet(
   sheetState: StoryBottomSheetState,
-  story: Story
+  story: Story,
+  modifier: Modifier = Modifier,
 ) {
   val pagerState = rememberPagerState { 2 }
   val scope = rememberCoroutineScope()
@@ -71,12 +72,12 @@ fun MobileStoryParameterSheet(
     sheetState = sheetState,
     onDismissRequest = sheetState::hide,
     containerColor = Color.White,
-    modifier = Modifier.statusBarsPadding().padding(top = 24.dp),
-    contentWindowInsets = { WindowInsets.displayCutout }
+    modifier = modifier.statusBarsPadding().padding(top = 24.dp),
+    contentWindowInsets = { WindowInsets.displayCutout },
   ) {
     CenterRow(
       modifier = Modifier.padding(horizontal = 20.dp),
-      horizontalArrangement = Arrangement.spacedBy(12.dp)
+      horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
       StoryPage.entries.forEachIndexed { index, storyPage ->
         val isSelected = index == pagerState.currentPage
@@ -84,12 +85,12 @@ fun MobileStoryParameterSheet(
           true -> TextStyle(
             color = Color(0xFF0021CE),
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
           )
           false -> TextStyle(
             color = Color(0xFFAAAAAA),
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
           )
         }
         Text(
@@ -99,20 +100,20 @@ fun MobileStoryParameterSheet(
             scope.launch {
               pagerState.animateScrollToPage(index)
             }
-          }
+          },
         )
       }
     }
     Gap(24.dp)
     HorizontalPager(
       state = pagerState,
-      modifier = Modifier.fillMaxSize()
+      modifier = Modifier.fillMaxSize(),
     ) {
       when (it) {
         0 -> StoryParameter(
           activeStory = story,
           showStoryName = false,
-          contentPadding = PaddingValues(horizontal = 20.dp)
+          contentPadding = PaddingValues(horizontal = 20.dp),
         )
         1 -> MobileCodeBlock(
           code = story.code,
@@ -125,17 +126,18 @@ fun MobileStoryParameterSheet(
 @Composable
 private fun MobileCodeBlock(
   code: String,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) = Box(modifier = modifier) {
   val clipboard = LocalClipboardManager.current
   val scope = rememberCoroutineScope()
   var copied by remember { mutableStateOf(false) }
   CodeBlock(
     code = code,
-    modifier = Modifier.fillMaxSize()
+    modifier = Modifier.fillMaxSize(),
   )
   Box(
-    modifier = Modifier.align(Alignment.BottomEnd)
+    modifier = Modifier
+      .align(Alignment.BottomEnd)
       .padding(end = 24.dp)
       .navigationBarsPadding()
       .clip(RoundedCornerShape(10.dp))
@@ -147,7 +149,7 @@ private fun MobileCodeBlock(
           copied = false
         }
         clipboard.setText(AnnotatedString(code))
-      }
+      },
   ) {
     AnimatedContent(
       targetState = copied,
@@ -155,9 +157,9 @@ private fun MobileCodeBlock(
         ContentTransform(
           targetContentEnter = fadeIn() + slideIntoContainer(Up),
           initialContentExit = fadeOut() + slideOutOfContainer(Down),
-          sizeTransform = SizeTransform()
+          sizeTransform = SizeTransform(),
         )
-      }
+      },
     ) {
       when (it) {
         true -> CenterRow(modifier = Modifier.padding(8.dp)) {
@@ -165,20 +167,20 @@ private fun MobileCodeBlock(
             painter = painterResource(Res.drawable.check),
             contentDescription = "Copy code",
             tint = Color.White,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp),
           )
           Gap(6.dp)
           Text(
             text = "Copied to clipboard!",
             fontWeight = FontWeight.SemiBold,
-            color = Color.White
+            color = Color.White,
           )
         }
         false -> Icon(
           painter = painterResource(Res.drawable.copy),
           contentDescription = "Copy code",
           tint = Color.White,
-          modifier = Modifier.padding(8.dp)
+          modifier = Modifier.padding(8.dp),
         )
       }
     }

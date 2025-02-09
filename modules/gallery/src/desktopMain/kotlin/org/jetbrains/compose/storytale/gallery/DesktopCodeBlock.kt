@@ -58,7 +58,7 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 fun DesktopCodeBlock(
   code: String,
   storyName: String,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) = Column(modifier) {
   val clipboard = LocalClipboardManager.current
   var showCodeHighlightTheme by remember { mutableStateOf(false) }
@@ -74,7 +74,7 @@ fun DesktopCodeBlock(
         painter = painterResource(Res.drawable.story_widget_icon),
         contentDescription = null,
         modifier = Modifier.size(18.dp),
-        tint = currentColorScheme.primaryText
+        tint = currentColorScheme.primaryText,
       )
       Gap(4.dp)
       Text(
@@ -82,7 +82,7 @@ fun DesktopCodeBlock(
         color = currentColorScheme.primaryText,
         modifier = Modifier.weight(1f),
         fontWeight = FontWeight.SemiBold,
-        fontSize = 15.sp
+        fontSize = 15.sp,
       )
     }
     CenterRow(
@@ -93,13 +93,13 @@ fun DesktopCodeBlock(
           onClick = {
             showCodeHighlightTheme = true
           },
-          modifier = Modifier.onSizeChanged { iconOffset = IntOffset(it.width, it.height) }
+          modifier = Modifier.onSizeChanged { iconOffset = IntOffset(it.width, it.height) },
         ) {
           Icon(
             painter = painterResource(Res.drawable.palette),
             contentDescription = "code highlight theme",
             tint = currentColorScheme.primaryText,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
           )
         }
         CodeHighlightThemePanel(
@@ -107,20 +107,20 @@ fun DesktopCodeBlock(
           currentTheme = codeHighlightTheme,
           initialOffset = IntOffset(-iconOffset.x * 2, 0),
           onDismissRequest = { showCodeHighlightTheme = false },
-          onChangeTheme = { codeHighlightTheme = it }
+          onChangeTheme = { codeHighlightTheme = it },
         )
       }
       IconButton(
         onClick = {
           Event.CopyCode.send()
           clipboard.setText(AnnotatedString(code))
-        }
+        },
       ) {
         Icon(
           painter = painterResource(Res.drawable.copy),
           contentDescription = "Copy code",
           tint = currentColorScheme.primaryText,
-          modifier = Modifier.size(24.dp)
+          modifier = Modifier.size(24.dp),
         )
       }
     }
@@ -129,7 +129,7 @@ fun DesktopCodeBlock(
   CodeBlock(
     code = code,
     theme = codeHighlightTheme,
-    modifier = Modifier.fillMaxSize()
+    modifier = Modifier.fillMaxSize(),
   )
 }
 
@@ -143,32 +143,36 @@ private fun CodeHighlightThemePanel(
 ) = AnimatedVisibility(
   visible = visible,
   enter = EnterTransition.None,
-  exit = ExitTransition.None
+  exit = ExitTransition.None,
 ) {
   Popup(
     onDismissRequest = onDismissRequest,
-    offset = initialOffset
+    offset = initialOffset,
   ) {
     Column(
-      modifier = Modifier.animateEnterExit(
-        enter = EnterTransition.None,
-        exit = fadeOut(tween(350))
-      ).background(Color.White, RoundedCornerShape(12.dp))
+      modifier = Modifier
+        .animateEnterExit(
+          enter = EnterTransition.None,
+          exit = fadeOut(tween(350)),
+        )
+        .background(Color.White, RoundedCornerShape(12.dp))
         .border(0.7.dp, Color.Gray, RoundedCornerShape(12.dp))
         .clip(RoundedCornerShape(12.dp))
-        .width(IntrinsicSize.Min)
+        .width(IntrinsicSize.Min),
     ) {
       SyntaxThemes.getNames().forEach {
         CenterRow(
-          modifier = Modifier.fillMaxWidth().clickable {
-            onChangeTheme(SyntaxThemes.light[it.toLowerCase(Locale.current)]!!)
-          }
-            .padding(8.dp)
+          modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+              onChangeTheme(SyntaxThemes.light[it.toLowerCase(Locale.current)]!!)
+            }
+            .padding(8.dp),
         ) {
           Text(
             text = it,
             fontWeight = FontWeight.Medium,
-            color = currentColorScheme.primaryText
+            color = currentColorScheme.primaryText,
           )
           if (currentTheme.key.replaceFirstChar { c -> c.uppercase() } == it) {
             Gap(6.dp)
@@ -176,7 +180,7 @@ private fun CodeHighlightThemePanel(
               painter = painterResource(Res.drawable.check),
               contentDescription = null,
               tint = Color(0xFF5FAD65),
-              modifier = Modifier.size(16.dp)
+              modifier = Modifier.size(16.dp),
             )
           }
         }

@@ -19,15 +19,16 @@ import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 fun StorySearchBar(
   text: String,
   onValueChange: (String) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
   BasicTextField(
     value = text,
     onValueChange = onValueChange,
     maxLines = 1,
-    modifier = modifier.clip(RoundedCornerShape(12.dp))
+    modifier = modifier
+      .clip(RoundedCornerShape(12.dp))
       .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
-      .background(Color.White)
+      .background(Color.White),
   ) {
     CenterRow(Modifier.padding(12.dp)) {
       Box {
@@ -35,7 +36,7 @@ fun StorySearchBar(
           Text(
             text = "Search Stories...",
             color = Color(0xFF6A7177),
-            fontSize = 14.sp
+            fontSize = 14.sp,
           )
         }
         it()

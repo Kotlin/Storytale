@@ -1,12 +1,12 @@
 package org.jetbrains.compose.storytale.plugin
 
 import com.squareup.kotlinpoet.FileSpec
+import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 @CacheableTask
 open class JvmSourceGeneratorTask : DefaultTask() {
@@ -37,7 +37,8 @@ open class JvmSourceGeneratorTask : DefaultTask() {
       addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
       function("MainViewController") {
-        addStatement("""
+        addStatement(
+          """
           |application {
           |   Window(
           |      onCloseRequest = ::exitApplication,
@@ -46,7 +47,8 @@ open class JvmSourceGeneratorTask : DefaultTask() {
           |   ) {
           |      Gallery()
           |   }
-          |}""".trimMargin()
+          |}
+          """.trimMargin(),
         )
       }
 
