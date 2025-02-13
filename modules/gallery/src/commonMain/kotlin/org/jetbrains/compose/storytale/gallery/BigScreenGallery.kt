@@ -1,6 +1,5 @@
-package org.jetbrains.compose.storytale.gallery.platform
+package org.jetbrains.compose.storytale.gallery
 
-import org.jetbrains.compose.storytale.gallery.DesktopCodeBlock
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
 import androidx.compose.animation.core.animateDpAsState
@@ -47,7 +46,7 @@ import org.jetbrains.compose.storytale.gallery.ui.component.rememberStoryToastSt
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
-actual fun StoryGallery(
+fun BigScreenGallery(
   stories: List<Story>,
   modifier: Modifier
 ) = HorizontalSplitPane(

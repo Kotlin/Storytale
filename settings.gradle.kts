@@ -33,4 +33,5 @@ dependencyResolutionManagement {
 include(":modules:gallery")
 include(":modules:gradle-plugin")
 include(":modules:compiler-plugin")
+include(":modules:dokka-plugin")
 include(":modules:runtime-api")

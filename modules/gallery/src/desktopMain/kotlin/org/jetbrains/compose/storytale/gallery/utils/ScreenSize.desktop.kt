@@ -13,6 +13,6 @@ actual object ScreenSize {
 
   actual val height: Dp
     @Composable get() = with(currentDensity) {
-      LocalWindowInfo.current.containerSize.width.toDp()
+      LocalWindowInfo.current.containerSize.height.toDp()
     }
 }
