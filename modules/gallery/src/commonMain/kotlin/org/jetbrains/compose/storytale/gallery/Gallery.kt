@@ -7,7 +7,7 @@ import org.jetbrains.compose.storytale.storiesStorage
 
 @Composable
 fun Gallery() {
-  StoryGalleryTheme {
-    StoryGallery(storiesStorage)
-  }
+    StoryGalleryTheme {
+        StoryGallery(storiesStorage)
+    }
 }

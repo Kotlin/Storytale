@@ -13,67 +13,67 @@ import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
 open class AndroidSourceGeneratorTask : DefaultTask() {
-  @Input
-  lateinit var title: String
+    @Input
+    lateinit var title: String
 
-  @Input
-  lateinit var appPackageName: String
+    @Input
+    lateinit var appPackageName: String
 
-  @OutputDirectory
-  lateinit var outputResourcesDir: File
+    @OutputDirectory
+    lateinit var outputResourcesDir: File
 
-  @OutputDirectory
-  lateinit var outputSourcesDir: File
+    @OutputDirectory
+    lateinit var outputSourcesDir: File
 
-  @TaskAction
-  fun generate() {
-    cleanup(outputSourcesDir)
-    cleanup(outputResourcesDir)
+    @TaskAction
+    fun generate() {
+        cleanup(outputSourcesDir)
+        cleanup(outputResourcesDir)
 
-    generateSources()
-    generateAndroidManifest()
-  }
-
-  private fun generateSources() {
-    FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController").apply {
-      addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
-
-      function("MainViewController") {
-        addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
-        addStatement("Gallery()")
-      }
+        generateSources()
+        generateAndroidManifest()
     }
-      .build()
-      .writeTo(outputSourcesDir)
 
-    FileSpec.builder(appPackageName, "StorytaleAppActivity").apply {
-      addImport("androidx.activity", "enableEdgeToEdge")
-      addImport("androidx.activity.compose", "setContent")
-      addImport(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController")
+    private fun generateSources() {
+        FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController").apply {
+            addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
-      klass("StorytaleAppActivity") {
-        superclass(ClassName("androidx.activity", "ComponentActivity"))
-        function("onCreate") {
-          addModifiers(KModifier.OVERRIDE)
-          addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
-          addStatement(
-            """
+            function("MainViewController") {
+                addAnnotation(ClassName("androidx.compose.runtime", "Composable"))
+                addStatement("Gallery()")
+            }
+        }
+            .build()
+            .writeTo(outputSourcesDir)
+
+        FileSpec.builder(appPackageName, "StorytaleAppActivity").apply {
+            addImport("androidx.activity", "enableEdgeToEdge")
+            addImport("androidx.activity.compose", "setContent")
+            addImport(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController")
+
+            klass("StorytaleAppActivity") {
+                superclass(ClassName("androidx.activity", "ComponentActivity"))
+                function("onCreate") {
+                    addModifiers(KModifier.OVERRIDE)
+                    addParameter("savedInstanceState", ClassName("android.os", "Bundle").copy(nullable = true))
+                    addStatement(
+                        """
               | super.onCreate(savedInstanceState)
               | setContent { MainViewController() }
-            """.trimMargin(),
-          )
+                        """.trimMargin(),
+                    )
+                }
+            }
         }
-      }
+            .build()
+            .writeTo(outputSourcesDir)
     }
-      .build()
-      .writeTo(outputSourcesDir)
-  }
 
-  private fun generateAndroidManifest() {
-    val androidManifestFile = File(outputResourcesDir, "AndroidManifest.xml")
-    Files.createDirectories(androidManifestFile.parentFile.toPath())
-    androidManifestFile.writeText(
-      """
+    private fun generateAndroidManifest() {
+        val androidManifestFile = File(outputResourcesDir, "AndroidManifest.xml")
+        Files.createDirectories(androidManifestFile.parentFile.toPath())
+        androidManifestFile.writeText(
+            """
         <?xml version="1.0" encoding="utf-8"?>
         <manifest
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -97,7 +97,7 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
             </application>
 
         </manifest>
-      """.trimIndent(),
-    )
-  }
+            """.trimIndent(),
+        )
+    }
 }

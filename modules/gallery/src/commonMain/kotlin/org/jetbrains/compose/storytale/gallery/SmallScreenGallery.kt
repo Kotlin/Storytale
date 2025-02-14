@@ -19,39 +19,39 @@ private const val DEFAULT_SLIDE_ANIMATION_TWEEN = 350
 
 @Composable
 fun SmallScreenGallery(
-  stories: List<Story>,
-  navController: NavHostController,
-  modifier: Modifier = Modifier,
+    stories: List<Story>,
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
 ) {
-  NavHost(
-    navController = navController,
-    startDestination = Route.MobileHome,
-    modifier = modifier,
-    enterTransition = { slideIntoContainer(Start, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
-    exitTransition = { slideOutOfContainer(End, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
-  ) {
-    composable<Route.MobileHome>(
-      enterTransition = { slideIntoContainer(End, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
-      exitTransition = { slideOutOfContainer(Start, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
+    NavHost(
+        navController = navController,
+        startDestination = Route.MobileHome,
+        modifier = modifier,
+        enterTransition = { slideIntoContainer(Start, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
+        exitTransition = { slideOutOfContainer(End, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
     ) {
-      StoryNavigationBar(
-        stories = stories,
-        onSelectStory = { storyId ->
-          navController.navigate(Route.MobileGallery(storyId))
-        },
-        activeStoryId = -1,
-      )
+        composable<Route.MobileHome>(
+            enterTransition = { slideIntoContainer(End, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
+            exitTransition = { slideOutOfContainer(Start, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
+        ) {
+            StoryNavigationBar(
+                stories = stories,
+                onSelectStory = { storyId ->
+                    navController.navigate(Route.MobileGallery(storyId))
+                },
+                activeStoryId = -1,
+            )
+        }
+        composable<Route.MobileGallery> { backStackEntry ->
+            val storyId = backStackEntry.toRoute<Route.MobileGallery>().storyId
+            Column {
+                MobileGallery(
+                    story = stories.find { it.id == storyId },
+                    back = dropUnlessResumed {
+                        navController.popBackStack()
+                    },
+                )
+            }
+        }
     }
-    composable<Route.MobileGallery> { backStackEntry ->
-      val storyId = backStackEntry.toRoute<Route.MobileGallery>().storyId
-      Column {
-        MobileGallery(
-          story = stories.find { it.id == storyId },
-          back = dropUnlessResumed {
-            navController.popBackStack()
-          },
-        )
-      }
-    }
-  }
 }

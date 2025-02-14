@@ -20,37 +20,37 @@ import org.jetbrains.compose.storytale.gallery.ui.component.NumberChip
 
 @Composable
 fun StorySearchList(
-  result: List<Story>,
-  activeStoryIndex: Int,
-  onSelectStory: (index: Int) -> Unit,
-  modifier: Modifier = Modifier,
+    result: List<Story>,
+    activeStoryIndex: Int,
+    onSelectStory: (index: Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) = LazyColumn(
-  modifier = modifier,
-  contentPadding = PaddingValues(bottom = 20.dp),
+    modifier = modifier,
+    contentPadding = PaddingValues(bottom = 20.dp),
 ) {
-  item {
-    CenterRow(Modifier.padding(horizontal = 20.dp)) {
-      Text(
-        text = "Search Results",
-        fontWeight = FontWeight.SemiBold,
-        color = Color.Black,
-        fontSize = 20.sp,
-        modifier = Modifier.weight(1f),
-      )
-      NumberChip(result.size)
+    item {
+        CenterRow(Modifier.padding(horizontal = 20.dp)) {
+            Text(
+                text = "Search Results",
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black,
+                fontSize = 20.sp,
+                modifier = Modifier.weight(1f),
+            )
+            NumberChip(result.size)
+        }
+        Gap(14.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            result.forEach { item ->
+                StoryListItem(
+                    story = item,
+                    selected = item.id == activeStoryIndex,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                    onClick = { onSelectStory(item.id) },
+                )
+            }
+        }
     }
-    Gap(14.dp)
-    Column(
-      verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-      result.forEach { item ->
-        StoryListItem(
-          story = item,
-          selected = item.id == activeStoryIndex,
-          modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-          onClick = { onSelectStory(item.id) },
-        )
-      }
-    }
-  }
 }

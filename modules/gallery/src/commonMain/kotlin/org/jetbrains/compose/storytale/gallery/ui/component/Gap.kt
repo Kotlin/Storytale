@@ -63,11 +63,11 @@ fun Gap(size: Dp, modifier: Modifier = Modifier) = Spacer(modifier = modifier.si
  */
 @Composable
 fun Gap(
-  modifier: Modifier = Modifier,
-  width: Dp = Dp.Unspecified,
-  height: Dp = Dp.Unspecified,
+    modifier: Modifier = Modifier,
+    width: Dp = Dp.Unspecified,
+    height: Dp = Dp.Unspecified,
 ) = Spacer(
-  modifier = modifier
-    .run { if (width.isSpecified) width(width) else this }
-    .run { if (height.isSpecified) height(height) else this },
+    modifier = modifier
+        .run { if (width.isSpecified) width(width) else this }
+        .run { if (height.isSpecified) height(height) else this },
 )

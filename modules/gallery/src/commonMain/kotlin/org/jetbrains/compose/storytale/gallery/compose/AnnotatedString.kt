@@ -5,5 +5,5 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
 
 fun Builder.text(text: String, style: SpanStyle = SpanStyle()) = withStyle(style = style) {
-  append(text)
+    append(text)
 }

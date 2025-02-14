@@ -11,41 +11,41 @@ import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
 open class NativeSourceGeneratorTask : DefaultTask() {
-  @Input
-  lateinit var title: String
+    @Input
+    lateinit var title: String
 
-  @OutputDirectory
-  lateinit var outputResourcesDir: File
+    @OutputDirectory
+    lateinit var outputResourcesDir: File
 
-  @OutputDirectory
-  lateinit var outputSourcesDir: File
+    @OutputDirectory
+    lateinit var outputSourcesDir: File
 
-  @TaskAction
-  fun generate() {
-    cleanup(outputSourcesDir)
-    cleanup(outputResourcesDir)
+    @TaskAction
+    fun generate() {
+        cleanup(outputSourcesDir)
+        cleanup(outputResourcesDir)
 
-    generateSources()
-  }
+        generateSources()
+    }
 
-  private fun generateSources() {
-    val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
-      addImport("androidx.compose.ui.window", "ComposeUIViewController")
-      addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
+    private fun generateSources() {
+        val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
+            addImport("androidx.compose.ui.window", "ComposeUIViewController")
+            addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
-      val uIViewControllerType = ClassName("platform.UIKit", "UIViewController")
-      function("MainViewController") {
-        returns(uIViewControllerType)
-        addStatement(
-          """
+            val uIViewControllerType = ClassName("platform.UIKit", "UIViewController")
+            function("MainViewController") {
+                returns(uIViewControllerType)
+                addStatement(
+                    """
                 |return ComposeUIViewController {
                 |  Gallery()
                 |}
-          """.trimMargin(),
-        )
-      }
-    }.build()
+                    """.trimMargin(),
+                )
+            }
+        }.build()
 
-    file.writeTo(outputSourcesDir)
-  }
+        file.writeTo(outputSourcesDir)
+    }
 }

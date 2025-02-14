@@ -56,133 +56,133 @@ import org.jetbrains.compose.storytale.gallery.ui.component.sheet.StoryBottomShe
 import org.jetbrains.compose.storytale.gallery.ui.component.sheet.StoryBottomSheetState
 
 private enum class StoryPage {
-  Properties,
-  SourceCode,
+    Properties,
+    SourceCode,
 }
 
 @Composable
 fun MobileStoryParameterSheet(
-  sheetState: StoryBottomSheetState,
-  story: Story,
-  modifier: Modifier = Modifier,
+    sheetState: StoryBottomSheetState,
+    story: Story,
+    modifier: Modifier = Modifier,
 ) {
-  val pagerState = rememberPagerState { 2 }
-  val scope = rememberCoroutineScope()
-  StoryBottomSheet(
-    sheetState = sheetState,
-    onDismissRequest = sheetState::hide,
-    containerColor = Color.White,
-    modifier = modifier.statusBarsPadding().padding(top = 24.dp),
-    contentWindowInsets = { WindowInsets.displayCutout },
-  ) {
-    CenterRow(
-      modifier = Modifier.padding(horizontal = 20.dp),
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
+    val pagerState = rememberPagerState { 2 }
+    val scope = rememberCoroutineScope()
+    StoryBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = sheetState::hide,
+        containerColor = Color.White,
+        modifier = modifier.statusBarsPadding().padding(top = 24.dp),
+        contentWindowInsets = { WindowInsets.displayCutout },
     ) {
-      StoryPage.entries.forEachIndexed { index, storyPage ->
-        val isSelected = index == pagerState.currentPage
-        val style = when (isSelected) {
-          true -> TextStyle(
-            color = Color(0xFF0021CE),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-          )
-          false -> TextStyle(
-            color = Color(0xFFAAAAAA),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-          )
-        }
-        Text(
-          text = storyPage.name,
-          style = style,
-          modifier = Modifier.clickableWithoutRipple {
-            scope.launch {
-              pagerState.animateScrollToPage(index)
+        CenterRow(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            StoryPage.entries.forEachIndexed { index, storyPage ->
+                val isSelected = index == pagerState.currentPage
+                val style = when (isSelected) {
+                    true -> TextStyle(
+                        color = Color(0xFF0021CE),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    false -> TextStyle(
+                        color = Color(0xFFAAAAAA),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+                Text(
+                    text = storyPage.name,
+                    style = style,
+                    modifier = Modifier.clickableWithoutRipple {
+                        scope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                )
             }
-          },
-        )
-      }
+        }
+        Gap(24.dp)
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            when (it) {
+                0 -> StoryParameter(
+                    activeStory = story,
+                    showStoryName = false,
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                )
+                1 -> MobileCodeBlock(
+                    code = story.code,
+                )
+            }
+        }
     }
-    Gap(24.dp)
-    HorizontalPager(
-      state = pagerState,
-      modifier = Modifier.fillMaxSize(),
-    ) {
-      when (it) {
-        0 -> StoryParameter(
-          activeStory = story,
-          showStoryName = false,
-          contentPadding = PaddingValues(horizontal = 20.dp),
-        )
-        1 -> MobileCodeBlock(
-          code = story.code,
-        )
-      }
-    }
-  }
 }
 
 @Composable
 private fun MobileCodeBlock(
-  code: String,
-  modifier: Modifier = Modifier,
+    code: String,
+    modifier: Modifier = Modifier,
 ) = Box(modifier = modifier) {
-  val clipboard = LocalClipboardManager.current
-  val scope = rememberCoroutineScope()
-  var copied by remember { mutableStateOf(false) }
-  CodeBlock(
-    code = code,
-    modifier = Modifier.fillMaxSize(),
-  )
-  Box(
-    modifier = Modifier
-      .align(Alignment.BottomEnd)
-      .padding(end = 24.dp)
-      .navigationBarsPadding()
-      .clip(RoundedCornerShape(10.dp))
-      .background(Color(0xFF5448D9))
-      .clickable {
-        scope.launch {
-          copied = true
-          delay(1000)
-          copied = false
-        }
-        clipboard.setText(AnnotatedString(code))
-      },
-  ) {
-    AnimatedContent(
-      targetState = copied,
-      transitionSpec = {
-        ContentTransform(
-          targetContentEnter = fadeIn() + slideIntoContainer(Up),
-          initialContentExit = fadeOut() + slideOutOfContainer(Down),
-          sizeTransform = SizeTransform(),
-        )
-      },
+    val clipboard = LocalClipboardManager.current
+    val scope = rememberCoroutineScope()
+    var copied by remember { mutableStateOf(false) }
+    CodeBlock(
+        code = code,
+        modifier = Modifier.fillMaxSize(),
+    )
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(end = 24.dp)
+            .navigationBarsPadding()
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFF5448D9))
+            .clickable {
+                scope.launch {
+                    copied = true
+                    delay(1000)
+                    copied = false
+                }
+                clipboard.setText(AnnotatedString(code))
+            },
     ) {
-      when (it) {
-        true -> CenterRow(modifier = Modifier.padding(8.dp)) {
-          Icon(
-            painter = painterResource(Res.drawable.check),
-            contentDescription = "Copy code",
-            tint = Color.White,
-            modifier = Modifier.size(20.dp),
-          )
-          Gap(6.dp)
-          Text(
-            text = "Copied to clipboard!",
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White,
-          )
+        AnimatedContent(
+            targetState = copied,
+            transitionSpec = {
+                ContentTransform(
+                    targetContentEnter = fadeIn() + slideIntoContainer(Up),
+                    initialContentExit = fadeOut() + slideOutOfContainer(Down),
+                    sizeTransform = SizeTransform(),
+                )
+            },
+        ) {
+            when (it) {
+                true -> CenterRow(modifier = Modifier.padding(8.dp)) {
+                    Icon(
+                        painter = painterResource(Res.drawable.check),
+                        contentDescription = "Copy code",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Gap(6.dp)
+                    Text(
+                        text = "Copied to clipboard!",
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White,
+                    )
+                }
+                false -> Icon(
+                    painter = painterResource(Res.drawable.copy),
+                    contentDescription = "Copy code",
+                    tint = Color.White,
+                    modifier = Modifier.padding(8.dp),
+                )
+            }
         }
-        false -> Icon(
-          painter = painterResource(Res.drawable.copy),
-          contentDescription = "Copy code",
-          tint = Color.White,
-          modifier = Modifier.padding(8.dp),
-        )
-      }
     }
-  }
 }

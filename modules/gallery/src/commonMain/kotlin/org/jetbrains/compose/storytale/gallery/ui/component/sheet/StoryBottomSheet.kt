@@ -70,62 +70,62 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun StoryBottomSheet(
-  onDismissRequest: () -> Unit,
-  modifier: Modifier = Modifier,
-  sheetState: StoryBottomSheetState = rememberStoryBottomSheetState(),
-  contentPadding: PaddingValues = PaddingValues(0.dp),
-  sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
-  shape: Shape = BottomSheetDefaults.ExpandedShape,
-  containerColor: Color = BottomSheetDefaults.ContainerColor,
-  contentColor: Color = contentColorFor(containerColor),
-  tonalElevation: Dp = 0.dp,
-  scrimColor: Color = BottomSheetDefaults.ScrimColor,
-  dragHandle: @Composable (() -> Unit)? = { StoryBottomSheetDragHandle() },
-  contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
-  properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
-  content: @Composable ColumnScope.() -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    sheetState: StoryBottomSheetState = rememberStoryBottomSheetState(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
+    shape: Shape = BottomSheetDefaults.ExpandedShape,
+    containerColor: Color = BottomSheetDefaults.ContainerColor,
+    contentColor: Color = contentColorFor(containerColor),
+    tonalElevation: Dp = 0.dp,
+    scrimColor: Color = BottomSheetDefaults.ScrimColor,
+    dragHandle: @Composable (() -> Unit)? = { StoryBottomSheetDragHandle() },
+    contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
+    properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-  if (sheetState.visible) {
-    ModalBottomSheet(
-      onDismissRequest = onDismissRequest,
-      modifier = modifier,
-      sheetState = sheetState.sheetState,
-      sheetMaxWidth = sheetMaxWidth,
-      shape = shape,
-      containerColor = containerColor,
-      contentColor = contentColor,
-      tonalElevation = tonalElevation,
-      scrimColor = scrimColor,
-      dragHandle = dragHandle,
-      contentWindowInsets = contentWindowInsets,
-      properties = properties,
-      content = {
-        Column(Modifier.padding(contentPadding)) { content() }
-      },
-    )
-  }
+    if (sheetState.visible) {
+        ModalBottomSheet(
+            onDismissRequest = onDismissRequest,
+            modifier = modifier,
+            sheetState = sheetState.sheetState,
+            sheetMaxWidth = sheetMaxWidth,
+            shape = shape,
+            containerColor = containerColor,
+            contentColor = contentColor,
+            tonalElevation = tonalElevation,
+            scrimColor = scrimColor,
+            dragHandle = dragHandle,
+            contentWindowInsets = contentWindowInsets,
+            properties = properties,
+            content = {
+                Column(Modifier.padding(contentPadding)) { content() }
+            },
+        )
+    }
 }
 
 @Composable
 private fun StoryBottomSheetDragHandle(
-  modifier: Modifier = Modifier,
-  color: Color = Color(0xFFD2D7E6),
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFFD2D7E6),
 ) = Spacer(
-  modifier = modifier
-    .drawBehind {
-      val barWidthPx = barWidth.toPx()
-      val barHeightPx = barHeight.toPx()
-      val x = size.width / 2 - barWidthPx / 2
-      val y = size.height / 2 - barHeightPx / 2
-      drawRoundRect(
-        color = color,
-        topLeft = Offset(x, y),
-        size = Size(barWidthPx, barHeightPx),
-        cornerRadius = CornerRadius(barHeightPx / 2),
-      )
-    }
-    .fillMaxWidth()
-    .height(height),
+    modifier = modifier
+        .drawBehind {
+            val barWidthPx = barWidth.toPx()
+            val barHeightPx = barHeight.toPx()
+            val x = size.width / 2 - barWidthPx / 2
+            val y = size.height / 2 - barHeightPx / 2
+            drawRoundRect(
+                color = color,
+                topLeft = Offset(x, y),
+                size = Size(barWidthPx, barHeightPx),
+                cornerRadius = CornerRadius(barHeightPx / 2),
+            )
+        }
+        .fillMaxWidth()
+        .height(height),
 )
 
 private val height: Dp = 24.dp

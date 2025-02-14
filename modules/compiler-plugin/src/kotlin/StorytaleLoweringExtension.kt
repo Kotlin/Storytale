@@ -42,135 +42,135 @@ import org.jetbrains.kotlin.text
 private val storytaleFqn = FqName("org.jetbrains.compose.storytale")
 
 private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLoweringPass {
-  val transformer = ReplaceStoryCallWithItsSuccessorWithCodeParameter(context)
-  override fun lower(irBody: IrBody, container: IrDeclaration) {
-    container.transform(transformer, null)
-  }
-
-  class ReplaceStoryCallWithItsSuccessorWithCodeParameter(private val context: IrPluginContext) : IrElementTransformerVoidWithContext() {
-    private val storyFunction = CallableId(storytaleFqn, Name.identifier("story"))
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override fun visitCall(expression: IrCall): IrExpression {
-      val owner = expression.symbol.owner
-      if (!owner.isTopLevel || owner.callableId != storyFunction) return super.visitCall(expression)
-
-      val callee = expression.getValueArgument(2)
-      val storyDescriber = when (callee) {
-        is IrFunctionExpression -> callee.function
-        else -> error("Unexpected callee: $callee")
-      }
-
-      val sourceCode = storyDescriber.getFileSourceCode() ?: return super.visitCall(expression)
-      val storyCodeSnippet = sourceCode.substring(storyDescriber.startOffset + 1, storyDescriber.endOffset - 1).trimIndent()
-
-      val storyTitle = storyDescriber.file.name.substringAfterLast("/").substringBeforeLast(".story.kt")
-
-      expression.putValueArgument(0, storyCodeSnippet.toIrConst(context.irBuiltIns.stringType))
-      expression.putValueArgument(1, storyTitle.toIrConst(context.irBuiltIns.stringType))
-      expression.putValueArgument(2, callee)
-
-      return super.visitCall(expression)
+    val transformer = ReplaceStoryCallWithItsSuccessorWithCodeParameter(context)
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        container.transform(transformer, null)
     }
 
-    private fun IrDeclaration.getFileSourceCode(): CharSequence? {
-      return (file.metadata as FirMetadataSource).fir.source.text
+    class ReplaceStoryCallWithItsSuccessorWithCodeParameter(private val context: IrPluginContext) : IrElementTransformerVoidWithContext() {
+        private val storyFunction = CallableId(storytaleFqn, Name.identifier("story"))
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        override fun visitCall(expression: IrCall): IrExpression {
+            val owner = expression.symbol.owner
+            if (!owner.isTopLevel || owner.callableId != storyFunction) return super.visitCall(expression)
+
+            val callee = expression.getValueArgument(2)
+            val storyDescriber = when (callee) {
+                is IrFunctionExpression -> callee.function
+                else -> error("Unexpected callee: $callee")
+            }
+
+            val sourceCode = storyDescriber.getFileSourceCode() ?: return super.visitCall(expression)
+            val storyCodeSnippet = sourceCode.substring(storyDescriber.startOffset + 1, storyDescriber.endOffset - 1).trimIndent()
+
+            val storyTitle = storyDescriber.file.name.substringAfterLast("/").substringBeforeLast(".story.kt")
+
+            expression.putValueArgument(0, storyCodeSnippet.toIrConst(context.irBuiltIns.stringType))
+            expression.putValueArgument(1, storyTitle.toIrConst(context.irBuiltIns.stringType))
+            expression.putValueArgument(2, callee)
+
+            return super.visitCall(expression)
+        }
+
+        private fun IrDeclaration.getFileSourceCode(): CharSequence? {
+            return (file.metadata as FirMetadataSource).fir.source.text
+        }
     }
-  }
 }
 
 private class MentionAllStoriesGettersInsideMainFunctionLowering(
-  private val context: IrPluginContext,
+    private val context: IrPluginContext,
 ) : DeclarationTransformer {
-  private val allFirstStoriesGetter = mutableListOf<IrStatement>()
-  private val alreadyMentionedFiles = mutableSetOf<IrFile>()
+    private val allFirstStoriesGetter = mutableListOf<IrStatement>()
+    private val alreadyMentionedFiles = mutableSetOf<IrFile>()
 
-  private val storyFactoryId = ClassId(storytaleFqn, Name.identifier("StoryDelegate"))
+    private val storyFactoryId = ClassId(storytaleFqn, Name.identifier("StoryDelegate"))
 
-  private val kotlinNativeFqn = FqName("kotlin.native")
-  private val hideFromObjcId = ClassId(kotlinNativeFqn, Name.identifier("HiddenFromObjC"))
+    private val kotlinNativeFqn = FqName("kotlin.native")
+    private val hideFromObjcId = ClassId(kotlinNativeFqn, Name.identifier("HiddenFromObjC"))
 
-  private val anyType = context.irBuiltIns.anyType
-  private val unitType = context.irBuiltIns.unitType
-  private val storyFactory = context.referenceClass(storyFactoryId)
-  private val hiddenFromObjCAnnotation = context.referenceConstructors(hideFromObjcId).single()
+    private val anyType = context.irBuiltIns.anyType
+    private val unitType = context.irBuiltIns.unitType
+    private val storyFactory = context.referenceClass(storyFactoryId)
+    private val hiddenFromObjCAnnotation = context.referenceConstructors(hideFromObjcId).single()
 
-  override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-    val factoryType = storyFactory?.defaultType ?: return null
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        val factoryType = storyFactory?.defaultType ?: return null
 
-    if (declaration is IrProperty && declaration.isStory(factoryType)) {
-      declaration.addHiddenFromObjCAnnotation()
-      declaration.mentionGetterInsideMainFunction()
+        if (declaration is IrProperty && declaration.isStory(factoryType)) {
+            declaration.addHiddenFromObjCAnnotation()
+            declaration.mentionGetterInsideMainFunction()
+        }
+
+        if (declaration is IrSimpleFunction && declaration.isGeneratedMainViewController()) {
+            declaration.addAllMentionedGettersIntoBody()
+        }
+
+        return null
     }
 
-    if (declaration is IrSimpleFunction && declaration.isGeneratedMainViewController()) {
-      declaration.addAllMentionedGettersIntoBody()
+    private fun IrProperty.mentionGetterInsideMainFunction() {
+        if (parent in alreadyMentionedFiles) return
+
+        val getter = getter!!
+
+        alreadyMentionedFiles.add(parent as IrFile)
+        allFirstStoriesGetter.add(
+            IrCallImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                getter.returnType,
+                getter.symbol,
+                0,
+            ),
+        )
     }
 
-    return null
-  }
+    private fun IrSimpleFunction.addAllMentionedGettersIntoBody() {
+        (body as? IrBlockBody)?.statements?.add(
+            0,
+            IrObservableBlockImpl(unitType, allFirstStoriesGetter),
+        )
+    }
 
-  private fun IrProperty.mentionGetterInsideMainFunction() {
-    if (parent in alreadyMentionedFiles) return
+    private fun IrProperty.isStory(factoryType: IrType) = isTopLevel &&
+        isDelegated &&
+        backingField?.let {
+            it.origin == IrDeclarationOrigin.PROPERTY_DELEGATE && it.type == factoryType
+        } ?: false
 
-    val getter = getter!!
+    private fun IrSimpleFunction.isGeneratedMainViewController() = isTopLevel &&
+        visibility.isPublicAPI &&
+        kotlinFqName.asString() == "org.jetbrains.compose.storytale.generated.MainViewController"
 
-    alreadyMentionedFiles.add(parent as IrFile)
-    allFirstStoriesGetter.add(
-      IrCallImpl(
-        UNDEFINED_OFFSET,
-        UNDEFINED_OFFSET,
-        getter.returnType,
-        getter.symbol,
-        0,
-      ),
-    )
-  }
+    private fun IrDeclaration.addHiddenFromObjCAnnotation() {
+        val annotation = IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            anyType,
+            hiddenFromObjCAnnotation,
+            0,
+            0,
+        )
+        context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(this, annotation)
+    }
 
-  private fun IrSimpleFunction.addAllMentionedGettersIntoBody() {
-    (body as? IrBlockBody)?.statements?.add(
-      0,
-      IrObservableBlockImpl(unitType, allFirstStoriesGetter),
-    )
-  }
-
-  private fun IrProperty.isStory(factoryType: IrType) = isTopLevel &&
-    isDelegated &&
-    backingField?.let {
-      it.origin == IrDeclarationOrigin.PROPERTY_DELEGATE && it.type == factoryType
-    } ?: false
-
-  private fun IrSimpleFunction.isGeneratedMainViewController() = isTopLevel &&
-    visibility.isPublicAPI &&
-    kotlinFqName.asString() == "org.jetbrains.compose.storytale.generated.MainViewController"
-
-  private fun IrDeclaration.addHiddenFromObjCAnnotation() {
-    val annotation = IrConstructorCallImpl(
-      UNDEFINED_OFFSET,
-      UNDEFINED_OFFSET,
-      anyType,
-      hiddenFromObjCAnnotation,
-      0,
-      0,
-    )
-    context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(this, annotation)
-  }
-
-  private class IrObservableBlockImpl(
-    override var type: IrType,
-    override val statements: MutableList<IrStatement>,
-  ) : IrBlock() {
-    override val startOffset = UNDEFINED_OFFSET
-    override val endOffset = UNDEFINED_OFFSET
-    override var origin: IrStatementOrigin? = null
-    override var attributeOwnerId: IrAttributeContainer = this
-    override var originalBeforeInline: IrAttributeContainer? = null
-  }
+    private class IrObservableBlockImpl(
+        override var type: IrType,
+        override val statements: MutableList<IrStatement>,
+    ) : IrBlock() {
+        override val startOffset = UNDEFINED_OFFSET
+        override val endOffset = UNDEFINED_OFFSET
+        override var origin: IrStatementOrigin? = null
+        override var attributeOwnerId: IrAttributeContainer = this
+        override var originalBeforeInline: IrAttributeContainer? = null
+    }
 }
 
 class StorytaleLoweringExtension : IrGenerationExtension {
-  override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-    MentionAllStoriesGettersInsideMainFunctionLowering(pluginContext).lower(moduleFragment)
-    AddCodeSnippetToStoriesLowering(pluginContext).lower(moduleFragment)
-  }
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+        MentionAllStoriesGettersInsideMainFunctionLowering(pluginContext).lower(moduleFragment)
+        AddCodeSnippetToStoriesLowering(pluginContext).lower(moduleFragment)
+    }
 }

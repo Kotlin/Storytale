@@ -14,17 +14,17 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ParameterLabel(
-  name: String,
-  modifier: Modifier = Modifier,
+    name: String,
+    modifier: Modifier = Modifier,
 ) = Box(
-  modifier = modifier
-    .clip(RoundedCornerShape(5.dp))
-    .background(Color(0xFFF1F5F9)),
+    modifier = modifier
+        .clip(RoundedCornerShape(5.dp))
+        .background(Color(0xFFF1F5F9)),
 ) {
-  Text(
-    text = name,
-    color = Color(0xFF64748B),
-    fontSize = 12.sp,
-    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-  )
+    Text(
+        text = name,
+        color = Color(0xFF64748B),
+        fontSize = 12.sp,
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+    )
 }

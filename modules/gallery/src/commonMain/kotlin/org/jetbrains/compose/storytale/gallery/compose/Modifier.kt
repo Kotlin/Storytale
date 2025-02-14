@@ -7,16 +7,16 @@ import androidx.compose.ui.Modifier
 
 @Stable
 fun Modifier.clickableWithoutRipple(
-  enabled: Boolean = true,
-  onClick: () -> Unit,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
 ) = clickable(
-  onClick = onClick,
-  indication = null,
-  interactionSource = MutableInteractionSource(),
-  enabled = enabled,
+    onClick = onClick,
+    indication = null,
+    interactionSource = MutableInteractionSource(),
+    enabled = enabled,
 )
 
 inline fun Modifier.thenIf(
-  condition: Boolean,
-  modifier: Modifier.() -> Modifier,
+    condition: Boolean,
+    modifier: Modifier.() -> Modifier,
 ): Modifier = if (condition) modifier() else this

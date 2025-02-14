@@ -31,68 +31,68 @@ import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 
 @Composable
 fun StoryNavigationBar(
-  activeStoryId: Int,
-  stories: List<Story>,
-  onSelectStory: (Int) -> Unit,
-  modifier: Modifier = Modifier,
+    activeStoryId: Int,
+    stories: List<Story>,
+    onSelectStory: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) = Column(
-  modifier = Modifier
-    .fillMaxHeight()
-    .background(Color.White)
-    .then(modifier),
+    modifier = Modifier
+        .fillMaxHeight()
+        .background(Color.White)
+        .then(modifier),
 ) {
-  var searchQuery by remember { mutableStateOf("") }
-  Column(
-    modifier = Modifier.padding(20.dp),
-  ) {
-    CenterRow {
-      Image(
-        painter = painterResource(Res.drawable.compose_multiplatform),
-        contentDescription = null,
-        modifier = Modifier.size(36.dp),
-      )
-      Gap(14.dp)
-      Text(
-        text = "Storytale",
-        fontWeight = FontWeight.Medium,
-        color = Color(0xFF1E1E1E),
-        fontSize = 24.sp,
-      )
-    }
-    if (stories.isNotEmpty()) {
-      Gap(18.dp)
-      StorySearchBar(
-        text = searchQuery,
-        onValueChange = { searchQuery = it },
-        modifier = Modifier.fillMaxWidth(),
-      )
-    }
-  }
-  AnimatedContent(
-    targetState = searchQuery.isEmpty(),
-    transitionSpec = {
-      ContentTransform(
-        targetContentEnter = fadeIn(),
-        initialContentExit = fadeOut(),
-        sizeTransform = null,
-      )
-    },
-    modifier = Modifier.fillMaxHeight(),
-  ) {
-    when (it) {
-      true -> {
-        when (stories.isEmpty()) {
-          true -> StoryEmptyStatus()
-          false -> StoryList(activeStoryId, stories, onSelectStory)
+    var searchQuery by remember { mutableStateOf("") }
+    Column(
+        modifier = Modifier.padding(20.dp),
+    ) {
+        CenterRow {
+            Image(
+                painter = painterResource(Res.drawable.compose_multiplatform),
+                contentDescription = null,
+                modifier = Modifier.size(36.dp),
+            )
+            Gap(14.dp)
+            Text(
+                text = "Storytale",
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF1E1E1E),
+                fontSize = 24.sp,
+            )
         }
-      }
-      else -> StorySearchList(
-        result = stories.filter { story ->
-          story.name.contains(searchQuery, ignoreCase = true)
-        },
-        activeStoryIndex = activeStoryId,
-        onSelectStory = onSelectStory,
-      )
+        if (stories.isNotEmpty()) {
+            Gap(18.dp)
+            StorySearchBar(
+                text = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
-  }
+    AnimatedContent(
+        targetState = searchQuery.isEmpty(),
+        transitionSpec = {
+            ContentTransform(
+                targetContentEnter = fadeIn(),
+                initialContentExit = fadeOut(),
+                sizeTransform = null,
+            )
+        },
+        modifier = Modifier.fillMaxHeight(),
+    ) {
+        when (it) {
+            true -> {
+                when (stories.isEmpty()) {
+                    true -> StoryEmptyStatus()
+                    false -> StoryList(activeStoryId, stories, onSelectStory)
+                }
+            }
+            else -> StorySearchList(
+                result = stories.filter { story ->
+                    story.name.contains(searchQuery, ignoreCase = true)
+                },
+                activeStoryIndex = activeStoryId,
+                onSelectStory = onSelectStory,
+            )
+        }
+    }
 }

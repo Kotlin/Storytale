@@ -38,80 +38,80 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
 fun StoryParameter(
-  activeStory: Story,
-  modifier: Modifier = Modifier,
-  contentPadding: PaddingValues = PaddingValues(0.dp),
-  showStoryName: Boolean = true,
+    activeStory: Story,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    showStoryName: Boolean = true,
 ) = Box(modifier = modifier.fillMaxHeight()) {
-  Column(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(
-        top = contentPadding.calculateTopPadding(),
-      ),
-  ) {
-    if (showStoryName) {
-      CenterRow(Modifier.padding(horizontal = 20.dp)) {
-        Icon(
-          painter = painterResource(Res.drawable.story_widget_icon),
-          contentDescription = null,
-          modifier = Modifier.size(24.dp),
-          tint = currentColorScheme.primaryText,
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = contentPadding.calculateTopPadding(),
+            ),
+    ) {
+        if (showStoryName) {
+            CenterRow(Modifier.padding(horizontal = 20.dp)) {
+                Icon(
+                    painter = painterResource(Res.drawable.story_widget_icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = currentColorScheme.primaryText,
+                )
+                Gap(11.dp)
+                Text(
+                    text = activeStory.name,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            HorizontalDivider(
+                modifier = Modifier.padding(top = 24.dp),
+                thickness = 0.5.dp,
+                color = Color.Black.copy(alpha = 0.4f),
+            )
+        }
+        StoryParameterContent(
+            parameters = activeStory.parameters,
+            modifier = Modifier.thenIf(activeStory.parameters.isNotEmpty()) {
+                verticalScroll(rememberScrollState())
+                padding(
+                    start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                    end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
+                    top = if (showStoryName) 24.dp else 0.dp,
+                    bottom = contentPadding.calculateBottomPadding(),
+                )
+            },
         )
-        Gap(11.dp)
-        Text(
-          text = activeStory.name,
-          fontSize = 20.sp,
-          fontWeight = FontWeight.SemiBold,
-        )
-      }
-      HorizontalDivider(
-        modifier = Modifier.padding(top = 24.dp),
-        thickness = 0.5.dp,
-        color = Color.Black.copy(alpha = 0.4f),
-      )
     }
-    StoryParameterContent(
-      parameters = activeStory.parameters,
-      modifier = Modifier.thenIf(activeStory.parameters.isNotEmpty()) {
-        verticalScroll(rememberScrollState())
-        padding(
-          start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-          end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
-          top = if (showStoryName) 24.dp else 0.dp,
-          bottom = contentPadding.calculateBottomPadding(),
-        )
-      },
-    )
-  }
 }
 
 @Composable
 private fun StoryParameterContent(
-  parameters: List<StoryParameter<*>>,
-  modifier: Modifier = Modifier,
+    parameters: List<StoryParameter<*>>,
+    modifier: Modifier = Modifier,
 ) = when (parameters.isEmpty()) {
-  true -> Box(
-    modifier = modifier.fillMaxSize(),
-    contentAlignment = Alignment.Center,
-  ) {
-    CenterRow(
-      modifier = Modifier.fillMaxSize(),
-      horizontalArrangement = Arrangement.Center,
+    true -> Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
-      Image(
-        painter = painterResource(Res.drawable.info),
-        contentDescription = null,
-        modifier = Modifier.size(24.dp),
-      )
-      Gap(8.dp)
-      Text(
-        text = "No configurable parameters",
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Medium,
-        color = Color(0xFFA1A1A1),
-      )
+        CenterRow(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                painter = painterResource(Res.drawable.info),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+            )
+            Gap(8.dp)
+            Text(
+                text = "No configurable parameters",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFFA1A1A1),
+            )
+        }
     }
-  }
-  false -> StoryParametersList(parameters, modifier)
+    false -> StoryParametersList(parameters, modifier)
 }

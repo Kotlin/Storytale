@@ -17,19 +17,19 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
 fun NumberChip(
-  number: Int,
-  modifier: Modifier = Modifier,
-  shape: Shape = RoundedCornerShape(6.dp),
+    number: Int,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(6.dp),
 ) = Box(
-  modifier = modifier
-    .clip(shape)
-    .background(currentColorScheme.primaryText, shape),
+    modifier = modifier
+        .clip(shape)
+        .background(currentColorScheme.primaryText, shape),
 ) {
-  Text(
-    text = number.toString(),
-    fontWeight = FontWeight.Bold,
-    fontSize = 13.sp,
-    modifier = Modifier.padding(horizontal = 5.5.dp, vertical = 2.dp),
-    color = Color.White,
-  )
+    Text(
+        text = number.toString(),
+        fontWeight = FontWeight.Bold,
+        fontSize = 13.sp,
+        modifier = Modifier.padding(horizontal = 5.5.dp, vertical = 2.dp),
+        color = Color.White,
+    )
 }

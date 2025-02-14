@@ -15,18 +15,18 @@ expect suspend fun bindNavigation(navController: NavHostController)
 
 @Composable
 fun StoryGallery(
-  stories: List<Story>,
-  modifier: Modifier = Modifier,
+    stories: List<Story>,
+    modifier: Modifier = Modifier,
 ) {
-  val navController = rememberNavController()
+    val navController = rememberNavController()
 
-  LaunchedEffect(Unit) {
-    bindNavigation(navController)
-  }
+    LaunchedEffect(Unit) {
+        bindNavigation(navController)
+    }
 
-  if (ScreenSize.isMobile) {
-    SmallScreenGallery(stories, navController, modifier)
-  } else {
-    BigScreenGallery(stories, modifier)
-  }
+    if (ScreenSize.isMobile) {
+        SmallScreenGallery(stories, navController, modifier)
+    } else {
+        BigScreenGallery(stories, modifier)
+    }
 }

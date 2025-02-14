@@ -13,22 +13,22 @@ import org.jetbrains.compose.storytale.gallery.compose.noCompositionLocalProvide
 val LocalTypography = staticCompositionLocalOf<Typography> { noCompositionLocalProvided() }
 
 val currentTypography: Typography
-  @Composable
-  @ReadOnlyComposable
-  get() = LocalTypography.current
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalTypography.current
 
 @Stable
 class Typography(
-  colorScheme: ColorScheme,
+    colorScheme: ColorScheme,
 ) {
-  val parameterText = TextStyle(
-    fontSize = 17.sp,
-    fontWeight = FontWeight.Medium,
-    color = Color.Black.copy(.9f),
-  )
-  val parameterDescription = TextStyle(
-    fontSize = 11.sp,
-    fontWeight = FontWeight.Normal,
-    color = colorScheme.description,
-  )
+    val parameterText = TextStyle(
+        fontSize = 17.sp,
+        fontWeight = FontWeight.Medium,
+        color = Color.Black.copy(.9f),
+    )
+    val parameterDescription = TextStyle(
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Normal,
+        color = colorScheme.description,
+    )
 }

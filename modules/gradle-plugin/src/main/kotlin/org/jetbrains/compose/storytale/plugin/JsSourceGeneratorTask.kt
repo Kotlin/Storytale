@@ -14,64 +14,64 @@ import org.jetbrains.kotlin.incremental.createDirectory
 @CacheableTask
 open class JsSourceGeneratorTask : DefaultTask() {
 
-  @Input
-  lateinit var title: String
+    @Input
+    lateinit var title: String
 
-  @OutputDirectory
-  lateinit var outputResourcesDir: File
+    @OutputDirectory
+    lateinit var outputResourcesDir: File
 
-  @OutputDirectory
-  lateinit var outputSourcesDir: File
+    @OutputDirectory
+    lateinit var outputSourcesDir: File
 
-  @TaskAction
-  fun generate() {
-    cleanup(outputSourcesDir)
-    cleanup(outputResourcesDir)
+    @TaskAction
+    fun generate() {
+        cleanup(outputSourcesDir)
+        cleanup(outputResourcesDir)
 
-    generateSources()
-    generateResources()
-  }
+        generateSources()
+        generateResources()
+    }
 
-  private fun generateSources() {
-    val optInExperimentalComposeUi = AnnotationSpec.builder(ClassName("kotlin", "OptIn")).addMember(
-      "androidx.compose.ui.ExperimentalComposeUiApi::class",
-    ).build()
+    private fun generateSources() {
+        val optInExperimentalComposeUi = AnnotationSpec.builder(ClassName("kotlin", "OptIn")).addMember(
+            "androidx.compose.ui.ExperimentalComposeUiApi::class",
+        ).build()
 
-    val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
-      addImport("androidx.compose.ui.window", "ComposeViewport")
-      addImport("kotlinx.browser", "document")
-      addImport("org.jetbrains.skiko.wasm", "onWasmReady")
-      addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
+        val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
+            addImport("androidx.compose.ui.window", "ComposeViewport")
+            addImport("kotlinx.browser", "document")
+            addImport("org.jetbrains.skiko.wasm", "onWasmReady")
+            addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
 
-      function("MainViewController") {
-        addAnnotation(optInExperimentalComposeUi)
-        addStatement(
-          """
+            function("MainViewController") {
+                addAnnotation(optInExperimentalComposeUi)
+                addStatement(
+                    """
           |onWasmReady {
           |   ComposeViewport(document.body!!) {
           |      Gallery()    
           |   }
           |}
-          """.trimMargin(),
-        )
-      }
+                    """.trimMargin(),
+                )
+            }
 
-      function("main") {
-        addStatement("MainViewController()")
-      }
-    }.build()
+            function("main") {
+                addStatement("MainViewController()")
+            }
+        }.build()
 
-    file.writeTo(outputSourcesDir)
-  }
-
-  private fun generateResources() {
-    if (!outputResourcesDir.exists()) {
-      outputResourcesDir.createDirectory()
+        file.writeTo(outputSourcesDir)
     }
 
-    val index = File(outputResourcesDir, "index.html")
-    index.writeText(
-      """
+    private fun generateResources() {
+        if (!outputResourcesDir.exists()) {
+            outputResourcesDir.createDirectory()
+        }
+
+        val index = File(outputResourcesDir, "index.html")
+        index.writeText(
+            """
       |<!DOCTYPE html>
       |<html lang="en">
       |  <head>
@@ -84,11 +84,11 @@ open class JsSourceGeneratorTask : DefaultTask() {
       |  </body>
       |</html>   
       | 
-      """.trimMargin(),
-    )
-  }
+            """.trimMargin(),
+        )
+    }
 
-  companion object {
-    internal const val SCRIPT_FILE_NAME = "composeApp.js"
-  }
+    companion object {
+        internal const val SCRIPT_FILE_NAME = "composeApp.js"
+    }
 }

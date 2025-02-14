@@ -14,22 +14,22 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun IconButton(
-  onClick: () -> Unit,
-  modifier: Modifier = Modifier,
-  interactiveSize: Dp = 24.dp,
-  interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-  indication: Indication? = ripple(
-    bounded = false,
-    radius = interactiveSize / 1.4f,
-    color = Color.Unspecified,
-  ),
-  enabled: Boolean = true,
-  content: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    interactiveSize: Dp = 24.dp,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    indication: Indication? = ripple(
+        bounded = false,
+        radius = interactiveSize / 1.4f,
+        color = Color.Unspecified,
+    ),
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
 ) = Box(
-  modifier = modifier.clickable(
-    enabled = enabled,
-    onClick = onClick,
-    indication = indication,
-    interactionSource = interactionSource,
-  ),
+    modifier = modifier.clickable(
+        enabled = enabled,
+        onClick = onClick,
+        indication = indication,
+        interactionSource = interactionSource,
+    ),
 ) { content() }
