@@ -36,21 +36,21 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Stable
 class StoryToastState {
-  private var previous: String = ""
+    private var previous: String = ""
 
-  var toastMessage by mutableStateOf("")
-  var toastDuration by mutableLongStateOf(2500)
+    var toastMessage by mutableStateOf("")
+    var toastDuration by mutableLongStateOf(2500)
 
-  val isSwitching = previous.isNotEmpty() && previous != toastMessage && toastMessage.isNotEmpty()
+    val isSwitching = previous.isNotEmpty() && previous != toastMessage && toastMessage.isNotEmpty()
 
-  fun show(message: String) {
-    previous = toastMessage
-    toastMessage = message
-  }
+    fun show(message: String) {
+        previous = toastMessage
+        toastMessage = message
+    }
 
-  fun dismiss() {
-    toastMessage = ""
-  }
+    fun dismiss() {
+        toastMessage = ""
+    }
 }
 
 @Composable
@@ -58,50 +58,50 @@ fun rememberStoryToastState(): StoryToastState = remember { StoryToastState() }
 
 @Composable
 fun StoryToast(
-  toastState: StoryToastState,
-  modifier: Modifier = Modifier,
+    toastState: StoryToastState,
+    modifier: Modifier = Modifier,
 ) {
-  val isSwitching = toastState.isSwitching
-  AnimatedContent(
-    targetState = toastState.toastMessage,
-    label = "toast",
-    transitionSpec = {
-      ContentTransform(
-        targetContentEnter = slideInVertically { it } + fadeIn(tween(if (isSwitching) 300 else 400)),
-        initialContentExit = slideOutVertically(tween(260), targetOffsetY = { it }) + fadeOut(),
-        sizeTransform = null
-      )
-    },
-    modifier = modifier.padding(horizontal = 70.dp)
-  ) { message ->
-    if (message.isNotEmpty()) {
-      Box(
-        modifier = Modifier
-          .clip(RoundedCornerShape(12.dp))
-          .background(currentColorScheme.primaryText),
-        contentAlignment = Alignment.Center
-      ) {
-        CenterRow(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-          Icon(
-            painter = painterResource(Res.drawable.story_widget_icon),
-            contentDescription = null,
-            modifier = Modifier.size(18.dp),
-            tint = Color.White
-          )
-          Gap(6.dp)
-          Text(
-            text = message,
-            fontSize = 16.sp,
-            color = Color.White
-          )
+    val isSwitching = toastState.isSwitching
+    AnimatedContent(
+        targetState = toastState.toastMessage,
+        label = "toast",
+        transitionSpec = {
+            ContentTransform(
+                targetContentEnter = slideInVertically { it } + fadeIn(tween(if (isSwitching) 300 else 400)),
+                initialContentExit = slideOutVertically(tween(260), targetOffsetY = { it }) + fadeOut(),
+                sizeTransform = null,
+            )
+        },
+        modifier = modifier.padding(horizontal = 70.dp),
+    ) { message ->
+        if (message.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(currentColorScheme.primaryText),
+                contentAlignment = Alignment.Center,
+            ) {
+                CenterRow(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+                    Icon(
+                        painter = painterResource(Res.drawable.story_widget_icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = Color.White,
+                    )
+                    Gap(6.dp)
+                    Text(
+                        text = message,
+                        fontSize = 16.sp,
+                        color = Color.White,
+                    )
+                }
+            }
         }
-      }
     }
-  }
-  LaunchedValueEffect(toastState.toastMessage) {
-    if (it.isNotEmpty()) {
-      delay(toastState.toastDuration)
-      toastState.dismiss()
+    LaunchedValueEffect(toastState.toastMessage) {
+        if (it.isNotEmpty()) {
+            delay(toastState.toastDuration)
+            toastState.dismiss()
+        }
     }
-  }
 }

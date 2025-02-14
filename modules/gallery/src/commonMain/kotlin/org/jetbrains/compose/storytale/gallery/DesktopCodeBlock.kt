@@ -56,131 +56,135 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
 fun DesktopCodeBlock(
-  code: String,
-  storyName: String,
-  modifier: Modifier = Modifier
+    code: String,
+    storyName: String,
+    modifier: Modifier = Modifier,
 ) = Column(modifier) {
-  val clipboard = LocalClipboardManager.current
-  var showCodeHighlightTheme by remember { mutableStateOf(false) }
-  var iconOffset by remember { mutableStateOf(IntOffset.Zero) }
+    val clipboard = LocalClipboardManager.current
+    var showCodeHighlightTheme by remember { mutableStateOf(false) }
+    var iconOffset by remember { mutableStateOf(IntOffset.Zero) }
 
-  var codeHighlightTheme by remember {
-    mutableStateOf(SyntaxThemes.pastel())
-  }
-
-  CenterRow(Modifier.padding(12.dp)) {
-    CenterRow(Modifier.weight(1f)) {
-      Icon(
-        painter = painterResource(Res.drawable.story_widget_icon),
-        contentDescription = null,
-        modifier = Modifier.size(18.dp),
-        tint = currentColorScheme.primaryText
-      )
-      Gap(4.dp)
-      Text(
-        text = storyName,
-        color = currentColorScheme.primaryText,
-        modifier = Modifier.weight(1f),
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 15.sp
-      )
+    var codeHighlightTheme by remember {
+        mutableStateOf(SyntaxThemes.pastel())
     }
-    CenterRow(
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-      Column {
-        IconButton(
-          onClick = {
-            showCodeHighlightTheme = true
-          },
-          modifier = Modifier.onSizeChanged { iconOffset = IntOffset(it.width, it.height) }
+
+    CenterRow(Modifier.padding(12.dp)) {
+        CenterRow(Modifier.weight(1f)) {
+            Icon(
+                painter = painterResource(Res.drawable.story_widget_icon),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = currentColorScheme.primaryText,
+            )
+            Gap(4.dp)
+            Text(
+                text = storyName,
+                color = currentColorScheme.primaryText,
+                modifier = Modifier.weight(1f),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+            )
+        }
+        CenterRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-          Icon(
-            painter = painterResource(Res.drawable.palette),
-            contentDescription = "code highlight theme",
-            tint = currentColorScheme.primaryText,
-            modifier = Modifier.size(24.dp)
-          )
+            Column {
+                IconButton(
+                    onClick = {
+                        showCodeHighlightTheme = true
+                    },
+                    modifier = Modifier.onSizeChanged { iconOffset = IntOffset(it.width, it.height) },
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.palette),
+                        contentDescription = "code highlight theme",
+                        tint = currentColorScheme.primaryText,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+                CodeHighlightThemePanel(
+                    visible = showCodeHighlightTheme,
+                    currentTheme = codeHighlightTheme,
+                    initialOffset = IntOffset(-iconOffset.x * 2, 0),
+                    onDismissRequest = { showCodeHighlightTheme = false },
+                    onChangeTheme = { codeHighlightTheme = it },
+                )
+            }
+            IconButton(
+                onClick = {
+                    Event.CopyCode.send()
+                    clipboard.setText(AnnotatedString(code))
+                },
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.copy),
+                    contentDescription = "Copy code",
+                    tint = currentColorScheme.primaryText,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
         }
-        CodeHighlightThemePanel(
-          visible = showCodeHighlightTheme,
-          currentTheme = codeHighlightTheme,
-          initialOffset = IntOffset(-iconOffset.x * 2, 0),
-          onDismissRequest = { showCodeHighlightTheme = false },
-          onChangeTheme = { codeHighlightTheme = it }
-        )
-      }
-      IconButton(
-        onClick = {
-          Event.CopyCode.send()
-          clipboard.setText(AnnotatedString(code))
-        }
-      ) {
-        Icon(
-          painter = painterResource(Res.drawable.copy),
-          contentDescription = "Copy code",
-          tint = currentColorScheme.primaryText,
-          modifier = Modifier.size(24.dp)
-        )
-      }
     }
-  }
-  HorizontalDivider(color = Color(0xFFE1E1E1), thickness = 0.67.dp)
-  CodeBlock(
-    code = code,
-    theme = codeHighlightTheme,
-    modifier = Modifier.fillMaxSize()
-  )
+    HorizontalDivider(color = Color(0xFFE1E1E1), thickness = 0.67.dp)
+    CodeBlock(
+        code = code,
+        theme = codeHighlightTheme,
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 
 @Composable
 private fun CodeHighlightThemePanel(
-  visible: Boolean,
-  currentTheme: SyntaxTheme,
-  initialOffset: IntOffset,
-  onChangeTheme: (SyntaxTheme) -> Unit,
-  onDismissRequest: () -> Unit,
+    visible: Boolean,
+    currentTheme: SyntaxTheme,
+    initialOffset: IntOffset,
+    onChangeTheme: (SyntaxTheme) -> Unit,
+    onDismissRequest: () -> Unit,
 ) = AnimatedVisibility(
-  visible = visible,
-  enter = EnterTransition.None,
-  exit = ExitTransition.None
+    visible = visible,
+    enter = EnterTransition.None,
+    exit = ExitTransition.None,
 ) {
-  Popup(
-    onDismissRequest = onDismissRequest,
-    offset = initialOffset
-  ) {
-    Column(
-      modifier = Modifier.animateEnterExit(
-        enter = EnterTransition.None,
-        exit = fadeOut(tween(350))
-      ).background(Color.White, RoundedCornerShape(12.dp))
-        .border(0.7.dp, Color.Gray, RoundedCornerShape(12.dp))
-        .clip(RoundedCornerShape(12.dp))
-        .width(IntrinsicSize.Min)
+    Popup(
+        onDismissRequest = onDismissRequest,
+        offset = initialOffset,
     ) {
-      SyntaxThemes.getNames().forEach {
-        CenterRow(
-          modifier = Modifier.fillMaxWidth().clickable {
-            onChangeTheme(SyntaxThemes.light[it.toLowerCase(Locale.current)]!!)
-          }
-            .padding(8.dp)
+        Column(
+            modifier = Modifier
+                .animateEnterExit(
+                    enter = EnterTransition.None,
+                    exit = fadeOut(tween(350)),
+                )
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .border(0.7.dp, Color.Gray, RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(12.dp))
+                .width(IntrinsicSize.Min),
         ) {
-          Text(
-            text = it,
-            fontWeight = FontWeight.Medium,
-            color = currentColorScheme.primaryText
-          )
-          if (currentTheme.key.replaceFirstChar { c -> c.uppercase() } == it) {
-            Gap(6.dp)
-            Icon(
-              painter = painterResource(Res.drawable.check),
-              contentDescription = null,
-              tint = Color(0xFF5FAD65),
-              modifier = Modifier.size(16.dp)
-            )
-          }
+            SyntaxThemes.getNames().forEach {
+                CenterRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onChangeTheme(SyntaxThemes.light[it.toLowerCase(Locale.current)]!!)
+                        }
+                        .padding(8.dp),
+                ) {
+                    Text(
+                        text = it,
+                        fontWeight = FontWeight.Medium,
+                        color = currentColorScheme.primaryText,
+                    )
+                    if (currentTheme.key.replaceFirstChar { c -> c.uppercase() } == it) {
+                        Gap(6.dp)
+                        Icon(
+                            painter = painterResource(Res.drawable.check),
+                            contentDescription = null,
+                            tint = Color(0xFF5FAD65),
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

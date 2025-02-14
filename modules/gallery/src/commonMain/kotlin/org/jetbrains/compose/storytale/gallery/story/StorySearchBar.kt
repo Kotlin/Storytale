@@ -17,29 +17,30 @@ import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 
 @Composable
 fun StorySearchBar(
-  text: String,
-  onValueChange: (String) -> Unit,
-  modifier: Modifier = Modifier
+    text: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  BasicTextField(
-    value = text,
-    onValueChange = onValueChange,
-    maxLines = 1,
-    modifier = modifier.clip(RoundedCornerShape(12.dp))
-      .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
-      .background(Color.White)
-  ) {
-    CenterRow(Modifier.padding(12.dp)) {
-      Box {
-        if (text.isEmpty()) {
-          Text(
-            text = "Search Stories...",
-            color = Color(0xFF6A7177),
-            fontSize = 14.sp
-          )
+    BasicTextField(
+        value = text,
+        onValueChange = onValueChange,
+        maxLines = 1,
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
+            .background(Color.White),
+    ) {
+        CenterRow(Modifier.padding(12.dp)) {
+            Box {
+                if (text.isEmpty()) {
+                    Text(
+                        text = "Search Stories...",
+                        color = Color(0xFF6A7177),
+                        fontSize = 14.sp,
+                    )
+                }
+                it()
+            }
         }
-        it()
-      }
     }
-  }
 }

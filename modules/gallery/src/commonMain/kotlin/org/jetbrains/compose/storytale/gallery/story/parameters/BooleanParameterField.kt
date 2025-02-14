@@ -14,35 +14,36 @@ import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.component.SwitchButton
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentTypography
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 fun BooleanParameterField(
-  parameterName: String,
-  state: MutableState<Boolean>,
-  description: String = "",
-  modifier: Modifier = Modifier,
+    parameterName: String,
+    state: MutableState<Boolean>,
+    modifier: Modifier = Modifier,
+    description: String = "",
 ) = Column(modifier = modifier) {
-  var checked by state
-  CenterRow {
-    CenterRow(Modifier.weight(1f)) {
-      Text(
-        text = parameterName,
-        style = currentTypography.parameterText,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-      )
-      Gap(6.dp)
-      ParameterLabel("Boolean")
+    var checked by state
+    CenterRow {
+        CenterRow(Modifier.weight(1f)) {
+            Text(
+                text = parameterName,
+                style = currentTypography.parameterText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Gap(6.dp)
+            ParameterLabel("Boolean")
+        }
+        SwitchButton(
+            checked = checked,
+            onValueChange = { checked = it },
+        )
     }
-    SwitchButton(
-      checked = checked,
-      onValueChange = { checked = it }
-    )
-  }
-  if (description.isNotEmpty()) {
-    Gap(12.dp)
-    Text(
-      text = description,
-      style = currentTypography.parameterDescription
-    )
-  }
+    if (description.isNotEmpty()) {
+        Gap(12.dp)
+        Text(
+            text = description,
+            style = currentTypography.parameterDescription,
+        )
+    }
 }

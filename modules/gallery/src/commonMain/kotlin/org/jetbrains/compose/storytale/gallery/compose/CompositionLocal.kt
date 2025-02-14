@@ -8,15 +8,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
 
 val currentDensity: Density
-  @Composable
-  @ReadOnlyComposable
-  get() = LocalDensity.current
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalDensity.current
 
 val currentTextStyle: TextStyle
-  @Composable
-  @ReadOnlyComposable
-  get() = LocalTextStyle.current
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalTextStyle.current
 
 inline fun <reified T> noCompositionLocalProvided(): T {
-  error("CompositionLocal ${T::class.simpleName} not present")
+    error("CompositionLocal ${T::class.simpleName} not present")
 }

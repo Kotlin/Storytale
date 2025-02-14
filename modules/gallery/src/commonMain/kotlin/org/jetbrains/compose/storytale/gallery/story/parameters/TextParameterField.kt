@@ -24,14 +24,15 @@ import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentTypography
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 fun <T> TextParameterField(
     parameterName: String,
     state: MutableState<T>,
     toTypeOrNull: String.() -> T?,
+    modifier: Modifier = Modifier,
     label: String = "",
     description: String = "",
-    modifier: Modifier = Modifier,
 ) = Column {
     var number by state
     CenterRow {
@@ -47,7 +48,8 @@ fun <T> TextParameterField(
         value = number.toString(),
         onValueChange = { newValue -> newValue.toTypeOrNull()?.also { number = it } },
         maxLines = 1,
-        modifier = modifier.clip(RoundedCornerShape(12.dp))
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
             .background(currentColorScheme.primaryText),
         textStyle = currentTextStyle.copy(
             fontSize = 14.sp,
