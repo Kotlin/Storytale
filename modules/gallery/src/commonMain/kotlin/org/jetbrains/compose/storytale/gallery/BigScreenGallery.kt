@@ -33,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.storytale.Story
-import org.jetbrains.compose.storytale.gallery.DesktopCodeBlock
 import org.jetbrains.compose.storytale.gallery.event.Event
 import org.jetbrains.compose.storytale.gallery.event.EventCenter
 import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
@@ -49,7 +48,7 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 @Composable
 fun BigScreenGallery(
   stories: List<Story>,
-  modifier: Modifier,
+  modifier: Modifier = Modifier,
 ) = HorizontalSplitPane(
   modifier = modifier,
   initialFirstPlaceableWith = 350.dp,

@@ -10,37 +10,36 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.navigation.Route
 import org.jetbrains.compose.storytale.gallery.story.StoryNavigationBar
 
-private const val defaultSlideAnimationTween = 350
+private const val DEFAULT_SLIDE_ANIMATION_TWEEN = 350
 
 @Composable
 fun SmallScreenGallery(
   stories: List<Story>,
-  modifier: Modifier,
-  navController: NavHostController
+  navController: NavHostController,
+  modifier: Modifier = Modifier,
 ) {
   NavHost(
     navController = navController,
     startDestination = Route.MobileHome,
     modifier = modifier,
-    enterTransition = { slideIntoContainer(Start, tween(defaultSlideAnimationTween)) },
-    exitTransition = { slideOutOfContainer(End, tween(defaultSlideAnimationTween)) }
+    enterTransition = { slideIntoContainer(Start, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
+    exitTransition = { slideOutOfContainer(End, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
   ) {
     composable<Route.MobileHome>(
-      enterTransition = { slideIntoContainer(End, tween(defaultSlideAnimationTween)) },
-      exitTransition = { slideOutOfContainer(Start, tween(defaultSlideAnimationTween)) }
+      enterTransition = { slideIntoContainer(End, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
+      exitTransition = { slideOutOfContainer(Start, tween(DEFAULT_SLIDE_ANIMATION_TWEEN)) },
     ) {
       StoryNavigationBar(
         stories = stories,
         onSelectStory = { storyId ->
           navController.navigate(Route.MobileGallery(storyId))
         },
-        activeStoryId = -1
+        activeStoryId = -1,
       )
     }
     composable<Route.MobileGallery> { backStackEntry ->
@@ -50,7 +49,7 @@ fun SmallScreenGallery(
           story = stories.find { it.id == storyId },
           back = dropUnlessResumed {
             navController.popBackStack()
-          }
+          },
         )
       }
     }

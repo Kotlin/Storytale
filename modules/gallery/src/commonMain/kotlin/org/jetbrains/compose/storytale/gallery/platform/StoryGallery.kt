@@ -16,7 +16,7 @@ expect suspend fun bindNavigation(navController: NavHostController)
 @Composable
 fun StoryGallery(
   stories: List<Story>,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
   val navController = rememberNavController()
 
@@ -24,9 +24,9 @@ fun StoryGallery(
     bindNavigation(navController)
   }
 
- if (ScreenSize.isMobile) {
-    SmallScreenGallery(stories, modifier, navController)
- } else {
+  if (ScreenSize.isMobile) {
+    SmallScreenGallery(stories, navController, modifier)
+  } else {
     BigScreenGallery(stories, modifier)
- }
+  }
 }
