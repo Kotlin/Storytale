@@ -27,52 +27,52 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 
 @Composable
 fun StoryListItem(
-  story: Story,
-  selected: Boolean,
-  modifier: Modifier = Modifier,
-  shape: Shape = RoundedCornerShape(12.dp),
-  onClick: () -> Unit,
+    story: Story,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(12.dp),
 ) {
-  val animatedBackgroundColor by animateColorAsState(
-    targetValue = when (selected) {
-      true -> currentColorScheme.primaryText
-      false -> Color.Transparent
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = when (selected) {
+            true -> currentColorScheme.primaryText
+            false -> Color.Transparent
+        },
+    )
+    val animatedIconColor by animateColorAsState(
+        targetValue = when (selected) {
+            true -> Color.White
+            else -> currentColorScheme.primaryText
+        },
+    )
+    val animatedTextColor by animateColorAsState(
+        targetValue = when (selected) {
+            true -> Color.White
+            else -> currentColorScheme.primaryText
+        },
+    )
+    Box(
+        modifier = modifier
+            .clip(shape)
+            .background(
+                color = animatedBackgroundColor,
+                shape = shape,
+            )
+            .clickable { onClick() },
+    ) {
+        CenterRow(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+            Icon(
+                painter = painterResource(Res.drawable.story_widget_icon),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = animatedIconColor,
+            )
+            Gap(11.dp)
+            Text(
+                text = story.name,
+                color = animatedTextColor,
+                fontSize = 15.sp,
+            )
+        }
     }
-  )
-  val animatedIconColor by animateColorAsState(
-    targetValue = when (selected) {
-      true -> Color.White
-      else -> currentColorScheme.primaryText
-    }
-  )
-  val animatedTextColor by animateColorAsState(
-    targetValue = when (selected) {
-      true -> Color.White
-      else -> currentColorScheme.primaryText
-    }
-  )
-  Box(
-    modifier = modifier
-      .clip(shape)
-      .background(
-        color = animatedBackgroundColor,
-        shape = shape
-      )
-      .clickable { onClick() }
-  ) {
-    CenterRow(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-      Icon(
-        painter = painterResource(Res.drawable.story_widget_icon),
-        contentDescription = null,
-        modifier = Modifier.size(20.dp),
-        tint = animatedIconColor,
-      )
-      Gap(11.dp)
-      Text(
-        text = story.name,
-        color = animatedTextColor,
-        fontSize = 15.sp
-      )
-    }
-  }
 }

@@ -13,6 +13,7 @@ kotlin = "2.1.10"
 kotlin-poet = "1.18.1"
 build-time-config = "2.3.0"
 code-highlights = "0.9.3"
+spotless = "7.0.2"
 dokka = "1.9.10"
 kotlinx-html = "0.7.3"
 junit = "5.10.1"
@@ -36,6 +37,8 @@ dokka-base-test-utils = { module = "org.jetbrains.dokka:dokka-base-test-utils", 
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+ktlint = "com.pinterest.ktlint:ktlint-cli:1.5.0"
+composeRules = "io.nlopez.compose.rules:ktlint:0.4.22"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -46,5 +49,8 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 buildTimeConfig = { id = "dev.limebeck.build-time-config", version.ref = "build-time-config" }
 storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
+kotlinDsl = { id = "kotlin-dsl" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

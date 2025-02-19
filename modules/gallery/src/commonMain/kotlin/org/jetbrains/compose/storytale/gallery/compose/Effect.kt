@@ -8,8 +8,8 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 @NonRestartableComposable
 fun <T : Any?> LaunchedValueEffect(
-  key: T,
-  block: suspend CoroutineScope.(T) -> Unit
-) = LaunchedEffect(key) {
-  block(key)
+    key: T,
+    block: suspend CoroutineScope.(T) -> Unit,
+) = LaunchedEffect(key, block) {
+    block(key)
 }

@@ -25,7 +25,6 @@ dependencies {
     testImplementation(libs.dokka.base)
     testImplementation(libs.junit.api)
     testImplementation(libs.kotlin.test)
-
 }
 
 tasks.withType<Test> {

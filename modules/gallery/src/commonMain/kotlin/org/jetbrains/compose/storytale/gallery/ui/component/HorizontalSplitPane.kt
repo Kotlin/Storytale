@@ -23,79 +23,80 @@ import org.jetbrains.compose.storytale.gallery.compose.currentDensity
 
 @Composable
 fun HorizontalSplitPane(
-  modifier: Modifier = Modifier,
-  initialFirstPlaceableWith: Dp = 350.dp,
-  content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    initialFirstPlaceableWith: Dp = 350.dp,
+    content: @Composable () -> Unit,
 ) {
-  var dividerOffset by remember { mutableStateOf(0.dp) }
-  Layout(
-    modifier = modifier,
-    content = {
-      content()
-      VerticalSplitDivider(
-        onDrag = { dividerOffset += it }
-      )
-    }
-  ) { measurables, constraints ->
-    require(measurables.size == 3) {
-      "HorizontalSplitPane only supports plays with two @Composable content, " +
-        "the @Composable functions to the left and right of the splitter line."
-    }
-    val dividerWidth = measurables[2].maxIntrinsicWidth(constraints.maxHeight)
+    var dividerOffset by remember { mutableStateOf(0.dp) }
+    Layout(
+        modifier = modifier,
+        content = {
+            content()
+            VerticalSplitDivider(
+                onDrag = { dividerOffset += it },
+            )
+        },
+    ) { measurables, constraints ->
+        require(measurables.size == 3) {
+            "HorizontalSplitPane only supports plays with two @Composable content, " +
+                "the @Composable functions to the left and right of the splitter line."
+        }
+        val dividerWidth = measurables[2].maxIntrinsicWidth(constraints.maxHeight)
 
-    val firstPlaceable = measurables[0].measure(
-      constraints.copy(
-        maxWidth = (initialFirstPlaceableWith + dividerOffset).coerceIn(
-          minimumValue = dividerWidth.toDp(),
-          maximumValue = constraints.maxWidth.toDp() - dividerWidth.toDp()
-        ).roundToPx()
-      )
-    )
+        val firstPlaceable = measurables[0].measure(
+            constraints.copy(
+                maxWidth = (initialFirstPlaceableWith + dividerOffset).coerceIn(
+                    minimumValue = dividerWidth.toDp(),
+                    maximumValue = constraints.maxWidth.toDp() - dividerWidth.toDp(),
+                ).roundToPx(),
+            ),
+        )
 
-    val secondWidth = (constraints.maxWidth - firstPlaceable.width - dividerWidth)
-      .coerceIn(minimumValue = 0, maximumValue = constraints.maxWidth)
-    val secondPlaceable = measurables[1].measure(
-      Constraints(
-        minWidth = secondWidth,
-        maxWidth = secondWidth,
-        minHeight = constraints.maxHeight,
-        maxHeight = constraints.maxHeight
-      )
-    )
-    val splitterPlaceable = measurables[2].measure(constraints)
-    layout(constraints.maxWidth, constraints.maxHeight) {
-      firstPlaceable.place(0, 0)
-      secondPlaceable.place(
-        x = firstPlaceable.width + dividerWidth,
-        y = 0
-      )
-      splitterPlaceable.place(firstPlaceable.width, 0)
+        val secondWidth = (constraints.maxWidth - firstPlaceable.width - dividerWidth)
+            .coerceIn(minimumValue = 0, maximumValue = constraints.maxWidth)
+        val secondPlaceable = measurables[1].measure(
+            Constraints(
+                minWidth = secondWidth,
+                maxWidth = secondWidth,
+                minHeight = constraints.maxHeight,
+                maxHeight = constraints.maxHeight,
+            ),
+        )
+        val splitterPlaceable = measurables[2].measure(constraints)
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            firstPlaceable.place(0, 0)
+            secondPlaceable.place(
+                x = firstPlaceable.width + dividerWidth,
+                y = 0,
+            )
+            splitterPlaceable.place(firstPlaceable.width, 0)
+        }
     }
-  }
 }
 
 @Composable
 private fun VerticalSplitDivider(
-  modifier: Modifier = Modifier,
-  shape: Shape = CircleShape,
-  color: Color = Color(0xFFDADADA),
-  width: Dp = 4.dp,
-  onDrag: (Dp) -> Unit
+    onDrag: (Dp) -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = CircleShape,
+    color: Color = Color(0xFFDADADA),
+    width: Dp = 4.dp,
 ) {
-  val density = currentDensity
-  VerticalDivider(
-    modifier = modifier.fillMaxHeight()
-      .clip(shape)
-      .draggable(
-        state = rememberDraggableState { offset ->
-          with(density) {
-            onDrag(offset.toDp())
-          }
-        },
-        orientation = Orientation.Horizontal,
-        startDragImmediately = true
-      ),
-    color = color,
-    thickness = width
-  )
+    val density = currentDensity
+    VerticalDivider(
+        modifier = modifier
+            .fillMaxHeight()
+            .clip(shape)
+            .draggable(
+                state = rememberDraggableState { offset ->
+                    with(density) {
+                        onDrag(offset.toDp())
+                    }
+                },
+                orientation = Orientation.Horizontal,
+                startDragImmediately = true,
+            ),
+        color = color,
+        thickness = width,
+    )
 }

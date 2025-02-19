@@ -18,8 +18,7 @@ import androidx.compose.ui.unit.isSpecified
  * @param modifier The optional modifier to be applied to the spacer.
  */
 @Composable
-fun ColumnScope.Gap(height: Dp, modifier: Modifier = Modifier) =
-  Spacer(modifier = modifier.height(height))
+fun ColumnScope.Gap(height: Dp, modifier: Modifier = Modifier) = Spacer(modifier = modifier.height(height))
 
 /**
  * A spacer that adds a horizontal gap between elements in a row layout.
@@ -28,8 +27,7 @@ fun ColumnScope.Gap(height: Dp, modifier: Modifier = Modifier) =
  * @param modifier The optional modifier to be applied to the spacer.
  */
 @Composable
-fun RowScope.Gap(width: Dp, modifier: Modifier = Modifier) =
-  Spacer(modifier = modifier.width(width))
+fun RowScope.Gap(width: Dp, modifier: Modifier = Modifier) = Spacer(modifier = modifier.width(width))
 
 /**
  * A spacer that fills the available space in a column layout.
@@ -37,8 +35,7 @@ fun RowScope.Gap(width: Dp, modifier: Modifier = Modifier) =
  * @param modifier The optional modifier to be applied to the spacer.
  */
 @Composable
-fun ColumnScope.FillGap(modifier: Modifier = Modifier) =
-  Spacer(modifier = modifier.weight(1f))
+fun ColumnScope.FillGap(modifier: Modifier = Modifier) = Spacer(modifier = modifier.weight(1f))
 
 /**
  * A spacer that fills the available space in a row layout.
@@ -46,8 +43,7 @@ fun ColumnScope.FillGap(modifier: Modifier = Modifier) =
  * @param modifier The optional modifier to be applied to the spacer.
  */
 @Composable
-fun RowScope.FillGap(modifier: Modifier = Modifier) =
-  Spacer(modifier = modifier.weight(1f))
+fun RowScope.FillGap(modifier: Modifier = Modifier) = Spacer(modifier = modifier.weight(1f))
 
 /**
  * A spacer that adds a square gap of the specified size.
@@ -56,8 +52,7 @@ fun RowScope.FillGap(modifier: Modifier = Modifier) =
  * @param modifier The optional modifier to be applied to the spacer.
  */
 @Composable
-fun Gap(size: Dp, modifier: Modifier = Modifier) =
-  Spacer(modifier = modifier.size(size))
+fun Gap(size: Dp, modifier: Modifier = Modifier) = Spacer(modifier = modifier.size(size))
 
 /**
  * A spacer that adds a gap with the specified width and height.
@@ -68,11 +63,11 @@ fun Gap(size: Dp, modifier: Modifier = Modifier) =
  */
 @Composable
 fun Gap(
-  modifier: Modifier = Modifier,
-  width: Dp = Dp.Unspecified,
-  height: Dp = Dp.Unspecified
+    modifier: Modifier = Modifier,
+    width: Dp = Dp.Unspecified,
+    height: Dp = Dp.Unspecified,
 ) = Spacer(
-  modifier = modifier
-    .run { if (width.isSpecified) width(width) else this }
-    .run { if (height.isSpecified) height(height) else this }
+    modifier = modifier
+        .run { if (width.isSpecified) width(width) else this }
+        .run { if (height.isSpecified) height(height) else this },
 )
