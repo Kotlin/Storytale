@@ -1,0 +1,156 @@
+package storytale.gallery.demo
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DismissibleDrawerSheet
+import androidx.compose.material3.DismissibleNavigationDrawer
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.PermanentDrawerSheet
+import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.singleWindowApplication
+import androidx.window.core.layout.WindowWidthSizeClass
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.reload.DevelopmentEntryPoint
+import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
+
+
+fun main() = singleWindowApplication(
+    state = WindowState(width = 1400.dp, height = 800.dp),
+) {
+    initStories()
+
+    DevelopmentEntryPoint {
+//        Gallery()
+        Testing()
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun Testing() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    ResponsiveNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            Row(
+                modifier = Modifier.padding(end = 8.dp, start = 8.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                CompositionLocalProvider(LocalDensity provides Density(1.7f)) {
+                    StorySearchBar("", {})
+                }
+            }
+        },
+        content = movableContentOf {
+            Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+                GalleryTopAppBar(drawerState)
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun GalleryTopAppBar(drawerState: DrawerState) {
+    val coroutineScope = rememberCoroutineScope()
+    val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
+
+    TopAppBar(
+        title = {
+            AnimatedVisibility(!isExpanded, enter = fadeIn(), exit = fadeOut()) {
+                Text("Subtitle")
+            }
+        },
+        subtitle = {},
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
+        titleHorizontalAlignment = Alignment.CenterHorizontally,
+        navigationIcon = {
+            val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+            val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
+
+            AnimatedVisibility(!isExpanded, enter = fadeIn(), exit = fadeOut()) {
+                Row(modifier = Modifier.padding(start = 8.dp)) {
+                    FilledTonalIconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                if (drawerState.isOpen) {
+                                    drawerState.close()
+                                } else {
+                                    drawerState.open()
+                                }
+                            }
+                        },
+                        shape = IconButtonDefaults.smallRoundShape
+                    ) {
+                        Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+                    }
+                }
+            }
+        },
+        actions = {
+
+        },
+        modifier = Modifier.drawBehind {
+            val strokeWidth = 1.dp.toPx()
+            val y = size.height
+            drawLine(color = Color.Gray, Offset(0f, y), Offset(size.width, y), strokeWidth)
+        },
+    )
+}
+
+
+@Composable
+private fun ResponsiveNavigationDrawer(
+    drawerState: DrawerState,
+    drawerContent: @Composable ColumnScope.() -> Unit,
+    content: @Composable () -> Unit
+) {
+    val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
+
+    val drawerModifier =  Modifier.width(280.dp)
+    if (!isExpanded) {
+        DismissibleNavigationDrawer(drawerContent = {
+            DismissibleDrawerSheet(drawerState = drawerState, content = drawerContent, modifier = drawerModifier)
+        }, content = content, drawerState = drawerState, gesturesEnabled = false)
+    } else {
+        PermanentNavigationDrawer(drawerContent = {
+            PermanentDrawerSheet(content = drawerContent, modifier = drawerModifier)
+        }, content = content)
+    }
+}

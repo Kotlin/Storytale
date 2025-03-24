@@ -1,33 +1,27 @@
+import org.jetbrains.compose.reload.ComposeHotRun
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.serialization)
-    `maven-publish`
+    id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha03"
 }
 
 kotlin {
-    js {
-        browser()
-    }
+    js()
     wasmJs {
-        browser()
-    }
-    jvm()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-    androidTarget {
-        publishLibraryVariants("release")
-
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+        moduleName = "gallery-demo"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "gallery-demo.js"
+            }
         }
+        binaries.executable()
     }
+    jvm("desktop")
 
     applyDefaultHierarchyTemplate()
 
@@ -44,35 +38,16 @@ kotlin {
                 implementation(libs.compose.highlights)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(projects.modules.runtimeApi)
+                implementation(projects.modules.gallery)
+                implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.1.0-beta01")
             }
         }
 
-        val mobileMain by creating {
+        val desktopMain by getting {
             dependsOn(commonMain)
-        }
-
-        val androidMain by getting {
-            dependsOn(mobileMain)
-        }
-
-        val iosMain by getting {
-            dependsOn(mobileMain)
-        }
-
-        val desktopMain by creating {
-            dependsOn(commonMain)
-        }
-
-        val jsMain by getting {
-            dependsOn(desktopMain)
-        }
-
-        val wasmJsMain by getting {
-            dependsOn(desktopMain)
-        }
-
-        val jvmMain by getting {
-            dependsOn(desktopMain)
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
         }
     }
 
@@ -94,15 +69,18 @@ kotlin {
     }
 }
 
-group = "org.jetbrains.compose.storytale"
-
-publishing {}
-
-android {
-    namespace = "org.jetbrains.compose.storytale.gallery"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    defaultConfig {
-        minSdk = 24
+compose.desktop {
+    application {
+        mainClass = "storytale.gallery.demo.MainKt"
     }
+}
+
+
+composeCompiler {
+    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
+}
+
+
+tasks.register<ComposeHotRun>("runHot") {
+    mainClass.set("storytale.gallery.demo.MainKt")
 }
