@@ -27,6 +27,10 @@ jobs:
       - name: Publish to Maven Local
         run: ./gradlew publishToMavenLocal
 
+      - name: Build gallery-demo
+        run: |
+            ./gradlew :gallery-demo:wasmJsBrowserDevelopmentExecutableDistribution :gallery-demo:packageReleaseUberJarForCurrentOS
+
       - name: Build Stories for Wasm target
         run: |
           cd examples

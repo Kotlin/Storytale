@@ -11,12 +11,9 @@ class StoryParameterDelegate<T>(
     private val defaultValue: T,
     private val label: String? = null,
 ) {
-    @Composable
+    @Suppress("UNCHECKED_CAST")
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T = story.nameToParameterMapping.getValue(property.name).state.value as T
 
-    // because put operation is only executed once
-    @Suppress("ktlint:compose:remember-missing-check")
-    @Composable
     operator fun provideDelegate(thisRef: Any?, property: KProperty<*>) = also {
         story.nameToParameterMapping.getOrPut(property.name) {
             StoryParameter(property.name, type, values = null, label, mutableStateOf(defaultValue))

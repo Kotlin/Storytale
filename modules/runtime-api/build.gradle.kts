@@ -10,8 +10,12 @@ plugins {
 }
 
 kotlin {
-    wasmJs()
-    js()
+    wasmJs {
+        browser()
+    }
+    js {
+        browser()
+    }
     jvm()
     iosX64()
     iosArm64()
