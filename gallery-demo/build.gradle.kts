@@ -2,6 +2,11 @@ import org.jetbrains.compose.reload.ComposeHotRun
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,8 +15,34 @@ plugins {
     id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha03"
 }
 
+
+
+class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
+    override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
+        return kotlinCompilation.project.provider { emptyList() }
+    }
+
+    override fun getCompilerPluginId(): String {
+        return "org.jetbrains.compose.compiler.plugins.storytale"
+    }
+
+    override fun getPluginArtifact(): SubpluginArtifact {
+        return SubpluginArtifact("org.jetbrains.compose.storytale", "local-compiler-plugin")
+    }
+
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+        return kotlinCompilation.target.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
+    }
+}
+
+apply<StorytaleCompilerPlugin>()
+
+
 kotlin {
-    js()
+    js {
+        browser()
+        binaries.executable()
+    }
     wasmJs {
         moduleName = "gallery-demo"
         browser {
@@ -21,7 +52,16 @@ kotlin {
         }
         binaries.executable()
     }
-    jvm("desktop")
+
+    jvm("desktop") {
+        compilations.forEach {
+            it.configurations.pluginConfiguration.resolutionStrategy.dependencySubstitution {
+                substitute(module("org.jetbrains.compose.storytale:local-compiler-plugin"))
+                    .using(project(":modules:compiler-plugin"))
+            }
+        }
+    }
+
 
     applyDefaultHierarchyTemplate()
 

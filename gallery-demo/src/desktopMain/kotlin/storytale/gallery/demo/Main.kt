@@ -42,29 +42,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.singleWindowApplication
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.story.StoryList
 import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
 import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
-import org.jetbrains.compose.storytale.gallery.ui.theme.ColorScheme
-import org.jetbrains.compose.storytale.gallery.ui.theme.LocalColorScheme
+import org.jetbrains.compose.storytale.generated.MainViewController
+import org.jetbrains.compose.storytale.storiesStorage
 
 
-fun main() = singleWindowApplication(
-    state = WindowState(width = 1400.dp, height = 800.dp),
-) {
-//    initStories()
-
-    DevelopmentEntryPoint {
-        CompositionLocalProvider(LocalColorScheme provides ColorScheme.Light) {
-            Testing()
-        }
-    }
+fun main() {
+    MainViewController()
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -89,22 +78,10 @@ fun Testing() {
             val expandedGroups = remember { mutableStateSetOf<StoryListItemType.Group>() }
 
             val groups = remember {
-                listOf(
-                    StoryListItemType.Group("Parent 1", listOf(
-                    StoryListItemType.Group(
-                        "Buttons",
-                        listOf(
-                            StoryListItemType.StoryItem(Demo1),
-                        )
-                    ))),
-                    StoryListItemType.Group(
-                        "Buttons 2",
-                        listOf(
-                            StoryListItemType.StoryItem(Demo2),
-                        )
-                    ),
-                    StoryListItemType.StoryItem(Demo3),
-                )
+                val grouped = storiesStorage.groupBy { it.group }
+                grouped.keys.sorted().map { key ->
+                    StoryListItemType.Group(key, grouped[key]!!.map { StoryListItemType.StoryItem(it) })
+                }
             }
             StoryList(
                 activeStory = activeStoryItem.value?.story,

@@ -21,7 +21,3 @@ val Demo3 by story {
         Text("Click Me")
     }
 }
-
-fun initStories() {
-    // just calling this fun to initialize the Stories declared in this file
-}
