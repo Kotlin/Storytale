@@ -30,6 +30,9 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,17 +47,23 @@ import androidx.compose.ui.window.singleWindowApplication
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.reload.DevelopmentEntryPoint
+import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.story.StoryList
+import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
 import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
+import org.jetbrains.compose.storytale.gallery.ui.theme.ColorScheme
+import org.jetbrains.compose.storytale.gallery.ui.theme.LocalColorScheme
 
 
 fun main() = singleWindowApplication(
     state = WindowState(width = 1400.dp, height = 800.dp),
 ) {
-    initStories()
+//    initStories()
 
     DevelopmentEntryPoint {
-//        Gallery()
-        Testing()
+        CompositionLocalProvider(LocalColorScheme provides ColorScheme.Light) {
+            Testing()
+        }
     }
 }
 
@@ -63,9 +72,11 @@ fun main() = singleWindowApplication(
 fun Testing() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
+    val activeStoryItem = remember { mutableStateOf<StoryListItemType.StoryItem?>(null) }
+
     ResponsiveNavigationDrawer(
         drawerState = drawerState,
-        drawerContent = {
+        drawerContent = movableContentOf<ColumnScope>{
             Row(
                 modifier = Modifier.padding(end = 8.dp, start = 8.dp),
                 verticalAlignment = Alignment.Bottom
@@ -74,10 +85,47 @@ fun Testing() {
                     StorySearchBar("", {})
                 }
             }
+
+            val expandedGroups = remember { mutableStateSetOf<StoryListItemType.Group>() }
+
+            val groups = remember {
+                listOf(
+                    StoryListItemType.Group("Parent 1", listOf(
+                    StoryListItemType.Group(
+                        "Buttons",
+                        listOf(
+                            StoryListItemType.StoryItem(Demo1),
+                        )
+                    ))),
+                    StoryListItemType.Group(
+                        "Buttons 2",
+                        listOf(
+                            StoryListItemType.StoryItem(Demo2),
+                        )
+                    ),
+                    StoryListItemType.StoryItem(Demo3),
+                )
+            }
+            StoryList(
+                activeStory = activeStoryItem.value?.story,
+                storyListItems = groups,
+                expandedGroups = expandedGroups,
+                onItemClick = {
+                    if (it is StoryListItemType.Group) {
+                        if (expandedGroups.contains(it)) {
+                            expandedGroups.remove(it)
+                        } else {
+                            expandedGroups.add(it)
+                        }
+                    } else if (it is StoryListItemType.StoryItem) {
+                        activeStoryItem.value = it
+                    }
+                }
+            )
         },
         content = movableContentOf {
             Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
-                GalleryTopAppBar(drawerState)
+                GalleryTopAppBar(drawerState, activeStory = activeStoryItem.value?.story)
             }
         }
     )
@@ -85,7 +133,7 @@ fun Testing() {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun GalleryTopAppBar(drawerState: DrawerState) {
+private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
     val coroutineScope = rememberCoroutineScope()
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
@@ -93,16 +141,13 @@ private fun GalleryTopAppBar(drawerState: DrawerState) {
     TopAppBar(
         title = {
             AnimatedVisibility(!isExpanded, enter = fadeIn(), exit = fadeOut()) {
-                Text("Subtitle")
+                Text(activeStory?.name ?: "")
             }
         },
         subtitle = {},
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
         titleHorizontalAlignment = Alignment.CenterHorizontally,
         navigationIcon = {
-            val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-            val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
-
             AnimatedVisibility(!isExpanded, enter = fadeIn(), exit = fadeOut()) {
                 Row(modifier = Modifier.padding(start = 8.dp)) {
                     FilledTonalIconButton(

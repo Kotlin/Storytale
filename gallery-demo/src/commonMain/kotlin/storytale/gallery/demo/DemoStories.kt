@@ -10,6 +10,17 @@ val Demo1 by story {
     }
 }
 
+val Demo2 by story {
+    Button(onClick = {}) {
+        Text("Click Me")
+    }
+}
+
+val Demo3 by story {
+    Button(onClick = {}) {
+        Text("Click Me")
+    }
+}
 
 fun initStories() {
     // just calling this fun to initialize the Stories declared in this file
