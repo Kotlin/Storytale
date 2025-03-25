@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -86,7 +87,7 @@ fun Testing() {
                 }
             }
             val filteredList = remember(filterValue.value) {
-                if (filterValue.value.isEmpty()) {
+                if (filterValue.value.length < 2 || filterValue.value.isBlank()) {
                     fullList
                 } else {
                     // TODO: currently it reacts on every input change - add debounce?
@@ -115,8 +116,12 @@ fun Testing() {
             )
         },
         content = movableContentOf {
-            Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+            Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
                 GalleryTopAppBar(drawerState, activeStory = activeStoryItem.value?.story)
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    val story = activeStoryItem.value?.story
+                    story?.content?.invoke(story)
+                }
             }
         }
     )

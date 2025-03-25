@@ -139,7 +139,7 @@ private fun GroupContent(
     activeStory: Story?,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         StoryGroupLabelView(
