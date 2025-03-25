@@ -63,29 +63,43 @@ fun Testing() {
 
     val activeStoryItem = remember { mutableStateOf<StoryListItemType.StoryItem?>(null) }
 
+    val filterValue = remember { mutableStateOf("") }
+
     ResponsiveNavigationDrawer(
         drawerState = drawerState,
         drawerContent = movableContentOf<ColumnScope>{
             Row(
-                modifier = Modifier.padding(end = 8.dp, start = 8.dp),
+                modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
                 CompositionLocalProvider(LocalDensity provides Density(1.7f)) {
-                    StorySearchBar("", {})
+                    StorySearchBar(filterValue.value, { filterValue.value = it })
                 }
             }
 
             val expandedGroups = remember { mutableStateSetOf<StoryListItemType.Group>() }
 
-            val groups = remember {
+            val fullList = remember {
                 val grouped = storiesStorage.groupBy { it.group }
                 grouped.keys.sorted().map { key ->
                     StoryListItemType.Group(key, grouped[key]!!.map { StoryListItemType.StoryItem(it) })
                 }
             }
+            val filteredList = remember(filterValue.value) {
+                if (filterValue.value.isEmpty()) {
+                    fullList
+                } else {
+                    // TODO: currently it reacts on every input change - add debounce?
+                    fullList.flatMap { it.children }.filter {
+                        val story = (it as? StoryListItemType.StoryItem)?.story
+                        story?.name?.contains(filterValue.value, true) == true
+                    }
+                }
+            }
+
             StoryList(
                 activeStory = activeStoryItem.value?.story,
-                storyListItems = groups,
+                storyListItems = filteredList,
                 expandedGroups = expandedGroups,
                 onItemClick = {
                     if (it is StoryListItemType.Group) {

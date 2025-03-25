@@ -111,12 +111,14 @@ fun StoryList(
                     onItemClick = onItemClick,
                     activeStory = activeStory,
                     isHighlighted = listItem.contains(activeStory),
+                    modifier = Modifier.animateItem()
                 )
             } else if (listItem is StoryListItemType.StoryItem) {
                 StoryListItemView(
                     isActiveStory = listItem.story == activeStory,
                     storyListItemType = listItem,
                     onClick = { onItemClick(listItem) },
+                    modifier = Modifier.animateItem()
                 )
             }
         }
@@ -137,6 +139,7 @@ private fun GroupContent(
     activeStory: Story?,
 ) {
     Column(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         StoryGroupLabelView(
