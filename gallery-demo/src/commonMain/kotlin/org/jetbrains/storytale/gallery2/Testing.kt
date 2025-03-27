@@ -53,6 +53,7 @@ import org.jetbrains.compose.storytale.gallery.story.StoryList
 import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
 import org.jetbrains.compose.storytale.gallery.story.StoryParametersList2
 import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
+import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
 import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.storiesStorage
@@ -61,7 +62,11 @@ import org.jetbrains.compose.storytale.storiesStorage
 fun Testing() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    val activeStoryItem = remember { mutableStateOf<StoryListItemType.StoryItem?>(null) }
+    val activeStoryItem = remember {
+        mutableStateOf(
+            storiesStorage.firstOrNull()?.let { StoryListItemType.StoryItem(it) },
+        )
+    }
 
     val filterValue = remember { mutableStateOf("") }
 
@@ -121,9 +126,16 @@ fun Testing() {
                 HorizontalDivider()
 
                 Row(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLowest)) {
-                    Box(modifier = Modifier.fillMaxHeight().weight(0.75f), contentAlignment = Alignment.Center) {
-                        val story = activeStoryItem.value?.story
-                        story?.content?.invoke(story)
+                    Column(modifier = Modifier.fillMaxHeight().weight(0.75f)) {
+                        Box(modifier = Modifier.fillMaxSize().weight(0.5f), contentAlignment = Alignment.Center) {
+                            val story = activeStoryItem.value?.story
+                            story?.content?.invoke(story)
+                        }
+                        HorizontalDivider()
+                        Box(modifier = Modifier.fillMaxSize().weight(0.5f)) {
+                            val story = activeStoryItem.value?.story
+                            CodeBlock(story?.code ?: "", modifier = Modifier.fillMaxSize())
+                        }
                     }
                     val storyParameters = activeStoryItem.value?.story?.parameters
                     val hasParameters = storyParameters?.isNotEmpty() == true
