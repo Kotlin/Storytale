@@ -4,6 +4,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,13 +32,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -43,8 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
@@ -54,7 +56,6 @@ import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
 import org.jetbrains.compose.storytale.gallery.story.StoryParametersList2
 import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
 import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
-import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
 import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.storiesStorage
 
@@ -135,6 +136,17 @@ fun Testing() {
                         Box(modifier = Modifier.fillMaxSize().weight(0.5f)) {
                             val story = activeStoryItem.value?.story
                             CodeBlock(story?.code ?: "", modifier = Modifier.fillMaxSize())
+
+                            val clipboard = LocalClipboard.current
+                            val coroutineScope = rememberCoroutineScope()
+                            SmallFloatingActionButton(onClick = {
+                                coroutineScope.launch {
+                                    // TODO: add expect / actual for ClipEntry creation
+                                    //clipboard.setClipEntry(ClipEntry())
+                                }
+                            }, modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
+                                Icon(imageVector = ContentCopyImageVector, null)
+                            }
                         }
                     }
                     val storyParameters = activeStoryItem.value?.story?.parameters
@@ -181,7 +193,16 @@ private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
                             }
                         },
                     ) {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+                        val icon = if (drawerState.isOpen || drawerState.currentOffset > -200f) {
+                            MenuOpenImageVector
+                        } else {
+                            Icons.Default.Menu
+                        }
+                        AnimatedContent(targetState = icon, transitionSpec = {
+                            scaleIn().togetherWith(scaleOut())
+                        }) {
+                            Icon(imageVector = icon, contentDescription = null)
+                        }
                     }
                 }
             }
@@ -201,6 +222,7 @@ private fun ResponsiveNavigationDrawer(
 ) {
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val isWideWindow = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
+    val isSmallWindow = currentWindowWidthClass == WindowWidthSizeClass.COMPACT
 
     val drawerModifier = Modifier.width(280.dp)
     if (!isWideWindow) {
@@ -208,7 +230,7 @@ private fun ResponsiveNavigationDrawer(
             drawerContent = {
                 DismissibleDrawerSheet(drawerState = drawerState, content = drawerContent, modifier = drawerModifier)
             },
-            content = content, drawerState = drawerState, gesturesEnabled = false,
+            content = content, drawerState = drawerState, gesturesEnabled = isSmallWindow,
         )
     } else {
         PermanentNavigationDrawer(
