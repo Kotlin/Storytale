@@ -31,7 +31,11 @@ class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
-        return kotlinCompilation.target.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
+        return kotlinCompilation.target.platformType in setOf(
+            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm,
+            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.wasm
+        )
+
     }
 }
 
@@ -51,6 +55,13 @@ kotlin {
             }
         }
         binaries.executable()
+
+        compilations.forEach {
+            it.configurations.pluginConfiguration.resolutionStrategy.dependencySubstitution {
+                substitute(module("org.jetbrains.compose.storytale:local-compiler-plugin"))
+                    .using(project(":modules:compiler-plugin"))
+            }
+        }
     }
 
     jvm("desktop") {

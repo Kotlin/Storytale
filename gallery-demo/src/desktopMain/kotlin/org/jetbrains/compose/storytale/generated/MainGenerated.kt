@@ -7,7 +7,7 @@ import androidx.compose.ui.window.singleWindowApplication
 import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.jetbrains.compose.storytale.gallery.ui.theme.ColorScheme
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalColorScheme
-import storytale.gallery.demo.Testing
+import org.jetbrains.storytale.gallery2.Testing
 
 // To let the Storytale compiler plugin add the initializations for stories
 fun MainViewController() {

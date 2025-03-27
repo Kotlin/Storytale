@@ -1,15 +1,14 @@
 package storytale.gallery.demo
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.window.CanvasBasedWindow
 import androidx.compose.ui.window.ComposeViewport
-import org.jetbrains.compose.storytale.gallery.Gallery
+import org.jetbrains.compose.storytale.generated.MainViewController
+import org.jetbrains.storytale.gallery2.Testing
 
 fun main() {
+    MainViewController() // Storytale compiler will initialize the stories
+
     ComposeViewport(viewportContainerId = "composeApplication") {
-        App()
+        Testing()
     }
 }
 
-@Composable
-fun App() = Gallery()
