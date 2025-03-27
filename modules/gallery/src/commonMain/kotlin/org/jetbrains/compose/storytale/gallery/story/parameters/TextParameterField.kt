@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.storytale.gallery.compose.currentTextStyle
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
+import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
+import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentTypography
 
@@ -92,7 +94,7 @@ fun <T> TextParameterField2(
     ParameterHeader(parameterName, label)
     Gap(8.dp)
 
-    CompositionLocalProvider(LocalDensity provides Density(density = 1.7f)) {
+    UseCustomDensity {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value.toString(),

@@ -15,11 +15,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.component.SwitchButton
+import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentTypography
 
 @Suppress("ktlint:compose:mutable-state-param-check")
@@ -70,7 +70,7 @@ fun BooleanParameterField2(
 
         Spacer(Modifier.weight(1f))
 
-        CompositionLocalProvider(LocalDensity provides Density(density = 1.7f)) {
+        UseCustomDensity {
             Switch(checked = checked, onCheckedChange = { checked = it })
         }
     }

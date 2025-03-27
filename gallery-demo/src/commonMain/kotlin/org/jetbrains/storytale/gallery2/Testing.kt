@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -51,9 +53,8 @@ import org.jetbrains.compose.storytale.gallery.story.StoryList
 import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
 import org.jetbrains.compose.storytale.gallery.story.StoryParametersList2
 import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
-import org.jetbrains.compose.storytale.gallery.ui.theme.ColorScheme
-import org.jetbrains.compose.storytale.gallery.ui.theme.LocalTypography
-import org.jetbrains.compose.storytale.gallery.ui.theme.Typography
+import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
+import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.storiesStorage
 
 @Composable
@@ -66,12 +67,12 @@ fun Testing() {
 
     ResponsiveNavigationDrawer(
         drawerState = drawerState,
-        drawerContent = movableContentOf<ColumnScope>{
+        drawerContent = movableContentOf<ColumnScope> {
             Row(
                 modifier = Modifier.padding(8.dp),
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.Bottom,
             ) {
-                CompositionLocalProvider(LocalDensity provides Density(1.7f)) {
+                UseCustomDensity {
                     StorySearchBar(filterValue.value, { filterValue.value = it })
                 }
             }
@@ -110,7 +111,7 @@ fun Testing() {
                     } else if (it is StoryListItemType.StoryItem) {
                         activeStoryItem.value = it
                     }
-                }
+                },
             )
         },
         content = movableContentOf {
@@ -120,7 +121,7 @@ fun Testing() {
                 HorizontalDivider()
 
                 Row(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLowest)) {
-                    Box(modifier = Modifier.fillMaxSize().weight(0.75f), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.fillMaxHeight().weight(0.75f), contentAlignment = Alignment.Center) {
                         val story = activeStoryItem.value?.story
                         story?.content?.invoke(story)
                     }
@@ -128,15 +129,16 @@ fun Testing() {
                     val hasParameters = storyParameters?.isNotEmpty() == true
                     if (hasParameters) {
                         VerticalDivider()
-                        Column(modifier = Modifier.fillMaxSize().weight(0.25f)) {
-                            CompositionLocalProvider(LocalTypography provides Typography(ColorScheme.Light)) {
-                                StoryParametersList2(storyParameters!!, modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)))
-                            }
+                        Column(modifier = Modifier.fillMaxHeight().widthIn(max = 250.dp)) {
+                            StoryParametersList2(
+                                storyParameters!!,
+                                modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
+                            )
                         }
                     }
                 }
             }
-        }
+        },
     )
 }
 
@@ -174,7 +176,7 @@ private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
         },
         actions = {
 
-        }
+        },
     )
 }
 
@@ -183,19 +185,25 @@ private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
 private fun ResponsiveNavigationDrawer(
     drawerState: DrawerState,
     drawerContent: @Composable ColumnScope.() -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val isWideWindow = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
 
-    val drawerModifier =  Modifier.width(280.dp)
+    val drawerModifier = Modifier.width(280.dp)
     if (!isWideWindow) {
-        DismissibleNavigationDrawer(drawerContent = {
-            DismissibleDrawerSheet(drawerState = drawerState, content = drawerContent, modifier = drawerModifier)
-        }, content = content, drawerState = drawerState, gesturesEnabled = false)
+        DismissibleNavigationDrawer(
+            drawerContent = {
+                DismissibleDrawerSheet(drawerState = drawerState, content = drawerContent, modifier = drawerModifier)
+            },
+            content = content, drawerState = drawerState, gesturesEnabled = false,
+        )
     } else {
-        PermanentNavigationDrawer(drawerContent = {
-            PermanentDrawerSheet(content = drawerContent, modifier = drawerModifier)
-        }, content = content)
+        PermanentNavigationDrawer(
+            drawerContent = {
+                PermanentDrawerSheet(content = drawerContent, modifier = drawerModifier)
+            },
+            content = content,
+        )
     }
 }
