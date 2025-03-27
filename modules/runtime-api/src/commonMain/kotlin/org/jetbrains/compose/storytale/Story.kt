@@ -10,7 +10,7 @@ data class Story(
     val content: @Composable Story.() -> Unit,
 ) {
     @PublishedApi
-    internal val nameToParameterMapping = hashMapOf<String, StoryParameter<*>>()
+    internal val nameToParameterMapping = linkedMapOf<String, StoryParameter<*>>() // using linkedMap to keep the order
     val parameters inline get() = nameToParameterMapping.values.toList()
 
     @Composable

@@ -70,19 +70,19 @@ val `Common buttons` by story {
         }
 
         Button(onClick = {}) {
-            Text("Filled")
+            Text("Filled", softWrap = false)
         }
 
         FilledTonalButton(onClick = {}) {
-            Text("Tonal")
+            Text("Tonal", softWrap = false)
         }
 
         OutlinedButton(onClick = {}) {
-            Text("Outlined")
+            Text("Outlined", softWrap = false)
         }
 
         TextButton(onClick = {}) {
-            Text("Text")
+            Text("Text", softWrap = false)
         }
     }
 }

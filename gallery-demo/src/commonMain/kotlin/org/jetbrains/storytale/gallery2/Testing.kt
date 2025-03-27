@@ -1,5 +1,6 @@
 package org.jetbrains.storytale.gallery2
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -19,12 +22,14 @@ import androidx.compose.material3.DismissibleNavigationDrawer
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -36,9 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -47,7 +49,11 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.story.StoryList
 import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
+import org.jetbrains.compose.storytale.gallery.story.StoryParametersList2
 import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
+import org.jetbrains.compose.storytale.gallery.ui.theme.ColorScheme
+import org.jetbrains.compose.storytale.gallery.ui.theme.LocalTypography
+import org.jetbrains.compose.storytale.gallery.ui.theme.Typography
 import org.jetbrains.compose.storytale.storiesStorage
 
 @Composable
@@ -108,11 +114,26 @@ fun Testing() {
             )
         },
         content = movableContentOf {
-            Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 GalleryTopAppBar(drawerState, activeStory = activeStoryItem.value?.story)
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    val story = activeStoryItem.value?.story
-                    story?.content?.invoke(story)
+
+                HorizontalDivider()
+
+                Row(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLowest)) {
+                    Box(modifier = Modifier.fillMaxSize().weight(0.75f), contentAlignment = Alignment.Center) {
+                        val story = activeStoryItem.value?.story
+                        story?.content?.invoke(story)
+                    }
+                    val storyParameters = activeStoryItem.value?.story?.parameters
+                    val hasParameters = storyParameters?.isNotEmpty() == true
+                    if (hasParameters) {
+                        VerticalDivider()
+                        Column(modifier = Modifier.fillMaxSize().weight(0.25f)) {
+                            CompositionLocalProvider(LocalTypography provides Typography(ColorScheme.Light)) {
+                                StoryParametersList2(storyParameters!!, modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -127,11 +148,11 @@ private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
 
     CenterAlignedTopAppBar(
         title = {
-            AnimatedVisibility(!isExpanded, enter = fadeIn(), exit = fadeOut()) {
-                Text(activeStory?.name ?: "")
+            AnimatedContent(activeStory?.name) { title ->
+                Text(title ?: "")
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         navigationIcon = {
             AnimatedVisibility(!isExpanded, enter = fadeIn(), exit = fadeOut()) {
                 Row(modifier = Modifier.padding(start = 8.dp)) {
@@ -153,12 +174,7 @@ private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
         },
         actions = {
 
-        },
-        modifier = Modifier.drawBehind {
-            val strokeWidth = 1.dp.toPx()
-            val y = size.height
-            drawLine(color = Color.Gray, Offset(0f, y), Offset(size.width, y), strokeWidth)
-        },
+        }
     )
 }
 
@@ -170,10 +186,10 @@ private fun ResponsiveNavigationDrawer(
     content: @Composable () -> Unit
 ) {
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
+    val isWideWindow = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
 
     val drawerModifier =  Modifier.width(280.dp)
-    if (!isExpanded) {
+    if (!isWideWindow) {
         DismissibleNavigationDrawer(drawerContent = {
             DismissibleDrawerSheet(drawerState = drawerState, content = drawerContent, modifier = drawerModifier)
         }, content = content, drawerState = drawerState, gesturesEnabled = false)
