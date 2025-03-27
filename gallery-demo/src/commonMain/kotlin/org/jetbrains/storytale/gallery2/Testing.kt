@@ -9,11 +9,14 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -32,7 +35,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
@@ -48,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
@@ -103,6 +109,8 @@ fun Testing() {
                 }
             }
 
+            val coroutineScope = rememberCoroutineScope()
+
             StoryList(
                 activeStory = activeStoryItem.value?.story,
                 storyListItems = filteredList,
@@ -116,6 +124,9 @@ fun Testing() {
                         }
                     } else if (it is StoryListItemType.StoryItem) {
                         activeStoryItem.value = it
+                        coroutineScope.launch {
+                            drawerState.close()
+                        }
                     }
                 },
             )
@@ -126,44 +137,146 @@ fun Testing() {
 
                 HorizontalDivider()
 
-                Row(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLowest)) {
-                    Column(modifier = Modifier.fillMaxHeight().weight(0.75f)) {
-                        Box(modifier = Modifier.fillMaxSize().weight(0.5f), contentAlignment = Alignment.Center) {
-                            val story = activeStoryItem.value?.story
-                            story?.content?.invoke(story)
-                        }
-                        HorizontalDivider()
-                        Box(modifier = Modifier.fillMaxSize().weight(0.5f)) {
-                            val story = activeStoryItem.value?.story
-                            CodeBlock(story?.code ?: "", modifier = Modifier.fillMaxSize())
-
-                            val clipboard = LocalClipboard.current
-                            val coroutineScope = rememberCoroutineScope()
-                            SmallFloatingActionButton(onClick = {
-                                coroutineScope.launch {
-                                    // TODO: add expect / actual for ClipEntry creation
-                                    //clipboard.setClipEntry(ClipEntry())
-                                }
-                            }, modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
-                                Icon(imageVector = ContentCopyImageVector, null)
-                            }
-                        }
-                    }
-                    val storyParameters = activeStoryItem.value?.story?.parameters
-                    val hasParameters = storyParameters?.isNotEmpty() == true
-                    if (hasParameters) {
-                        VerticalDivider()
-                        Column(modifier = Modifier.fillMaxHeight().widthIn(max = 250.dp)) {
-                            StoryParametersList2(
-                                storyParameters!!,
-                                modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
-                            )
-                        }
-                    }
-                }
+                StoryContent(activeStoryItem.value?.story, modifier = Modifier.fillMaxSize())
             }
         },
     )
+}
+
+@Composable
+private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
+    val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    val heightClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
+
+    val isSmallHeight = heightClass == WindowHeightSizeClass.COMPACT
+    val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
+
+    Box(modifier = modifier) {
+        val previewContent = @Composable {
+            activeStory?.content?.invoke(activeStory)
+        }
+
+        val codeContent = movableContentOf<BoxScope> { boxScope ->
+            with(boxScope) {
+                CodeBlock(activeStory?.code ?: "", modifier = Modifier.fillMaxSize())
+                val clipboard = LocalClipboard.current
+                val coroutineScope = rememberCoroutineScope()
+                SmallFloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            // TODO: add expect / actual for ClipEntry creation
+                            //clipboard.setClipEntry(ClipEntry())
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+                ) {
+                    Icon(imageVector = ContentCopyImageVector, null)
+                }
+            }
+        }
+
+        AnimatedContent(targetState = isSmallHeight,
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            }
+        ) { isSmall ->
+            if (isSmall) {
+                val selectedTabIndex = remember { mutableStateOf(0) }
+                Column(modifier = Modifier.fillMaxSize()) {
+                    StoryTabs(
+                        modifier = Modifier.fillMaxWidth(),
+                        onPreviewTabClicked = { selectedTabIndex.value = 0 },
+                        onCodeTabClicked = { selectedTabIndex.value = 1 },
+                    )
+
+                    Box(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceContainerLowest),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        when (selectedTabIndex.value) {
+                            0 -> previewContent()
+                            1 -> codeContent(this)
+                        }
+                    }
+                }
+            } else {
+                StoryPreviewAndCodeCombined(
+                    activeStory = activeStory,
+                    previewContent = { previewContent() },
+                    codeContent = codeContent,
+                    modifier = Modifier
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StoryPreviewAndCodeCombined(
+    activeStory: Story?,
+    previewContent: @Composable () -> Unit,
+    codeContent: @Composable BoxScope.() -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
+
+    Row(modifier = modifier
+        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+    ) {
+        Column(modifier = Modifier.fillMaxHeight().weight(0.75f)) {
+            Box(modifier = Modifier.fillMaxSize().weight(0.5f), contentAlignment = Alignment.Center) {
+                previewContent()
+            }
+            HorizontalDivider()
+            Box(modifier = Modifier.fillMaxSize().weight(0.5f)) {
+                codeContent(this)
+            }
+        }
+
+        val storyParameters = activeStory?.parameters
+        val hasParameters = activeStory?.parameters?.isNotEmpty() == true
+
+        if (!isSmallWidth && hasParameters) {
+            VerticalDivider()
+            Column(modifier = Modifier.fillMaxHeight().widthIn(max = 250.dp)) {
+                StoryParametersList2(
+                    storyParameters!!,
+                    modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StoryTabs(
+    modifier: Modifier = Modifier,
+    onPreviewTabClicked: () -> Unit = {},
+    onCodeTabClicked: () -> Unit = {},
+) {
+    val selectedTabIndex = remember { mutableStateOf(0) }
+    val selectedTextColor = MaterialTheme.colorScheme.onSurface
+    val unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
+    SecondaryTabRow(selectedTabIndex = selectedTabIndex.value, modifier = modifier) {
+        Tab(selected = selectedTabIndex.value == 0, onClick = {
+            selectedTabIndex.value = 0
+            onPreviewTabClicked()
+        }, modifier = Modifier.height(48.dp)) {
+            val textColor = if (selectedTabIndex.value == 0) selectedTextColor else unselectedTextColor
+            Text(text = "Preview", style = MaterialTheme.typography.titleSmall, color = textColor)
+        }
+        Tab(selected = selectedTabIndex.value == 1, onClick = {
+            selectedTabIndex.value = 1
+            onCodeTabClicked()
+        }) {
+            val textColor = if (selectedTabIndex.value == 1) selectedTextColor else unselectedTextColor
+            Text(text = "Code", style = MaterialTheme.typography.titleSmall, color = textColor)
+        }
+    }
 }
 
 @Composable

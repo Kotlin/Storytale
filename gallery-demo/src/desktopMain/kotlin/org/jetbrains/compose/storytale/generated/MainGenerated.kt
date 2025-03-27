@@ -15,7 +15,7 @@ import org.jetbrains.storytale.gallery2.Testing
 // To let the Storytale compiler plugin add the initializations for stories
 fun MainViewController() {
     singleWindowApplication(
-        state = WindowState(width = 1000.dp, height = 800.dp),
+        state = WindowState(width = 400.dp, height = 800.dp),
     ) {
         DevelopmentEntryPoint {
             CompositionLocalProvider(
