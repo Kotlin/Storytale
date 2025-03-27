@@ -6,8 +6,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -23,7 +27,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.DismissibleNavigationDrawer
@@ -37,6 +43,7 @@ import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -44,6 +51,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -51,6 +59,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowHeightSizeClass
@@ -62,6 +71,7 @@ import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
 import org.jetbrains.compose.storytale.gallery.story.StoryParametersList2
 import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
 import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
+import org.jetbrains.compose.storytale.gallery.ui.component.IconButton
 import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.storiesStorage
 
@@ -134,9 +144,7 @@ fun Testing() {
         content = movableContentOf {
             Column(modifier = Modifier.fillMaxSize()) {
                 GalleryTopAppBar(drawerState, activeStory = activeStoryItem.value?.story)
-
                 HorizontalDivider()
-
                 StoryContent(activeStoryItem.value?.story, modifier = Modifier.fillMaxSize())
             }
         },
@@ -152,8 +160,34 @@ private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
     val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
 
     Box(modifier = modifier) {
+        val showOverlayParameters = remember { mutableStateOf(false) }
+
         val previewContent = @Composable {
-            activeStory?.content?.invoke(activeStory)
+            Box(modifier = Modifier.fillMaxSize()) {
+
+                Box(
+                    modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState(0)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    activeStory?.content?.invoke(activeStory)
+                }
+
+                AnimatedVisibility(
+                    isSmallWidth && activeStory?.parameters?.isNotEmpty() == true,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                ) {
+                    SmallFloatingActionButton(
+                        onClick = {
+                            showOverlayParameters.value = true
+                        },
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        Icon(imageVector = Icons.Default.Settings, null)
+                    }
+                }
+            }
         }
 
         val codeContent = movableContentOf<BoxScope> { boxScope ->
@@ -168,14 +202,15 @@ private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
                             //clipboard.setClipEntry(ClipEntry())
                         }
                     },
-                    modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
                 ) {
                     Icon(imageVector = ContentCopyImageVector, null)
                 }
             }
         }
 
-        AnimatedContent(targetState = isSmallHeight,
+        AnimatedContent(
+            targetState = isSmallHeight,
             transitionSpec = {
                 fadeIn() togetherWith fadeOut()
             }
@@ -210,6 +245,54 @@ private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
                 )
             }
         }
+
+        OverlayParametersList(activeStory, showOverlayParameters)
+    }
+}
+
+@Composable
+private fun BoxScope.OverlayParametersList(
+    activeStory: Story?,
+    showOverlayParameters: MutableState<Boolean>,
+) {
+    AnimatedVisibility(visible = showOverlayParameters.value, enter = fadeIn(), exit = fadeOut()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.15f))
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        val down = awaitFirstDown()
+                        showOverlayParameters.value = false
+                    }
+                },
+        )
+    }
+
+    AnimatedVisibility(
+        modifier = Modifier.align(Alignment.TopEnd),
+        visible = showOverlayParameters.value,
+        enter = slideInHorizontally(initialOffsetX = { it }),
+        exit = slideOutHorizontally(targetOffsetX = { it }),
+    ) {
+        Surface(modifier = Modifier.fillMaxHeight().width(250.dp), shadowElevation = 16.dp) {
+            Column(
+                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLowest),
+            ) {
+                IconButton(
+                    onClick = {
+                        showOverlayParameters.value = false
+                    },
+                    modifier = Modifier.align(Alignment.Start).padding(8.dp),
+                ) {
+                    Icon(imageVector = Icons.Default.Close, null)
+                }
+                StoryParametersList2(
+                    activeStory?.parameters ?: emptyList(),
+                    modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
+                )
+            }
+        }
     }
 }
 
@@ -223,8 +306,9 @@ private fun StoryPreviewAndCodeCombined(
     val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
 
-    Row(modifier = modifier
-        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+    Row(
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Column(modifier = Modifier.fillMaxHeight().weight(0.75f)) {
             Box(modifier = Modifier.fillMaxSize().weight(0.5f), contentAlignment = Alignment.Center) {
@@ -262,17 +346,24 @@ private fun StoryTabs(
     val unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     SecondaryTabRow(selectedTabIndex = selectedTabIndex.value, modifier = modifier) {
-        Tab(selected = selectedTabIndex.value == 0, onClick = {
-            selectedTabIndex.value = 0
-            onPreviewTabClicked()
-        }, modifier = Modifier.height(48.dp)) {
+        Tab(
+            selected = selectedTabIndex.value == 0,
+            onClick = {
+                selectedTabIndex.value = 0
+                onPreviewTabClicked()
+            },
+            modifier = Modifier.height(48.dp),
+        ) {
             val textColor = if (selectedTabIndex.value == 0) selectedTextColor else unselectedTextColor
             Text(text = "Preview", style = MaterialTheme.typography.titleSmall, color = textColor)
         }
-        Tab(selected = selectedTabIndex.value == 1, onClick = {
-            selectedTabIndex.value = 1
-            onCodeTabClicked()
-        }) {
+        Tab(
+            selected = selectedTabIndex.value == 1,
+            onClick = {
+                selectedTabIndex.value = 1
+                onCodeTabClicked()
+            },
+        ) {
             val textColor = if (selectedTabIndex.value == 1) selectedTextColor else unselectedTextColor
             Text(text = "Code", style = MaterialTheme.typography.titleSmall, color = textColor)
         }
@@ -311,9 +402,12 @@ private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
                         } else {
                             Icons.Default.Menu
                         }
-                        AnimatedContent(targetState = icon, transitionSpec = {
-                            scaleIn().togetherWith(scaleOut())
-                        }) {
+                        AnimatedContent(
+                            targetState = icon,
+                            transitionSpec = {
+                                scaleIn().togetherWith(scaleOut())
+                            },
+                        ) {
                             Icon(imageVector = icon, contentDescription = null)
                         }
                     }
