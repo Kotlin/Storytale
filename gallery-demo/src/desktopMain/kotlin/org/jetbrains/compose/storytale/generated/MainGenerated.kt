@@ -15,7 +15,7 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
 // To let the Storytale compiler plugin add the initializations for stories
 fun MainViewController() {
     singleWindowApplication(
-        state = WindowState(width = 400.dp, height = 800.dp),
+        state = WindowState(width = 800.dp, height = 800.dp),
     ) {
         DevelopmentEntryPoint {
             CompositionLocalProvider(

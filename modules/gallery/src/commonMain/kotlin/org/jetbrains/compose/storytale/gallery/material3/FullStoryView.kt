@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -21,6 +23,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -108,7 +111,16 @@ private fun DrawerContent(
         verticalAlignment = Alignment.Bottom,
     ) {
         UseCustomDensity {
-            StorySearchBar(filterValue.value, { filterValue.value = it })
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = filterValue.value,
+                onValueChange = { filterValue.value = it },
+                maxLines = 1,
+                label = { Text("Type to filter") },
+                trailingIcon = {
+                    Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                }
+            )
         }
     }
 
