@@ -22,11 +22,13 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.storytale.story
 
@@ -101,26 +103,29 @@ fun parseColorLeniently(colorString: String, defaultColor: Color = Color.Black):
 
 
 val `Floating Action Buttons` by story {
+    val Density by parameter(LocalDensity.current)
     val `Container color (hex)` by parameter("705FA6")
 
     val bgColor = `Container color (hex)`.let {
         parseColorLeniently(it, MaterialTheme.colorScheme.primary)
     }
 
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        SmallFloatingActionButton(onClick = {}, containerColor = bgColor) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = null)
-        }
-        FloatingActionButton(onClick = {}, containerColor = bgColor) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = null)
-        }
-        ExtendedFloatingActionButton(onClick = {}, containerColor = bgColor) {
-            Icon(imageVector = Icons.Default.AddCircle, contentDescription = null)
-            Spacer(Modifier.padding(4.dp))
-            Text("Extended")
-        }
-        LargeFloatingActionButton(onClick = {}, containerColor = bgColor) {
-            Text("Large")
+    CompositionLocalProvider(LocalDensity provides Density) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            SmallFloatingActionButton(onClick = {}, containerColor = bgColor) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+            }
+            FloatingActionButton(onClick = {}, containerColor = bgColor) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+            }
+            ExtendedFloatingActionButton(onClick = {}, containerColor = bgColor) {
+                Icon(imageVector = Icons.Default.AddCircle, contentDescription = null)
+                Spacer(Modifier.padding(4.dp))
+                Text("Extended")
+            }
+            LargeFloatingActionButton(onClick = {}, containerColor = bgColor) {
+                Text("Large")
+            }
         }
     }
 }
