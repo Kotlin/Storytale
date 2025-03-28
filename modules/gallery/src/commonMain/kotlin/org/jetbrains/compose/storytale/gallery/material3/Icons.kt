@@ -1,4 +1,4 @@
-package org.jetbrains.storytale.gallery2
+package org.jetbrains.compose.storytale.gallery.material3
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType

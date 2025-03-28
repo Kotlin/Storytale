@@ -7,10 +7,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
 import org.jetbrains.compose.reload.DevelopmentEntryPoint
+import org.jetbrains.compose.storytale.gallery.material3.FullStorytaleGallery
 import org.jetbrains.compose.storytale.gallery.ui.theme.ColorScheme
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalColorScheme
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
-import org.jetbrains.storytale.gallery2.Testing
 
 // To let the Storytale compiler plugin add the initializations for stories
 fun MainViewController() {
@@ -22,7 +22,7 @@ fun MainViewController() {
                 LocalColorScheme provides ColorScheme.Light,
                 LocalCustomDensity provides Density(LocalDensity.current.density * 0.75f),
             ) {
-                Testing()
+                FullStorytaleGallery()
             }
         }
     }

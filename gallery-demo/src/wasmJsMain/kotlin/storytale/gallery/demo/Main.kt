@@ -12,13 +12,13 @@ import androidx.navigation.toRoute
 import kotlinx.browser.window
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.preloadFont
+import org.jetbrains.compose.storytale.gallery.material3.EmbeddedStoryView
+import org.jetbrains.compose.storytale.gallery.material3.FullStorytaleGallery
+import org.jetbrains.compose.storytale.gallery.material3.StoryScreen
 import org.jetbrains.compose.storytale.gallery.story.code.JetBrainsMonoRegularRes
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
 import org.jetbrains.compose.storytale.generated.MainViewController
 import org.jetbrains.compose.storytale.storiesStorage
-import org.jetbrains.storytale.gallery2.EmbeddedStoryView
-import org.jetbrains.storytale.gallery2.StoryScreen
-import org.jetbrains.storytale.gallery2.Testing
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalBrowserHistoryApi::class)
 fun main() {
@@ -29,12 +29,12 @@ fun main() {
     val useEmbedded = window.location.search.contains("embedded=true")
 
     ComposeViewport(viewportContainerId = "composeApplication") {
-        val isReady = preloadFont(JetBrainsMonoRegularRes).value != null
+        val hasResourcePreloadCompleted = preloadFont(JetBrainsMonoRegularRes).value != null
 
         CompositionLocalProvider(
             LocalCustomDensity provides Density(LocalDensity.current.density * 0.8f),
         ) {
-            if (isReady) {
+            if (hasResourcePreloadCompleted) {
                 if (useEmbedded) {
                     EmbeddedStoryView(
                         activeStory = storiesStorage.firstOrNull {
@@ -43,7 +43,7 @@ fun main() {
                     )
                 } else {
                     val navHostController = rememberNavController()
-                    Testing(
+                    FullStorytaleGallery(
                         navController = navHostController
                     )
 
