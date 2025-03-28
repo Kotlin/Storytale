@@ -16,12 +16,17 @@ import org.jetbrains.compose.storytale.gallery.story.code.JetBrainsMonoRegularRe
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
 import org.jetbrains.compose.storytale.generated.MainViewController
 import org.jetbrains.compose.storytale.storiesStorage
+import org.jetbrains.storytale.gallery2.EmbeddedStoryView
 import org.jetbrains.storytale.gallery2.StoryScreen
 import org.jetbrains.storytale.gallery2.Testing
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalBrowserHistoryApi::class)
 fun main() {
     MainViewController() // Storytale compiler will initialize the stories
+
+    val initRoute = window.location.hash.substringAfter('#', "")
+    val storyName = initRoute.substringAfter("story=", "")
+    val useEmbedded = window.location.search.contains("embedded=true")
 
     ComposeViewport(viewportContainerId = "composeApplication") {
         val isReady = preloadFont(JetBrainsMonoRegularRes).value != null
@@ -30,27 +35,33 @@ fun main() {
             LocalCustomDensity provides Density(LocalDensity.current.density * 0.8f),
         ) {
             if (isReady) {
-                val navHostController = rememberNavController()
+                if (useEmbedded) {
+                    EmbeddedStoryView(
+                        activeStory = storiesStorage.firstOrNull {
+                            it.name == storyName
+                        } ?: storiesStorage.first()
+                    )
+                } else {
+                    val navHostController = rememberNavController()
+                    Testing(
+                        navController = navHostController
+                    )
 
-                Testing(navController = navHostController)
-
-                LaunchedEffect(Unit) {
-                    val initRoute = window.location.hash.substringAfter('#', "")
-                    when {
-                        initRoute.startsWith("story=") -> {
-                            val storyName = initRoute.substringAfter("story=", "")
-                            println("Navigate to $storyName")
-                            navHostController.navigate(StoryScreen(storyName))
-                        }
-                    }
-                    window.bindToNavigation(navHostController) { entry ->
-                        val route = entry.destination.route.orEmpty()
+                    LaunchedEffect(Unit) {
                         when {
-                            route.startsWith(StoryScreen.serializer().descriptor.serialName) -> {
-                                val storyName = entry.toRoute<StoryScreen>().storyName
-                                "#story=$storyName"
+                            initRoute.startsWith("story=") -> {
+                                navHostController.navigate(StoryScreen(storyName))
                             }
-                            else -> ""
+                        }
+                        window.bindToNavigation(navHostController) { entry ->
+                            val route = entry.destination.route.orEmpty()
+                            when {
+                                route.startsWith(StoryScreen.serializer().descriptor.serialName) -> {
+                                    val storyName = entry.toRoute<StoryScreen>().storyName
+                                    "#story=$storyName"
+                                }
+                                else -> ""
+                            }
                         }
                     }
                 }

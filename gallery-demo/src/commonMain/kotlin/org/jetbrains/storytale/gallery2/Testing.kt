@@ -63,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -182,7 +183,37 @@ fun Testing(
 }
 
 @Composable
-private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
+fun EmbeddedStoryView(
+    activeStory: Story?
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            activeStory?.name ?: "",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(12.dp),
+        )
+        StoryContent(activeStory, useEmbeddedView = true, modifier = Modifier.weight(1f))
+        HorizontalDivider()
+        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 12.dp)) {
+            Text(
+                "Powered by Storytale",
+                modifier = Modifier.align(Alignment.CenterEnd),
+                style = MaterialTheme.typography.bodySmall,
+                fontSize = 9.sp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun StoryContent(
+    activeStory: Story?,
+    useEmbeddedView: Boolean = false,
+    modifier: Modifier = Modifier
+) {
     val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val heightClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
 
@@ -203,7 +234,7 @@ private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
                 }
 
                 AnimatedVisibility(
-                    isSmallWidth && activeStory?.parameters?.isNotEmpty() == true,
+                    (isSmallWidth || useEmbeddedView) && activeStory?.parameters?.isNotEmpty() == true,
                     enter = fadeIn(),
                     exit = fadeOut(),
                     modifier = Modifier.align(Alignment.BottomEnd),
@@ -240,7 +271,7 @@ private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
         }
 
         AnimatedContent(
-            targetState = isSmallHeight,
+            targetState = isSmallHeight || useEmbeddedView,
             transitionSpec = {
                 fadeIn() togetherWith fadeOut()
             },
