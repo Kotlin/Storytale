@@ -78,29 +78,3 @@ fun <T> TextParameterField(
         )
     }
 }
-
-@Suppress("ktlint:compose:mutable-state-param-check")
-@Composable
-fun <T> TextParameterField2(
-    parameterName: String,
-    state: MutableState<T>,
-    toTypeOrNull: String.() -> T?,
-    modifier: Modifier = Modifier,
-    label: String = "",
-    description: String = "",
-) = Column {
-    var value by state
-
-    ParameterHeader(parameterName, label)
-    Gap(8.dp)
-
-    UseCustomDensity {
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = value.toString(),
-            onValueChange = { newValue -> newValue.toTypeOrNull()?.also { value = it } },
-        )
-    }
-
-    ParameterDescription(description)
-}

@@ -32,7 +32,7 @@ fun main() {
         val hasResourcePreloadCompleted = preloadFont(JetBrainsMonoRegularRes).value != null
 
         CompositionLocalProvider(
-            LocalCustomDensity provides Density(LocalDensity.current.density * 0.75f),
+            LocalCustomDensity provides Density(LocalDensity.current.density * 0.8f),
         ) {
             if (hasResourcePreloadCompleted) {
                 if (useEmbedded) {

@@ -46,9 +46,6 @@ import androidx.savedstate.read
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
-import org.jetbrains.compose.storytale.gallery.story.StoryList
-import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
-import org.jetbrains.compose.storytale.gallery.story.StorySearchBar
 import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.storiesStorage
 

@@ -20,7 +20,7 @@ fun MainViewController() {
         DevelopmentEntryPoint {
             CompositionLocalProvider(
                 LocalColorScheme provides ColorScheme.Light,
-                LocalCustomDensity provides Density(LocalDensity.current.density * 0.75f),
+                LocalCustomDensity provides Density(LocalDensity.current.density * 0.8f),
             ) {
                 FullStorytaleGallery()
             }

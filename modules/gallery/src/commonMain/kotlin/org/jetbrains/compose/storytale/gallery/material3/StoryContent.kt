@@ -51,7 +51,6 @@ import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
-import org.jetbrains.compose.storytale.gallery.story.StoryParametersList2
 import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
 import org.jetbrains.compose.storytale.gallery.ui.component.IconButton
 
@@ -186,7 +185,7 @@ private fun StoryPreviewAndCodeStacked(
         if (!isSmallWidth && hasParameters) {
             VerticalDivider()
             Column(modifier = Modifier.fillMaxHeight().widthIn(max = 250.dp)) {
-                StoryParametersList2(
+                StoryParametersList(
                     storyParameters!!,
                     modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
                 )
@@ -232,7 +231,7 @@ private fun BoxScope.OverlayParametersList(
                 ) {
                     Icon(imageVector = Icons.Default.Close, null)
                 }
-                StoryParametersList2(
+                StoryParametersList(
                     activeStory?.parameters ?: emptyList(),
                     modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
                 )

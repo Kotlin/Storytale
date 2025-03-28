@@ -55,24 +55,3 @@ fun BooleanParameterField(
         )
     }
 }
-
-@Suppress("ktlint:compose:mutable-state-param-check")
-@Composable
-fun BooleanParameterField2(
-    parameterName: String,
-    state: MutableState<Boolean>,
-    modifier: Modifier = Modifier,
-    description: String = "",
-) = Column(modifier = modifier) {
-    var checked by state
-    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-        ParameterHeader(parameterName, "Boolean")
-
-        Spacer(Modifier.weight(1f))
-
-        UseCustomDensity {
-            Switch(checked = checked, onCheckedChange = { checked = it })
-        }
-    }
-    ParameterDescription(description)
-}
