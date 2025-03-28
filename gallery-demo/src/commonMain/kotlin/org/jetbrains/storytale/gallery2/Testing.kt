@@ -52,6 +52,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -62,9 +63,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.savedstate.read
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.story.StoryList
 import org.jetbrains.compose.storytale.gallery.story.StoryListItemType
@@ -75,14 +82,18 @@ import org.jetbrains.compose.storytale.gallery.ui.component.IconButton
 import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.storiesStorage
 
+@Serializable
+data class StoryScreen(val storyName: String)
+
 @Composable
-fun Testing() {
+fun Testing(
+    navController: NavHostController = rememberNavController(),
+    initialStory: Story? = storiesStorage.firstOrNull(),
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val activeStoryItem = remember {
-        mutableStateOf(
-            storiesStorage.firstOrNull()?.let { StoryListItemType.StoryItem(it) },
-        )
+        mutableStateOf(initialStory?.let { StoryListItemType.StoryItem(it) })
     }
 
     val filterValue = remember { mutableStateOf("") }
@@ -133,7 +144,7 @@ fun Testing() {
                             expandedGroups.add(it)
                         }
                     } else if (it is StoryListItemType.StoryItem) {
-                        activeStoryItem.value = it
+                        navController.navigate(StoryScreen(it.story.name))
                         coroutineScope.launch {
                             drawerState.close()
                         }
@@ -145,7 +156,26 @@ fun Testing() {
             Column(modifier = Modifier.fillMaxSize()) {
                 GalleryTopAppBar(drawerState, activeStory = activeStoryItem.value?.story)
                 HorizontalDivider()
-                StoryContent(activeStoryItem.value?.story, modifier = Modifier.fillMaxSize())
+
+                NavHost(
+                    navController = navController,
+                    startDestination = StoryScreen(activeStoryItem.value?.story?.name ?: ""),
+                    enterTransition = { fadeIn() },
+                    exitTransition = { fadeOut() },
+                    popEnterTransition = { fadeIn() },
+                    popExitTransition = { fadeOut() },
+                ) {
+                    composable<StoryScreen> {
+                        val storyName = it.arguments?.read { getString("storyName") } ?: ""
+                        StoryContent(activeStoryItem.value?.story, modifier = Modifier.fillMaxSize())
+
+                        SideEffect {
+                            activeStoryItem.value = storiesStorage.firstOrNull { it.name == storyName }?.let {
+                                StoryListItemType.StoryItem(it)
+                            }
+                        }
+                    }
+                }
             }
         },
     )
@@ -213,7 +243,7 @@ private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
             targetState = isSmallHeight,
             transitionSpec = {
                 fadeIn() togetherWith fadeOut()
-            }
+            },
         ) { isSmall ->
             if (isSmall) {
                 val selectedTabIndex = remember { mutableStateOf(0) }
@@ -241,7 +271,7 @@ private fun StoryContent(activeStory: Story?, modifier: Modifier = Modifier) {
                     activeStory = activeStory,
                     previewContent = { previewContent() },
                     codeContent = codeContent,
-                    modifier = Modifier
+                    modifier = Modifier,
                 )
             }
         }
