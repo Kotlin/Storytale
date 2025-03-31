@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowHeightSizeClass
@@ -157,8 +158,7 @@ private fun BoxScope.StoryCodeViewer(code: String) {
     SmallFloatingActionButton(
         onClick = {
             coroutineScope.launch {
-                // TODO: add expect / actual for ClipEntry creation
-                //clipboard.setClipEntry(ClipEntry())
+                clipboard.copyCodeToClipboard(code)
                 showCopiedMessage.value = true
             }
         },
@@ -342,3 +342,5 @@ private fun StoryTabbedView(
         }
     }
 }
+
+internal expect suspend fun Clipboard.copyCodeToClipboard(code: String)
