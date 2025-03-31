@@ -29,7 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -42,7 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.savedstate.read
+import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
@@ -60,34 +60,43 @@ fun FullStorytaleGallery(
         mutableStateOf(initialStory?.let { StoryListItemType.StoryItem(it) })
     }
 
+    LaunchedEffect(Unit) {
+        navController.currentBackStack.collect { backstack ->
+            val entry = backstack.lastOrNull()
+            val isStory = entry?.destination?.route?.startsWith("story/") == true
+            if (entry != null && isStory) {
+                val story = entry.toRoute<StoryScreen>()
+                activeStoryItem.value = storiesStorage.firstOrNull {
+                    it.name == story.storyName
+                }?.let {
+                    StoryListItemType.StoryItem(it)
+                }
+            }
+        }
+    }
+
     ResponsiveNavigationDrawer(
         drawerState = drawerState,
         drawerContent = movableContentOf<ColumnScope> {
             DrawerContent(drawerState, navController, activeStoryItem.value)
         },
         content = movableContentOf {
-            Column(modifier = Modifier.fillMaxSize()) {
-                GalleryTopAppBar(drawerState, activeStory = activeStoryItem.value?.story)
-
-                HorizontalDivider()
-
-                NavHost(
-                    navController = navController,
-                    startDestination = StoryScreen(activeStoryItem.value?.story?.name ?: ""),
-                    enterTransition = { fadeIn() },
-                    exitTransition = { fadeOut() },
-                    popEnterTransition = { fadeIn() },
-                    popExitTransition = { fadeOut() },
-                ) {
-                    composable<StoryScreen> {
-                        val storyName = it.arguments?.read { getString("storyName") } ?: ""
+            NavHost(
+                navController = navController,
+                startDestination = StoryScreen(activeStoryItem.value?.story?.name ?: ""),
+                enterTransition = { fadeIn() },
+                exitTransition = { fadeOut() },
+                popEnterTransition = { fadeIn() },
+                popExitTransition = { fadeOut() },
+            ) {
+                composable<StoryScreen> {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        GalleryTopAppBar(
+                            drawerState = drawerState,
+                            activeStoryName = activeStoryItem.value?.story?.name
+                        )
+                        HorizontalDivider()
                         StoryContent(activeStoryItem.value?.story, modifier = Modifier.fillMaxSize())
-
-                        SideEffect {
-                            activeStoryItem.value = storiesStorage.firstOrNull { it.name == storyName }?.let {
-                                StoryListItemType.StoryItem(it)
-                            }
-                        }
                     }
                 }
             }
@@ -116,7 +125,7 @@ private fun DrawerContent(
                 label = { Text("Type to filter") },
                 trailingIcon = {
                     Icon(imageVector = Icons.Default.Search, contentDescription = null)
-                }
+                },
             )
         }
     }
@@ -155,9 +164,12 @@ private fun DrawerContent(
                     expandedGroups.add(it)
                 }
             } else if (it is StoryListItemType.StoryItem) {
-                navController.navigate(StoryScreen(it.story.name))
-                coroutineScope.launch {
-                    drawerState.close()
+                if (activeStoryItem?.story?.name != it.story.name) {
+                    navController.navigate(StoryScreen(it.story.name))
+
+                    coroutineScope.launch {
+                        drawerState.close()
+                    }
                 }
             }
         },
@@ -165,14 +177,14 @@ private fun DrawerContent(
 }
 
 @Composable
-private fun GalleryTopAppBar(drawerState: DrawerState, activeStory: Story?) {
+private fun GalleryTopAppBar(drawerState: DrawerState, activeStoryName: String?) {
     val coroutineScope = rememberCoroutineScope()
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
 
     CenterAlignedTopAppBar(
         title = {
-            AnimatedContent(activeStory?.name) { title ->
+            AnimatedContent(activeStoryName) { title ->
                 Text(title ?: "")
             }
         },
