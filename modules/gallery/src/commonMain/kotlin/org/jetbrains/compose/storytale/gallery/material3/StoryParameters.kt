@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -47,7 +48,10 @@ fun StoryParametersList(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         parameters.forEach { parameter ->
-            when (parameter.type) {
+            val customComposable = parameterUiControllerCustomizer?.customComposable(parameter)
+            if (customComposable != null) {
+                customComposable(parameter)
+            } else when (parameter.type) {
                 String::class -> TextParameterField(
                     parameterName = parameter.name,
                     state = parameter.state.cast(),
@@ -128,6 +132,20 @@ fun StoryParametersList(
             }
         }
     }
+}
+
+internal var parameterUiControllerCustomizer: ParameterUiControllerCustomizer? = null
+
+/**
+ * Available for internal usages for now.
+ * Might be deleted or changed in an incompatible manner. Use it at your own risk.
+ */
+fun interface ParameterUiControllerCustomizer {
+    /**
+     * Returns null if the customizer doesn't handle this [StoryParameter.type].
+     * Otherwise, it must return a Composable lambda with a UI visualizing and controlling the parameter state.
+     */
+    fun customComposable(parameter: StoryParameter<*>): (@Composable (parameter: StoryParameter<*>) -> Unit)?
 }
 
 @Composable
