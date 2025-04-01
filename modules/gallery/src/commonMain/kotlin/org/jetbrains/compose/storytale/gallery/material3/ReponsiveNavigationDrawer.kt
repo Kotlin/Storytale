@@ -9,6 +9,7 @@ import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -26,7 +27,7 @@ fun ResponsiveNavigationDrawer(
     val drawerModifier = Modifier.width(280.dp)
     if (!isWideWindow) {
         DismissibleNavigationDrawer(
-            drawerContent = {
+            drawerContent = movableContentOf {
                 DismissibleDrawerSheet(drawerState = drawerState, content = drawerContent, modifier = drawerModifier)
             },
             content = content, drawerState = drawerState, gesturesEnabled = isSmallWindow,

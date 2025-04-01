@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,11 +21,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.storiesStorage
 
 @Composable
 fun EmbeddedStoryView(
+    appState: StorytaleGalleryAppState,
     navHostController: NavHostController,
 ) {
 
@@ -43,10 +44,17 @@ fun EmbeddedStoryView(
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    text = storyName,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(12.dp),
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = storyName,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(12.dp),
+                        )
+                    },
+                    actions = {
+                        ThemeSwitcherIconButton(appState)
+                    }
                 )
                 StoryContent(
                     activeStory = storiesStorage.firstOrNull {

@@ -29,9 +29,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,14 +48,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import kotlin.math.roundToInt
+import dev.snipme.highlights.model.SyntaxThemes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
@@ -150,7 +146,11 @@ private fun StoryPreview(
 
 @Composable
 private fun BoxScope.StoryCodeViewer(code: String) {
-    CodeBlock(code, modifier = Modifier.fillMaxSize())
+    CodeBlock(
+        code = code,
+        modifier = Modifier.fillMaxSize(),
+        theme = SyntaxThemes.darcula(darkMode = isDarkMaterialTheme())
+    )
     val clipboard = LocalClipboard.current
     val showCopiedMessage = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -260,10 +260,12 @@ private fun BoxScope.OverlayParametersList(
         enter = slideInHorizontally(initialOffsetX = { it }),
         exit = slideOutHorizontally(targetOffsetX = { it }),
     ) {
-        Surface(modifier = Modifier.fillMaxHeight().width(250.dp), shadowElevation = 16.dp) {
+        Surface(modifier = Modifier.fillMaxHeight().width(250.dp), shadowElevation = 0.dp) {
             Column(
-                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLowest),
+                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
             ) {
+                if (!isDarkMaterialTheme()) HorizontalDivider()
+
                 IconButton(
                     onClick = {
                         showOverlayParameters.value = false

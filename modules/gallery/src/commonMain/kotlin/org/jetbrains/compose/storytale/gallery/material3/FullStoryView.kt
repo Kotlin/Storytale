@@ -22,6 +22,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -51,6 +53,7 @@ import org.jetbrains.compose.storytale.storiesStorage
 
 @Composable
 fun FullStorytaleGallery(
+    appState: StorytaleGalleryAppState,
     navController: NavHostController = rememberNavController(),
     initialStory: Story? = storiesStorage.firstOrNull(),
 ) {
@@ -77,8 +80,8 @@ fun FullStorytaleGallery(
 
     ResponsiveNavigationDrawer(
         drawerState = drawerState,
-        drawerContent = movableContentOf<ColumnScope> {
-            DrawerContent(drawerState, navController, activeStoryItem.value)
+        drawerContent = {
+            DrawerContent(appState, drawerState, navController, activeStoryItem.value)
         },
         content = movableContentOf {
             NavHost(
@@ -92,6 +95,7 @@ fun FullStorytaleGallery(
                 composable<StoryScreen> {
                     Column(modifier = Modifier.fillMaxSize()) {
                         GalleryTopAppBar(
+                            appState = appState,
                             drawerState = drawerState,
                             activeStoryName = activeStoryItem.value?.story?.name
                         )
@@ -106,6 +110,7 @@ fun FullStorytaleGallery(
 
 @Composable
 private fun DrawerContent(
+    appState: StorytaleGalleryAppState,
     drawerState: DrawerState,
     navController: NavHostController,
     activeStoryItem: StoryListItemType.StoryItem?,
@@ -130,8 +135,6 @@ private fun DrawerContent(
         }
     }
 
-    val expandedGroups = remember { mutableStateSetOf<StoryListItemType.Group>() }
-
     val fullList = remember {
         val grouped = storiesStorage.groupBy { it.group }
         grouped.keys.sorted().map { key ->
@@ -155,13 +158,13 @@ private fun DrawerContent(
     StoryList(
         activeStory = activeStoryItem?.story,
         storyListItems = filteredList,
-        expandedGroups = expandedGroups,
+        expandedGroups = appState.expandedGroups,
         onItemClick = {
             if (it is StoryListItemType.Group) {
-                if (expandedGroups.contains(it)) {
-                    expandedGroups.remove(it)
+                if (appState.expandedGroups.contains(it)) {
+                    appState.expandedGroups.remove(it)
                 } else {
-                    expandedGroups.add(it)
+                    appState.expandedGroups.add(it)
                 }
             } else if (it is StoryListItemType.StoryItem) {
                 if (activeStoryItem?.story?.name != it.story.name) {
@@ -177,7 +180,11 @@ private fun DrawerContent(
 }
 
 @Composable
-private fun GalleryTopAppBar(drawerState: DrawerState, activeStoryName: String?) {
+private fun GalleryTopAppBar(
+    drawerState: DrawerState,
+    appState: StorytaleGalleryAppState,
+    activeStoryName: String?
+) {
     val coroutineScope = rememberCoroutineScope()
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
@@ -220,6 +227,25 @@ private fun GalleryTopAppBar(drawerState: DrawerState, activeStoryName: String?)
                 }
             }
         },
-        actions = {},
+        actions = {
+            ThemeSwitcherIconButton(appState)
+
+        },
     )
+}
+
+
+@Composable
+internal fun ThemeSwitcherIconButton(appState: StorytaleGalleryAppState) {
+    IconButton(onClick = {
+        appState.switchTheme(!appState.isDarkTheme())
+    }) {
+        AnimatedContent(targetState = appState.isDarkTheme()) { isDarkTheme ->
+            if (isDarkTheme) {
+                Icon(imageVector = Light_mode, contentDescription = null)
+            } else {
+                Icon(imageVector = Dark_mode, contentDescription = null)
+            }
+        }
+    }
 }

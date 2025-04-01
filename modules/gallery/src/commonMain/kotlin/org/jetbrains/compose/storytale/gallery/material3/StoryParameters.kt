@@ -160,8 +160,8 @@ fun ParameterLabel(
     Text(
         text = name,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = 8.sp,
-        modifier = Modifier.padding(4.dp),
+        fontSize = 9.sp,
+        modifier = Modifier.padding(2.dp),
     )
 }
 
@@ -175,6 +175,7 @@ fun ParameterHeader(
     CenterRow(modifier) {
         Text(
             text = name,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyMedium,
         )
         Gap(6.dp)
@@ -190,6 +191,7 @@ fun ParameterDescription(
         Gap(8.dp)
         Text(
             text = description,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodySmall,
         )
     }
@@ -207,7 +209,7 @@ internal fun DensityParameterSlider(
 
         val realDensity = LocalDensity.current.density
 
-        Row(modifier = Modifier.fillMaxWidth().padding(top = 20.dp), verticalAlignment = CenterVertically) {
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 28.dp), verticalAlignment = CenterVertically) {
             CompositionLocalProvider(LocalDensity provides LocalCustomDensity.current) {
                 Slider(
                     modifier = Modifier.weight(0.75f),
@@ -221,6 +223,7 @@ internal fun DensityParameterSlider(
 
             Text(
                 text = state.value.density.simpleFormat(1),
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(0.15f).padding(4.dp),
                 textAlign = TextAlign.End,
             )

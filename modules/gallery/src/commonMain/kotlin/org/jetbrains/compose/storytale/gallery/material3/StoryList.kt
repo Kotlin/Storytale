@@ -137,10 +137,10 @@ private fun StoryGroupLabelView(
     onClick: () -> Unit,
 ) {
     val bgAlpha = animateFloatAsState(
-        if (isHighlighted) 0.5f else 0f,
+        if (isHighlighted) 0.1f else 0f,
         tween()
     ).value
-    val bgColor = MaterialTheme.colorScheme.surfaceDim.copy(alpha = bgAlpha)
+    val bgColor = MaterialTheme.colorScheme.onSurface.copy(alpha = bgAlpha)
     val indentation = indentationDp * groupDepth
 
     Row(
@@ -239,5 +239,16 @@ sealed interface StoryListItemType {
     }
 
 
-    class StoryItem(val story: Story) : StoryListItemType
+    class StoryItem(val story: Story) : StoryListItemType {
+        override fun hashCode(): Int {
+            return story.hashCode()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+            other as StoryItem
+            return story == other.story
+        }
+    }
 }
