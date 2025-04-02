@@ -1,10 +1,8 @@
 import org.jetbrains.compose.reload.ComposeHotRun
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
@@ -43,6 +41,14 @@ class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 apply<StorytaleCompilerPlugin>()
 
 
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("org.jetbrains.compose.storytale:local-compiler-plugin"))
+            .using(project(":modules:compiler-plugin"))
+    }
+}
+
+
 kotlin {
     js {
         browser()
@@ -56,23 +62,9 @@ kotlin {
             }
         }
         binaries.executable()
-
-        compilations.forEach {
-            it.configurations.pluginConfiguration.resolutionStrategy.dependencySubstitution {
-                substitute(module("org.jetbrains.compose.storytale:local-compiler-plugin"))
-                    .using(project(":modules:compiler-plugin"))
-            }
-        }
     }
 
-    jvm("desktop") {
-        compilations.forEach {
-            it.configurations.pluginConfiguration.resolutionStrategy.dependencySubstitution {
-                substitute(module("org.jetbrains.compose.storytale:local-compiler-plugin"))
-                    .using(project(":modules:compiler-plugin"))
-            }
-        }
-    }
+    jvm("desktop")
 
 
     applyDefaultHierarchyTemplate()
