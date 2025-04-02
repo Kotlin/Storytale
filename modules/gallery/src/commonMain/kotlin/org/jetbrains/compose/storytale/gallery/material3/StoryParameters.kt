@@ -17,12 +17,16 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
@@ -128,6 +132,12 @@ fun StoryParametersList(
                         modifier = Modifier.fillMaxWidth(),
                     )
 
+                    Color::class -> HexColorTextField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
                     else -> error("Unsupported parameter type ${parameter.type}")
                 }
             }
@@ -199,7 +209,7 @@ fun ParameterDescription(
 
 @Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
-internal fun DensityParameterSlider(
+fun DensityParameterSlider(
     parameterName: String,
     state: MutableState<Density>,
     modifier: Modifier = Modifier,
@@ -278,6 +288,31 @@ fun <T> TextParameterField(
     ParameterDescription(description)
 }
 
+@OptIn(ExperimentalStdlibApi::class)
+@Composable
+fun HexColorTextField(
+    parameterName: String,
+    state: MutableState<Color>,
+    modifier: Modifier = Modifier,
+) {
+    val hexRepresentation = remember { mutableStateOf(state.value.value.toHexString().substring(0, 8)) }
+
+    TextParameterField(
+        parameterName = parameterName,
+        state = hexRepresentation,
+        toTypeOrNull = {
+            val len = this.length.coerceAtMost(8)
+            this.substring(0, len)
+        },
+        modifier = modifier,
+        label = "hex ARGB Color",
+    )
+
+    LaunchedEffect(hexRepresentation.value) {
+        state.value = parseColorLeniently(hexRepresentation.value)
+    }
+}
+
 private fun Number.simpleFormat(numberDigitsAfterSeparator: Int = 0, decimalSeparator: Char = '.'): String {
     if (numberDigitsAfterSeparator < 0) {
         throw IllegalArgumentException("numberDigitsAfterSeparator should be >= 0 but is $numberDigitsAfterSeparator")
@@ -299,4 +334,74 @@ private fun addNullsBefore(suffixInt: Int, numberDigitsAfterSeparator: Int): Str
     val len = s.length
     repeat(numberDigitsAfterSeparator - len) { _ -> s = "0$s" }
     return s
+}
+
+
+/**
+ * Parses a hex color string (#RRGGBB, #AARRGGBB, or partial inputs) into a Compose Color.
+ * Handles optional '#' prefix and case-insensitivity.
+ * - If 1-6 hex digits are provided, assumes RGB and pads with '0' to the right
+ *   to complete 6 digits, then assumes full alpha ('FF').
+ * - If 7-8 hex digits are provided, assumes ARGB and pads with '0' to the right
+ *   to complete 8 digits.
+ * - Returns a default color if the string contains invalid hex characters,
+ *   is empty/just '#', or is longer than 8 hex digits.
+ *
+ * Examples:
+ *   "#F" -> "#FF F0 00 00" (Red, full alpha)
+ *   "#123" -> "#FF 12 30 00"
+ *   "#ABCDEF" -> "#FF AB CD EF"
+ *   "#AABBC" -> "#AA BB C0 00" (Alpha from input, padded)
+ *   "#AABBCCDD" -> "#AA BB CC DD"
+ *   "#G" -> defaultColor
+ *   "" -> defaultColor
+ *
+ * @param colorString The potentially partial or complete hex color string.
+ * @param defaultColor The Color to return if parsing is not possible even leniently.
+ *                     Defaults to Color.Black.
+ * @return The parsed Compose Color, or the defaultColor.
+ */
+internal fun parseColorLeniently(colorString: String, defaultColor: Color = Color.Black): Color {
+    // 1. Basic cleanup and initial validation
+    val trimmed = colorString.trim()
+    if (trimmed.isEmpty() || trimmed == "#") {
+        return defaultColor
+    }
+
+    // 2. Remove prefix, standardize case
+    val hex = trimmed.removePrefix("#").uppercase()
+
+    // 3. Check for invalid characters (only 0-9, A-F allowed)
+    if (!hex.all { it.isDigit() || it in 'A'..'F' }) {
+        return defaultColor
+    }
+
+    // 4. Check for excessive length (more than 8 hex digits is invalid)
+    if (hex.length > 8) {
+        return defaultColor
+    }
+
+    // 5. Determine final 8-digit hex (AARRGGBB) based on input length
+    val fullHex = when (hex.length) {
+        in 1..6 -> {
+            // Assume RGB input, pad to 6 digits, prepend FF alpha
+            val paddedRgb = hex.padEnd(6, '0')
+            "FF$paddedRgb"
+        }
+        7, 8 -> {
+            // Assume ARGB input, pad to 8 digits
+            hex.padEnd(8, '0')
+        }
+        else -> {
+            // Should not happen due to initial checks, but handle defensively
+            return defaultColor
+        }
+    }
+
+    // 6. Parse the constructed 8-digit hex string
+    // Since we validated characters and length, this should succeed
+    val colorLong = fullHex.toLongOrNull(16) ?: return defaultColor
+
+    // 7. Convert Long (ARGB) to Compose Color Int (ARGB)
+    return Color(colorLong.toInt())
 }
