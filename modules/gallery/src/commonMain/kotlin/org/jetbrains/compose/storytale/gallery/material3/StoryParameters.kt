@@ -337,7 +337,6 @@ private fun addNullsBefore(suffixInt: Int, numberDigitsAfterSeparator: Int): Str
     return s
 }
 
-
 /**
  * Parses a hex color string (#RRGGBB, #AARRGGBB, or partial inputs) into a Compose Color.
  * Handles optional '#' prefix and case-insensitivity.
