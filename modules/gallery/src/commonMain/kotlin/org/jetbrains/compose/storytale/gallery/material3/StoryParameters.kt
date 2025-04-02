@@ -288,6 +288,7 @@ fun <T> TextParameterField(
     ParameterDescription(description)
 }
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun HexColorTextField(
