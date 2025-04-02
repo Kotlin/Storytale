@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -51,84 +50,86 @@ fun StoryParametersList(
             val customComposable = parameterUiControllerCustomizer?.customComposable(parameter)
             if (customComposable != null) {
                 customComposable(parameter)
-            } else when (parameter.type) {
-                String::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toString() },
-                    label = "String",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            } else {
+                when (parameter.type) {
+                    String::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toString() },
+                        label = "String",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Boolean::class -> BooleanParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Boolean::class -> BooleanParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Byte::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toByteOrNull() },
-                    label = "Byte",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Byte::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toByteOrNull() },
+                        label = "Byte",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Short::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toShortOrNull() },
-                    label = "Short",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Short::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toShortOrNull() },
+                        label = "Short",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Int::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toIntOrNull() },
-                    label = "Int",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Int::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toIntOrNull() },
+                        label = "Int",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Long::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toLongOrNull() },
-                    label = "Long",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Long::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toLongOrNull() },
+                        label = "Long",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                ULong::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toULongOrNull() },
-                    label = "ULong",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    ULong::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toULongOrNull() },
+                        label = "ULong",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Float::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toFloatOrNull() },
-                    label = "Float",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Float::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toFloatOrNull() },
+                        label = "Float",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Double::class -> TextParameterField(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    toTypeOrNull = { toDoubleOrNull() },
-                    label = "Double",
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Double::class -> TextParameterField(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        toTypeOrNull = { toDoubleOrNull() },
+                        label = "Double",
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                Density::class -> DensityParameterSlider(
-                    parameterName = parameter.name,
-                    state = parameter.state.cast(),
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                    Density::class -> DensityParameterSlider(
+                        parameterName = parameter.name,
+                        state = parameter.state.cast(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
 
-                else -> error("Unsupported parameter type ${parameter.type}")
+                    else -> error("Unsupported parameter type ${parameter.type}")
+                }
             }
         }
     }
@@ -165,12 +166,11 @@ fun ParameterLabel(
     )
 }
 
-
 @Composable
 fun ParameterHeader(
     name: String,
     type: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     CenterRow(modifier) {
         Text(
@@ -185,7 +185,7 @@ fun ParameterHeader(
 
 @Composable
 fun ParameterDescription(
-    description: String
+    description: String,
 ) {
     if (description.isNotEmpty()) {
         Gap(8.dp)
@@ -197,13 +197,13 @@ fun ParameterDescription(
     }
 }
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 internal fun DensityParameterSlider(
     parameterName: String,
     state: MutableState<Density>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
     BoxWithConstraints(modifier = modifier) {
         ParameterHeader(parameterName, "Density")
 
@@ -217,7 +217,7 @@ internal fun DensityParameterSlider(
                     valueRange = 0.25f..realDensity + 2f,
                     onValueChange = {
                         state.value = Density(it)
-                    }
+                    },
                 )
             }
 
@@ -230,7 +230,6 @@ internal fun DensityParameterSlider(
         }
     }
 }
-
 
 @Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
@@ -252,7 +251,6 @@ fun BooleanParameterField(
     }
     ParameterDescription(description)
 }
-
 
 @Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
@@ -281,8 +279,9 @@ fun <T> TextParameterField(
 }
 
 private fun Number.simpleFormat(numberDigitsAfterSeparator: Int = 0, decimalSeparator: Char = '.'): String {
-    if (numberDigitsAfterSeparator < 0)
+    if (numberDigitsAfterSeparator < 0) {
         throw IllegalArgumentException("numberDigitsAfterSeparator should be >= 0 but is $numberDigitsAfterSeparator")
+    }
 
     val prefix = this.toInt()
     if (numberDigitsAfterSeparator == 0) return "$prefix"

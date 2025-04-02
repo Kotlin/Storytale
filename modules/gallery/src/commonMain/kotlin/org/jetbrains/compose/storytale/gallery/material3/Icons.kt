@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:backing-property-naming")
+
 package org.jetbrains.compose.storytale.gallery.material3
 
 import androidx.compose.ui.graphics.Color
@@ -19,7 +21,7 @@ internal val ContentCopyImageVector: ImageVector
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
-            viewportHeight = 960f
+            viewportHeight = 960f,
         ).apply {
             path(
                 fill = SolidColor(Color.Black),
@@ -30,7 +32,7 @@ internal val ContentCopyImageVector: ImageVector
                 strokeLineCap = StrokeCap.Butt,
                 strokeLineJoin = StrokeJoin.Miter,
                 strokeLineMiter = 1.0f,
-                pathFillType = PathFillType.NonZero
+                pathFillType = PathFillType.NonZero,
             ) {
                 moveTo(360f, 720f)
                 quadToRelative(-33f, 0f, -56.5f, -23.5f)
@@ -69,7 +71,6 @@ internal val ContentCopyImageVector: ImageVector
 
 private var _Content_copy: ImageVector? = null
 
-
 internal val MenuOpenImageVector: ImageVector
     get() {
         if (_Menu_open != null) {
@@ -80,7 +81,7 @@ internal val MenuOpenImageVector: ImageVector
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
-            viewportHeight = 960f
+            viewportHeight = 960f,
         ).apply {
             path(
                 fill = SolidColor(Color.Black),
@@ -91,7 +92,7 @@ internal val MenuOpenImageVector: ImageVector
                 strokeLineCap = StrokeCap.Butt,
                 strokeLineJoin = StrokeJoin.Miter,
                 strokeLineMiter = 1.0f,
-                pathFillType = PathFillType.NonZero
+                pathFillType = PathFillType.NonZero,
             ) {
                 moveTo(120f, 720f)
                 verticalLineToRelative(-80f)
@@ -122,7 +123,6 @@ internal val MenuOpenImageVector: ImageVector
 
 private var _Menu_open: ImageVector? = null
 
-
 internal val Dark_mode: ImageVector
     get() {
         if (_Dark_mode != null) {
@@ -133,7 +133,7 @@ internal val Dark_mode: ImageVector
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
-            viewportHeight = 960f
+            viewportHeight = 960f,
         ).apply {
             path(
                 fill = SolidColor(Color.Black),
@@ -144,7 +144,7 @@ internal val Dark_mode: ImageVector
                 strokeLineCap = StrokeCap.Butt,
                 strokeLineJoin = StrokeJoin.Miter,
                 strokeLineMiter = 1.0f,
-                pathFillType = PathFillType.NonZero
+                pathFillType = PathFillType.NonZero,
             ) {
                 moveTo(480f, 840f)
                 quadToRelative(-150f, 0f, -255f, -105f)
@@ -184,7 +184,6 @@ internal val Dark_mode: ImageVector
 
 private var _Dark_mode: ImageVector? = null
 
-
 internal val Light_mode: ImageVector
     get() {
         if (_Light_mode != null) {
@@ -195,7 +194,7 @@ internal val Light_mode: ImageVector
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
-            viewportHeight = 960f
+            viewportHeight = 960f,
         ).apply {
             path(
                 fill = SolidColor(Color.Black),
@@ -206,7 +205,7 @@ internal val Light_mode: ImageVector
                 strokeLineCap = StrokeCap.Butt,
                 strokeLineJoin = StrokeJoin.Miter,
                 strokeLineMiter = 1.0f,
-                pathFillType = PathFillType.NonZero
+                pathFillType = PathFillType.NonZero,
             ) {
                 moveTo(480f, 600f)
                 quadToRelative(50f, 0f, 85f, -35f)
@@ -273,5 +272,3 @@ internal val Light_mode: ImageVector
     }
 
 private var _Light_mode: ImageVector? = null
-
-

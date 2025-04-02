@@ -55,14 +55,14 @@ fun StoryList(
                     onItemClick = onItemClick,
                     activeStory = activeStory,
                     isHighlighted = listItem.contains(activeStory),
-                    modifier = Modifier.animateItem()
+                    modifier = Modifier.animateItem(),
                 )
             } else if (listItem is StoryListItemType.StoryItem) {
                 StoryListItemView(
                     isActiveStory = listItem.story == activeStory,
                     storyListItemType = listItem,
                     onClick = { onItemClick(listItem) },
-                    modifier = Modifier.animateItem()
+                    modifier = Modifier.animateItem(),
                 )
             }
         }
@@ -74,13 +74,13 @@ private val indentationDp = 12.dp
 
 @Composable
 private fun GroupContent(
-    groupDepth: Int = 0,
     group: StoryListItemType.Group,
     expandedGroups: SnapshotStateSet<StoryListItemType.Group>,
     isHighlighted: Boolean,
     onItemClick: (StoryListItemType) -> Unit,
-    modifier: Modifier = Modifier,
     activeStory: Story?,
+    modifier: Modifier = Modifier,
+    groupDepth: Int = 0,
 ) {
     Column(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
@@ -107,7 +107,7 @@ private fun GroupContent(
                                 expandedGroups = expandedGroups,
                                 onItemClick = onItemClick,
                                 activeStory = activeStory,
-                                isHighlighted = item.contains(activeStory)
+                                isHighlighted = item.contains(activeStory),
                             )
                         }
                         is StoryListItemType.StoryItem -> {
@@ -138,7 +138,7 @@ private fun StoryGroupLabelView(
 ) {
     val bgAlpha = animateFloatAsState(
         if (isHighlighted) 0.1f else 0f,
-        tween()
+        tween(),
     ).value
     val bgColor = MaterialTheme.colorScheme.onSurface.copy(alpha = bgAlpha)
     val indentation = indentationDp * groupDepth
@@ -178,12 +178,12 @@ private fun StoryGroupLabelView(
 private fun StoryListItemView(
     isActiveStory: Boolean,
     storyListItemType: StoryListItemType.StoryItem,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val bgAlpha = animateFloatAsState(
         if (isActiveStory) 1f else 0f,
-        tween()
+        tween(),
     ).value
 
     Box(
@@ -237,7 +237,6 @@ sealed interface StoryListItemType {
             }
         }
     }
-
 
     class StoryItem(val story: Story) : StoryListItemType {
         override fun hashCode(): Int {

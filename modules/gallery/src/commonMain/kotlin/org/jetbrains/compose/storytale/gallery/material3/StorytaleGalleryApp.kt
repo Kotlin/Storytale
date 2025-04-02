@@ -19,9 +19,8 @@ import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
 @Composable
 fun StorytaleGalleryApp(
     isEmbedded: Boolean = false,
-    navHostController: NavHostController = rememberNavController()
+    navHostController: NavHostController = rememberNavController(),
 ) {
-
     val isSystemDarkTheme = isSystemInDarkTheme()
 
     val appState = remember {

@@ -7,6 +7,7 @@ import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.jetbrains.compose.storytale.gallery.material3.StorytaleGalleryApp
 
 // To let the Storytale compiler plugin add the initializations for stories
+@Suppress("ktlint:standard:function-naming")
 fun MainViewController() {
     singleWindowApplication(
         state = WindowState(width = 800.dp, height = 800.dp),

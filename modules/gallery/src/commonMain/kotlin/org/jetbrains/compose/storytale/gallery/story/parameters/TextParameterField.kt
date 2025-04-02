@@ -3,15 +3,11 @@ package org.jetbrains.compose.storytale.gallery.story.parameters
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -19,16 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.storytale.gallery.compose.currentTextStyle
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
-import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
-import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentColorScheme
 import org.jetbrains.compose.storytale.gallery.ui.theme.currentTypography
 

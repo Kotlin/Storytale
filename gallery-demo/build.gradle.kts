@@ -14,8 +14,6 @@ plugins {
     id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha03"
 }
 
-
-
 class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         return kotlinCompilation.project.provider { emptyList() }
@@ -32,14 +30,12 @@ class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         return kotlinCompilation.target.platformType in setOf(
             org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm,
-            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.wasm
+            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.wasm,
         )
-
     }
 }
 
 apply<StorytaleCompilerPlugin>()
-
 
 configurations.all {
     resolutionStrategy.dependencySubstitution {
@@ -47,7 +43,6 @@ configurations.all {
             .using(project(":modules:compiler-plugin"))
     }
 }
-
 
 kotlin {
     js {
@@ -65,7 +60,6 @@ kotlin {
     }
 
     jvm("desktop")
-
 
     applyDefaultHierarchyTemplate()
 
@@ -119,11 +113,9 @@ compose.desktop {
     }
 }
 
-
 composeCompiler {
     featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
 }
-
 
 tasks.register<ComposeHotRun>("runHot") {
     mainClass.set("storytale.gallery.demo.MainKt")

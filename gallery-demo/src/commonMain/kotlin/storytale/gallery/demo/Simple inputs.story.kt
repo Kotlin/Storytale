@@ -1,4 +1,4 @@
-@file:Suppress("LocalVariableName")
+@file:Suppress("ktlint:standard:property-naming")
 
 package storytale.gallery.demo
 
@@ -21,8 +21,8 @@ val Button by story {
         enabled = Enabled,
         onClick = {},
         colors = ButtonDefaults.buttonColors().copy(
-            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = bgColorAlpha)
-        )
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = bgColorAlpha),
+        ),
     ) {
         Text(Label)
     }

@@ -8,7 +8,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,12 +30,9 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -83,7 +79,7 @@ fun FullStorytaleGallery(
         drawerContent = {
             DrawerContent(appState, drawerState, navController, activeStoryItem.value)
         },
-        content = movableContentOf {
+        content = {
             NavHost(
                 navController = navController,
                 startDestination = StoryScreen(activeStoryItem.value?.story?.name ?: ""),
@@ -97,7 +93,7 @@ fun FullStorytaleGallery(
                         GalleryTopAppBar(
                             appState = appState,
                             drawerState = drawerState,
-                            activeStoryName = activeStoryItem.value?.story?.name
+                            activeStoryName = activeStoryItem.value?.story?.name,
                         )
                         HorizontalDivider()
                         StoryContent(activeStoryItem.value?.story, modifier = Modifier.fillMaxSize())
@@ -183,7 +179,7 @@ private fun DrawerContent(
 private fun GalleryTopAppBar(
     drawerState: DrawerState,
     appState: StorytaleGalleryAppState,
-    activeStoryName: String?
+    activeStoryName: String?,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
@@ -229,11 +225,9 @@ private fun GalleryTopAppBar(
         },
         actions = {
             ThemeSwitcherIconButton(appState)
-
         },
     )
 }
-
 
 @Composable
 internal fun ThemeSwitcherIconButton(appState: StorytaleGalleryAppState) {

@@ -28,7 +28,6 @@ fun EmbeddedStoryView(
     appState: StorytaleGalleryAppState,
     navHostController: NavHostController,
 ) {
-
     NavHost(
         navController = navHostController,
         startDestination = StoryScreen(""),
@@ -54,7 +53,7 @@ fun EmbeddedStoryView(
                     },
                     actions = {
                         ThemeSwitcherIconButton(appState)
-                    }
+                    },
                 )
                 StoryContent(
                     activeStory = storiesStorage.firstOrNull {

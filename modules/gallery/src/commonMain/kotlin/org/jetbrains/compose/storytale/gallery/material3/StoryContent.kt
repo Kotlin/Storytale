@@ -42,7 +42,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,8 +64,8 @@ import org.jetbrains.compose.storytale.gallery.ui.component.IconButton
 @Composable
 internal fun StoryContent(
     activeStory: Story?,
+    modifier: Modifier = Modifier,
     useEmbeddedView: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val heightClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
@@ -79,10 +79,10 @@ internal fun StoryContent(
         val showOverlayParameters = remember { mutableStateOf(false) }
 
         val previewContent = @Composable {
-            StoryPreview(activeStory, useEmbeddedView, isSmallWidth, showOverlayParameters)
+            StoryPreview(showOverlayParameters, activeStory, useEmbeddedView, isSmallWidth)
         }
 
-        val codeContent = movableContentOf<BoxScope> { boxScope ->
+        val codeContent: @Composable (BoxScope) -> Unit = { boxScope ->
             with(boxScope) {
                 StoryCodeViewer(activeStory?.code ?: "")
             }
@@ -95,7 +95,7 @@ internal fun StoryContent(
             },
         ) { useTabs ->
             if (useTabs) {
-                StoryTabbedView(modifier, previewContent, codeContent)
+                StoryTabbedView(previewContent, codeContent)
             } else {
                 StoryPreviewAndCodeStacked(
                     activeStory = activeStory,
@@ -110,15 +110,15 @@ internal fun StoryContent(
     }
 }
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 private fun StoryPreview(
+    showOverlayParameters: MutableState<Boolean>,
     activeStory: Story? = null,
     useEmbeddedView: Boolean = false,
     isSmallWidth: Boolean = false,
-    showOverlayParameters: MutableState<Boolean>
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-
         Box(
             modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState(0)),
             contentAlignment = Alignment.Center,
@@ -149,7 +149,7 @@ private fun BoxScope.StoryCodeViewer(code: String) {
     CodeBlock(
         code = code,
         modifier = Modifier.fillMaxSize(),
-        theme = SyntaxThemes.darcula(darkMode = isDarkMaterialTheme())
+        theme = SyntaxThemes.darcula(darkMode = isDarkMaterialTheme()),
     )
     val clipboard = LocalClipboard.current
     val showCopiedMessage = remember { mutableStateOf(false) }
@@ -190,7 +190,7 @@ private fun BoxScope.StoryCodeViewer(code: String) {
             Text(
                 "Copied to clipboard",
                 modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
     }
@@ -235,6 +235,7 @@ private fun StoryPreviewAndCodeStacked(
     }
 }
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 private fun BoxScope.OverlayParametersList(
     activeStory: Story?,
@@ -286,10 +287,10 @@ private fun BoxScope.OverlayParametersList(
 @Composable
 private fun StoryTabs(
     modifier: Modifier = Modifier,
-    onPreviewTabClicked: () -> Unit = {},
-    onCodeTabClicked: () -> Unit = {},
+    onPreviewTabClick: () -> Unit = {},
+    onCodeTabClick: () -> Unit = {},
 ) {
-    val selectedTabIndex = remember { mutableStateOf(0) }
+    val selectedTabIndex = remember { mutableIntStateOf(0) }
     val selectedTextColor = MaterialTheme.colorScheme.onSurface
     val unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -298,7 +299,7 @@ private fun StoryTabs(
             selected = selectedTabIndex.value == 0,
             onClick = {
                 selectedTabIndex.value = 0
-                onPreviewTabClicked()
+                onPreviewTabClick()
             },
             modifier = Modifier.height(48.dp),
         ) {
@@ -309,7 +310,7 @@ private fun StoryTabs(
             selected = selectedTabIndex.value == 1,
             onClick = {
                 selectedTabIndex.value = 1
-                onCodeTabClicked()
+                onCodeTabClick()
             },
         ) {
             val textColor = if (selectedTabIndex.value == 1) selectedTextColor else unselectedTextColor
@@ -320,19 +321,19 @@ private fun StoryTabs(
 
 @Composable
 private fun StoryTabbedView(
-    modifier: Modifier = Modifier,
     previewContent: @Composable () -> Unit,
     codeContent: @Composable BoxScope.() -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val selectedTabIndex = remember { mutableStateOf(0) }
-    Column(modifier = Modifier.fillMaxSize()) {
+    val selectedTabIndex = remember { mutableIntStateOf(0) }
+    Column(modifier = modifier.fillMaxSize()) {
         StoryTabs(
             modifier = Modifier.fillMaxWidth(),
-            onPreviewTabClicked = { selectedTabIndex.value = 0 },
-            onCodeTabClicked = { selectedTabIndex.value = 1 },
+            onPreviewTabClick = { selectedTabIndex.value = 0 },
+            onCodeTabClick = { selectedTabIndex.value = 1 },
         )
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest),
             contentAlignment = Alignment.Center,

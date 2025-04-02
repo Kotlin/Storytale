@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:property-naming")
+
 package storytale.gallery.demo
 
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +25,7 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -101,7 +103,6 @@ fun parseColorLeniently(colorString: String, defaultColor: Color = Color.Black):
     return Color(colorLong.toInt())
 }
 
-
 val `Floating Action Buttons` by story {
     val Density by parameter(LocalDensity.current)
     val `Container color (hex)` by parameter("705FA6")
@@ -131,14 +132,14 @@ val `Floating Action Buttons` by story {
 }
 
 val `Segmented buttons` by story {
-    val selectedIndex = remember { mutableStateOf(0) }
+    val selectedIndex = remember { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow {
         repeat(3) { index ->
             SegmentedButton(
                 selected = index == selectedIndex.value,
                 onClick = { selectedIndex.value = index },
-                shape = SegmentedButtonDefaults.itemShape(index, 3)
+                shape = SegmentedButtonDefaults.itemShape(index, 3),
             ) {
                 Text("Button $index", modifier = Modifier.padding(4.dp))
             }
@@ -169,4 +170,3 @@ val `Common buttons` by story {
         }
     }
 }
-
