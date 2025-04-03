@@ -13,6 +13,5 @@ data class Story(
     internal val nameToParameterMapping = linkedMapOf<String, StoryParameter<*>>() // using linkedMap to keep the order
     val parameters inline get() = nameToParameterMapping.values.toList()
 
-    @Composable
     inline fun <reified T> parameter(defaultValue: T) = StoryParameterDelegate(this, T::class, defaultValue)
 }
