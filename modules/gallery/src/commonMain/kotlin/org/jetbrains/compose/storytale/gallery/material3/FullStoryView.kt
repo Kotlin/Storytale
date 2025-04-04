@@ -2,6 +2,8 @@ package org.jetbrains.compose.storytale.gallery.material3
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -83,10 +85,10 @@ fun FullStorytaleGallery(
             NavHost(
                 navController = navController,
                 startDestination = StoryScreen(activeStoryItem.value?.story?.name ?: ""),
-                enterTransition = { fadeIn() },
-                exitTransition = { fadeOut() },
-                popEnterTransition = { fadeIn() },
-                popExitTransition = { fadeOut() },
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None },
             ) {
                 composable<StoryScreen> {
                     Column(modifier = Modifier.fillMaxSize()) {
