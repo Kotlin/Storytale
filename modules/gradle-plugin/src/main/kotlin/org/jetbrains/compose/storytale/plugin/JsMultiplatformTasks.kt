@@ -106,7 +106,8 @@ fun Project.createWasmAndJsStorytaleExecTask(compilation: KotlinJsIrCompilation)
     val compilationTarget = compilation.target as KotlinJsIrTarget
 
     afterEvaluate {
-        compilationTarget.browser.configureBuild(compilation)
-        compilationTarget.browser.configureRun(compilation)
+        // TODO: fix compatibility with Kotlin 2.1.20
+        // compilationTarget.browser.configureBuild(compilation)
+        // compilationTarget.browser.configureRun(compilation)
     }
 }

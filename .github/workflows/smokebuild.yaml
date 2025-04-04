@@ -27,7 +27,12 @@ jobs:
       - name: Publish to Maven Local
         run: ./gradlew publishToMavenLocal
 
+      - name: Build gallery-demo
+        run: |
+            ./gradlew :gallery-demo:wasmJsBrowserDevelopmentExecutableDistribution :gallery-demo:packageReleaseUberJarForCurrentOS
+
       - name: Build Stories for Wasm target
+        if: false  # Temporarily disabled due to incompatibility of storytale gradle plugin code with Kotlin 2.1.20
         run: |
           cd examples
           ../gradlew wasmJsBrowserStoriesProductionExecutableDistribution
