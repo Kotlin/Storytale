@@ -164,7 +164,6 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
         override val endOffset = UNDEFINED_OFFSET
         override var origin: IrStatementOrigin? = null
         override var attributeOwnerId: IrAttributeContainer = this
-        override var originalBeforeInline: IrAttributeContainer? = null
     }
 }
 

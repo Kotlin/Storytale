@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.WebpackConfigurator
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 fun Project.processJsCompilation(extension: StorytaleExtension, target: KotlinJsIrTarget) {
@@ -103,10 +105,12 @@ private fun Project.createJsStorytaleGenerateSourceTask(extension: StorytaleExte
 }
 
 fun Project.createWasmAndJsStorytaleExecTask(compilation: KotlinJsIrCompilation) {
-    val compilationTarget = compilation.target as KotlinJsIrTarget
-
     afterEvaluate {
-        compilationTarget.browser.configureBuild(compilation)
-        compilationTarget.browser.configureRun(compilation)
+        val browser = compilation.target.browser as KotlinBrowserJsIr
+
+        browser.subTargetConfigurators.withType<WebpackConfigurator>().configureEach {
+            setupBuild(compilation)
+            setupRun(compilation)
+        }
     }
 }
