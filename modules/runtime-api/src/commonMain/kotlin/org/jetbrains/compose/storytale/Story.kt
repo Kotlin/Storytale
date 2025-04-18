@@ -1,6 +1,7 @@
 package org.jetbrains.compose.storytale
 
 import androidx.compose.runtime.Composable
+import kotlin.enums.enumEntries
 
 data class Story(
     val id: Int,
@@ -15,4 +16,13 @@ data class Story(
 
     @Composable
     inline fun <reified T> parameter(defaultValue: T) = StoryParameterDelegate(this, T::class, defaultValue)
+
+    @Composable
+    inline fun <reified T> parameter(values: List<T>, defaultValueIndex: Int = 0, label: String? = null) = StoryListParameterDelegate(this, T::class, values, defaultValueIndex, label)
+
+    @Composable
+    inline fun <reified T : Enum<T>> parameter(defaultValue: T): StoryListParameterDelegate<T> {
+        val enumEntries = enumEntries<T>()
+        return StoryListParameterDelegate(this, T::class, enumEntries, enumEntries.indexOf(defaultValue))
+    }
 }

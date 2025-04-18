@@ -107,7 +107,7 @@ fun StoryBottomSheet(
 }
 
 @Composable
-private fun StoryBottomSheetDragHandle(
+internal fun StoryBottomSheetDragHandle(
     modifier: Modifier = Modifier,
     color: Color = Color(0xFFD2D7E6),
 ) = Spacer(
