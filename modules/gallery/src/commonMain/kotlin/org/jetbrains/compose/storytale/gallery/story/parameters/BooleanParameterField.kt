@@ -20,7 +20,8 @@ fun BooleanParameterField(
     parameterName: String,
     state: MutableState<Boolean>,
     modifier: Modifier = Modifier,
-    description: String = "",
+    label: String? = "",
+    description: String? = null,
 ) = Column(modifier = modifier) {
     var checked by state
     CenterRow {
@@ -32,14 +33,14 @@ fun BooleanParameterField(
                 overflow = TextOverflow.Ellipsis,
             )
             Gap(6.dp)
-            ParameterLabel("Boolean")
+            if (label != null && label.isNotBlank()) ParameterLabel(label)
         }
         SwitchButton(
             checked = checked,
             onValueChange = { checked = it },
         )
     }
-    if (description.isNotEmpty()) {
+    if (description != null && description.isNotBlank()) {
         Gap(12.dp)
         Text(
             text = description,

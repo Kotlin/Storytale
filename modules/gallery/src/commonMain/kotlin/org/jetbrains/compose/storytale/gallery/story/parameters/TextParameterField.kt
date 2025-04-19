@@ -31,8 +31,8 @@ fun <T> TextParameterField(
     state: MutableState<T>,
     toTypeOrNull: String.() -> T?,
     modifier: Modifier = Modifier,
-    label: String = "",
-    description: String = "",
+    label: String? = null,
+    description: String? = null,
 ) = Column {
     var number by state
     CenterRow {
@@ -41,7 +41,7 @@ fun <T> TextParameterField(
             style = currentTypography.parameterText,
         )
         Gap(6.dp)
-        ParameterLabel(label)
+        if (label != null && label.isNotBlank()) ParameterLabel(label)
     }
     Gap(12.dp)
     BasicTextField(
@@ -62,7 +62,7 @@ fun <T> TextParameterField(
             it()
         }
     }
-    if (description.isNotEmpty()) {
+    if (description != null && description.isNotBlank()) {
         Gap(12.dp)
         Text(
             text = description,

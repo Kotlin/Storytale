@@ -53,9 +53,8 @@ class StoryBottomSheetState(
                         initialValue = it,
                         confirmValueChange = confirmValueChange,
                         skipPartiallyExpanded = skipPartiallyExpanded,
-                        positionalThreshold = { density.density },
-                        velocityThreshold = { density.density },
                         skipHiddenState = skipHiddenState,
+                        density = density,
                     ),
                     scope = scope,
                 )
