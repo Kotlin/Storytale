@@ -107,7 +107,7 @@ fun StoryParametersList(
     }
 }
 
-private fun KClass<*>.toLabel(): String? = when (this) {
+internal fun KClass<*>.toLabel(): String? = when (this) {
     String::class -> "String"
     Boolean::class -> "Boolean"
     Byte::class -> "Byte"

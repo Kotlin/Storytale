@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 import kotlin.math.pow
 import org.jetbrains.compose.storytale.StoryParameter
+import org.jetbrains.compose.storytale.gallery.story.parameters.ListParameter
+import org.jetbrains.compose.storytale.gallery.story.toLabel
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
@@ -55,7 +57,16 @@ fun StoryParametersList(
             if (customComposable != null) {
                 customComposable(parameter)
             } else {
-                when (parameter.type) {
+                val values = parameter.values
+                val label = parameter.label ?: parameter.type.toLabel()
+                if (values != null) {
+                    ListParameter(
+                        parameterName = parameter.name,
+                        selectedValueIndex = parameter.state.cast(),
+                        values = values,
+                        label = label,
+                    )
+                } else when (parameter.type) {
                     String::class -> TextParameterField(
                         parameterName = parameter.name,
                         state = parameter.state.cast(),
@@ -172,7 +183,7 @@ fun ParameterLabel(
         text = name,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 9.sp,
-        modifier = Modifier.padding(2.dp),
+        modifier = Modifier.padding(horizontal = 2.dp),
     )
 }
 

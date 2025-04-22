@@ -16,12 +16,11 @@ data class Story(
 
     inline fun <reified T> parameter(defaultValue: T) = StoryParameterDelegate(this, T::class, defaultValue)
 
-    @Composable
-    inline fun <reified T> parameter(values: List<T>, defaultValueIndex: Int = 0, label: String? = null) = StoryListParameterDelegate(this, T::class, values, defaultValueIndex, label)
+    inline fun <reified T> parameter(values: List<T>, defaultValueIndex: Int = 0, label: String? = null) =
+        StoryListParameterDelegate(this, T::class, values, defaultValueIndex, label)
 
-    @Composable
-    inline fun <reified T : Enum<T>> parameter(defaultValue: T): StoryListParameterDelegate<T> {
+    inline fun <reified T : Enum<T>> parameter(defaultValue: T, label: String? = null): StoryListParameterDelegate<T> {
         val enumEntries = enumEntries<T>()
-        return StoryListParameterDelegate(this, T::class, enumEntries, enumEntries.indexOf(defaultValue))
+        return StoryListParameterDelegate(this, T::class, enumEntries, enumEntries.indexOf(defaultValue), label)
     }
 }
