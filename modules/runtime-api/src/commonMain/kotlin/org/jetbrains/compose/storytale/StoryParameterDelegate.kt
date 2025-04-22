@@ -12,8 +12,7 @@ class StoryParameterDelegate<T>(
     private val label: String? = null,
 ) {
     @Suppress("UNCHECKED_CAST")
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-        story.nameToParameterMapping.getValue(property.name).state.value as T
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = story.nameToParameterMapping.getValue(property.name).state.value as T
 
     @Suppress("UNCHECKED_CAST")
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
@@ -34,8 +33,7 @@ class StoryListParameterDelegate<T>(
     private val defaultValueIndex: Int,
     private val label: String? = null,
 ) {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
-        list[story.nameToParameterMapping.getValue(property.name).state.value as Int]
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = list[story.nameToParameterMapping.getValue(property.name).state.value as Int]
 
     operator fun provideDelegate(thisRef: Any?, property: KProperty<*>) = also {
         story.nameToParameterMapping.getOrPut(property.name) {

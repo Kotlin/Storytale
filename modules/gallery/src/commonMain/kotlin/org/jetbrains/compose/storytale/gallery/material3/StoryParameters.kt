@@ -66,90 +66,92 @@ fun StoryParametersList(
                         values = values,
                         label = label,
                     )
-                } else when (parameter.type) {
-                    String::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toString() },
-                        label = "String",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                } else {
+                    when (parameter.type) {
+                        String::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toString() },
+                            label = "String",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Boolean::class -> BooleanParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Boolean::class -> BooleanParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Byte::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toByteOrNull() },
-                        label = "Byte",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Byte::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toByteOrNull() },
+                            label = "Byte",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Short::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toShortOrNull() },
-                        label = "Short",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Short::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toShortOrNull() },
+                            label = "Short",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Int::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toIntOrNull() },
-                        label = "Int",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Int::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toIntOrNull() },
+                            label = "Int",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Long::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toLongOrNull() },
-                        label = "Long",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Long::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toLongOrNull() },
+                            label = "Long",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    ULong::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toULongOrNull() },
-                        label = "ULong",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        ULong::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toULongOrNull() },
+                            label = "ULong",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Float::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toFloatOrNull() },
-                        label = "Float",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Float::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toFloatOrNull() },
+                            label = "Float",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Double::class -> TextParameterField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        toTypeOrNull = { toDoubleOrNull() },
-                        label = "Double",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Double::class -> TextParameterField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            toTypeOrNull = { toDoubleOrNull() },
+                            label = "Double",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Density::class -> DensityParameterSlider(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Density::class -> DensityParameterSlider(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    Color::class -> HexColorTextField(
-                        parameterName = parameter.name,
-                        state = parameter.state.cast(),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                        Color::class -> HexColorTextField(
+                            parameterName = parameter.name,
+                            state = parameter.state.cast(),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
 
-                    else -> error("Unsupported parameter type ${parameter.type}")
+                        else -> error("Unsupported parameter type ${parameter.type}")
+                    }
                 }
             }
         }

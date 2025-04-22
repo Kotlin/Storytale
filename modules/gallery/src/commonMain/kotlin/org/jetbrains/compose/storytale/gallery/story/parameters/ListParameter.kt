@@ -43,6 +43,7 @@ import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.component.sheet.StoryBottomSheetDragHandle
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 fun ListParameter(
     parameterName: String,
@@ -57,7 +58,7 @@ fun ListParameter(
 
     ParameterHeader(
         name = parameterName,
-        type = label ?: ""
+        type = label ?: "",
     )
     Gap(12.dp)
     Row {
@@ -94,9 +95,9 @@ fun ListParameter(
                     Icon(
                         painter = painterResource(Res.drawable.arrow_back),
                         contentDescription = null,
-                        modifier = Modifier.size(12.dp).rotate(180f)
+                        modifier = Modifier.size(12.dp).rotate(180f),
                     )
-                }
+                },
             )
         }
     }
@@ -108,6 +109,7 @@ fun ListParameter(
     ParameterDescription(description ?: "")
 }
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 private fun <T> SelectionSheet(
     onDismissRequest: () -> Unit,
@@ -150,7 +152,7 @@ private fun <T> SelectionSheet(
                     )
                     RadioButton(
                         selected = selected,
-                        onClick = null
+                        onClick = null,
                     )
                 }
             }

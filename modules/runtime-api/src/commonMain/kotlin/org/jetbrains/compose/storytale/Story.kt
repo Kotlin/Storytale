@@ -16,8 +16,7 @@ data class Story(
 
     inline fun <reified T> parameter(defaultValue: T) = StoryParameterDelegate(this, T::class, defaultValue)
 
-    inline fun <reified T> parameter(values: List<T>, defaultValueIndex: Int = 0, label: String? = null) =
-        StoryListParameterDelegate(this, T::class, values, defaultValueIndex, label)
+    inline fun <reified T> parameter(values: List<T>, defaultValueIndex: Int = 0, label: String? = null) = StoryListParameterDelegate(this, T::class, values, defaultValueIndex, label)
 
     inline fun <reified T : Enum<T>> parameter(defaultValue: T, label: String? = null): StoryListParameterDelegate<T> {
         val enumEntries = enumEntries<T>()
