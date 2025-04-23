@@ -1,7 +1,5 @@
 package org.jetbrains.compose.storytale.plugin
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import java.io.File
 import org.gradle.api.DefaultTask
@@ -33,31 +31,12 @@ open class JsSourceGeneratorTask : DefaultTask() {
     }
 
     private fun generateSources() {
-        val optInExperimentalComposeUi = AnnotationSpec.builder(ClassName("kotlin", "OptIn")).addMember(
-            "androidx.compose.ui.ExperimentalComposeUiApi::class",
-        ).build()
-
         val file = FileSpec.builder(StorytaleGradlePlugin.STORYTALE_PACKAGE, "Main").apply {
-            addImport("androidx.compose.ui.window", "ComposeViewport")
-            addImport("kotlinx.browser", "document")
             addImport("org.jetbrains.skiko.wasm", "onWasmReady")
-            addImport("org.jetbrains.compose.storytale.gallery", "Gallery")
-
-            function("MainViewController") {
-                addAnnotation(optInExperimentalComposeUi)
-                addStatement(
-                    """
-          |onWasmReady {
-          |   ComposeViewport(document.body!!) {
-          |      Gallery()    
-          |   }
-          |}
-                    """.trimMargin(),
-                )
-            }
-
+            addMainFileImports()
+            addMainViewControllerFun()
             function("main") {
-                addStatement("MainViewController()")
+                addStatement("onWasmReady { MainViewController() }")
             }
         }.build()
 
@@ -69,23 +48,11 @@ open class JsSourceGeneratorTask : DefaultTask() {
             outputResourcesDir.createDirectory()
         }
 
+        val stylesFile = File(outputResourcesDir, "styles.css")
+        stylesFile.writeText(webStylesCssContent)
+
         val index = File(outputResourcesDir, "index.html")
-        index.writeText(
-            """
-      |<!DOCTYPE html>
-      |<html lang="en">
-      |  <head>
-      |    <meta charset="UTF-8">
-      |    <title>Gallery</title>
-      |    <script type="application/javascript" src="skiko.js"></script>
-      |    <script type="application/javascript" src="$SCRIPT_FILE_NAME"></script>
-      |  </head>
-      |  <body style="height: 100vh; width: 100vw;">
-      |  </body>
-      |</html>   
-      | 
-            """.trimMargin(),
-        )
+        index.writeText(webIndexHtmlContent(SCRIPT_FILE_NAME))
     }
 
     companion object {
