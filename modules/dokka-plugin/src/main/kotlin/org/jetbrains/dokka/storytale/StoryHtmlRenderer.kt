@@ -21,12 +21,12 @@ const val STORY_IFRAME_CODE = "@story/iframe"
 open class StoryHtmlRenderer(context: DokkaContext) : HtmlRenderer(context) {
     override fun FlowContent.buildCodeBlock(code: ContentCodeBlock, pageContext: ContentPage) {
         if (code.language == STORY_IFRAME_CODE) {
-            iframe {
-                width = "450"
-                height = "450"
-                style = "width: 450px; height: 450px; display: flex; margin: 15px auto;"
-                src = (code.children.single() as ContentText).text
-                attributes["allow"] = "clipboard-read; clipboard-write"
+            div(classes = "storytale-embedded-container") {
+                iframe(classes = "storytale-embedded") {
+                    style = "display: flex; margin: 15px auto;"
+                    src = (code.children.single() as ContentText).text
+                    attributes["allow"] = "clipboard-read; clipboard-write"
+                }
             }
         } else {
             div("sample-container") {
