@@ -11,18 +11,15 @@ data class Story(
     val content: @Composable Story.() -> Unit,
 ) {
     @PublishedApi
-    internal val nameToParameterMapping = hashMapOf<String, StoryParameter<*>>()
+    internal val nameToParameterMapping = linkedMapOf<String, StoryParameter<*>>() // using linkedMap to keep the order
     val parameters inline get() = nameToParameterMapping.values.toList()
 
-    @Composable
     inline fun <reified T> parameter(defaultValue: T) = StoryParameterDelegate(this, T::class, defaultValue)
 
-    @Composable
     inline fun <reified T> parameter(values: List<T>, defaultValueIndex: Int = 0, label: String? = null) = StoryListParameterDelegate(this, T::class, values, defaultValueIndex, label)
 
-    @Composable
-    inline fun <reified T : Enum<T>> parameter(defaultValue: T): StoryListParameterDelegate<T> {
+    inline fun <reified T : Enum<T>> parameter(defaultValue: T, label: String? = null): StoryListParameterDelegate<T> {
         val enumEntries = enumEntries<T>()
-        return StoryListParameterDelegate(this, T::class, enumEntries, enumEntries.indexOf(defaultValue))
+        return StoryListParameterDelegate(this, T::class, enumEntries, enumEntries.indexOf(defaultValue), label)
     }
 }

@@ -11,8 +11,12 @@ plugins {
 }
 
 kotlin {
-    js()
-    wasmJs()
+    js {
+        browser()
+    }
+    wasmJs {
+        browser()
+    }
     jvm()
     iosX64()
     iosArm64()
@@ -40,6 +44,7 @@ kotlin {
                 implementation(libs.compose.highlights)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(projects.modules.runtimeApi)
+                implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.1.0-beta01")
             }
         }
 
