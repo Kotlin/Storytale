@@ -168,7 +168,6 @@ private fun <T> SelectionSheet(
     }
 }
 
-
 @Composable
 private fun BottomSheetDragHandle(
     modifier: Modifier = Modifier,
