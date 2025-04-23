@@ -7,7 +7,7 @@ androidx-activityCompose = "1.9.3"
 storytale = "0.0.3+dev8"
 
 compose-plugin = "1.8.0-beta02"
-compose-navigation = "2.9.0-alpha15"
+compose-navigation = "2.9.0-alpha16"
 kotlinx-serialization-json = "1.7.3"
 kotlin = "2.1.20"
 kotlin-poet = "1.18.1"

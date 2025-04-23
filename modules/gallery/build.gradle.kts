@@ -44,6 +44,7 @@ kotlin {
                 implementation(libs.compose.highlights)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(projects.modules.runtimeApi)
+                implementation(libs.navigation.compose)
                 implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.1.0-beta01")
             }
         }
