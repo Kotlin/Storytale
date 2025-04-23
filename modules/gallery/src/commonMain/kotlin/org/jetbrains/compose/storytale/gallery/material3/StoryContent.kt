@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SmallFloatingActionButton
@@ -59,7 +60,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
-import org.jetbrains.compose.storytale.gallery.ui.component.IconButton
 
 @Composable
 internal fun StoryContent(

@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.reflect.KClass
 import org.jetbrains.compose.storytale.StoryParameter
 import org.jetbrains.compose.storytale.gallery.story.parameters.ListParameter
-import org.jetbrains.compose.storytale.gallery.story.toLabel
 import org.jetbrains.compose.storytale.gallery.ui.component.CenterRow
 import org.jetbrains.compose.storytale.gallery.ui.component.Gap
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
@@ -417,4 +417,16 @@ internal fun parseColorLeniently(colorString: String, defaultColor: Color = Colo
 
     // 7. Convert Long (ARGB) to Compose Color Int (ARGB)
     return Color(colorLong.toInt())
+}
+
+internal fun KClass<*>.toLabel(): String? = when (this) {
+    String::class -> "String"
+    Boolean::class -> "Boolean"
+    Byte::class -> "Byte"
+    Short::class -> "Short"
+    Int::class -> "Int"
+    Long::class -> "Long"
+    Float::class -> "Float"
+    Double::class -> "Double"
+    else -> simpleName
 }
