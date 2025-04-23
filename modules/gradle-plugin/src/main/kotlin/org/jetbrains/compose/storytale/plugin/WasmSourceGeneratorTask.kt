@@ -51,7 +51,6 @@ open class WasmSourceGeneratorTask : DefaultTask() {
         val styles = File(outputResourcesDir, "styles.css")
         styles.writeText(webStylesCssContent)
 
-
         val index = File(outputResourcesDir, "index.html")
         index.writeText(webIndexHtmlContent(JsSourceGeneratorTask.SCRIPT_FILE_NAME))
     }
@@ -68,7 +67,7 @@ internal fun FileSpec.Builder.addMainFileImports() {
 
 internal fun FileSpec.Builder.addMainViewControllerFun() {
     val optInExperimentalComposeUi = AnnotationSpec.builder(ClassName("kotlin", "OptIn")).addMember(
-        "androidx.compose.ui.ExperimentalComposeUiApi::class, org.jetbrains.compose.resources.ExperimentalResourceApi::class"
+        "androidx.compose.ui.ExperimentalComposeUiApi::class, org.jetbrains.compose.resources.ExperimentalResourceApi::class",
     ).build()
 
     function("MainViewController") {
@@ -86,7 +85,7 @@ internal fun FileSpec.Builder.addMainViewControllerFun() {
                 |
                 |}
                 |
-                    """.trimMargin(),
+            """.trimMargin(),
         )
     }
 }
@@ -99,7 +98,7 @@ internal val webStylesCssContent = """
             |    padding: 0;
             |    overflow: hidden;
             |}
-            """.trimMargin()
+""".trimMargin()
 
 internal fun webIndexHtmlContent(jsFileName: String): String {
     return """
@@ -113,8 +112,8 @@ internal fun webIndexHtmlContent(jsFileName: String): String {
             |    <script type="application/javascript" src="skiko.js"></script>
             |  </head>
             |  <body>
-            |      <script type="application/javascript" src="${jsFileName}"></script>
+            |      <script type="application/javascript" src="$jsFileName"></script>
             |  </body>
             |</html>
-            """.trimMargin()
+    """.trimMargin()
 }

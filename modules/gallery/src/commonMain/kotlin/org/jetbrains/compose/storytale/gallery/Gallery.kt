@@ -11,7 +11,6 @@ fun Gallery() {
     StorytaleGalleryApp()
 }
 
-
 @Composable
 fun Gallery(isEmbedded: Boolean) {
     val navHostController = rememberNavController()
