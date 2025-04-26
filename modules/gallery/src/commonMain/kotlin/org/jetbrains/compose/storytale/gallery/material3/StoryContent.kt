@@ -120,7 +120,7 @@ private fun StoryPreview(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
-            modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState(0)),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             activeStory?.content?.invoke(activeStory)
