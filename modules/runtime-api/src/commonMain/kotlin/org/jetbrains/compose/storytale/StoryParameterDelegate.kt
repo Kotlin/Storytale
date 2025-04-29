@@ -35,6 +35,16 @@ class StoryListParameterDelegate<T>(
 ) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T = list[story.nameToParameterMapping.getValue(property.name).state.value as Int]
 
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        val index = list.indexOf(value)
+        check(index != -1) {
+            "Cannot find element with value: $value in ${list.joinToString()}."
+        }
+        @Suppress("UNCHECKED_CAST")
+        (story.nameToParameterMapping.getValue(property.name).state as MutableState<Int>).value =
+            index
+    }
+
     operator fun provideDelegate(thisRef: Any?, property: KProperty<*>) = also {
         story.nameToParameterMapping.getOrPut(property.name) {
             require(list.isNotEmpty()) { "List cannot be empty" }
