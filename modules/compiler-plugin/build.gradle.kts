@@ -8,12 +8,17 @@ plugins {
 
 dependencies {
     implementation(kotlin("compiler-embeddable"))
+    testImplementation("junit:junit:4.13.2")
 }
 
 sourceSets {
     val main by getting {
-        java.srcDirs("src")
+        kotlin.srcDirs("src/kotlin")
         resources.srcDir("src/resources")
+    }
+    val test by getting {
+        kotlin.srcDirs("src/test/kotlin")
+        resources.srcDir("src/test/resources")
     }
 }
 
