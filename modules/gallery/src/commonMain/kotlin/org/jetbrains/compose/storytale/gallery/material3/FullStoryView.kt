@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -32,9 +33,11 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -46,6 +49,7 @@ import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.compose.LocalIsEmbeddedView
 import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
 import org.jetbrains.compose.storytale.storiesStorage
 
@@ -91,14 +95,20 @@ fun FullStorytaleGallery(
                 popExitTransition = { ExitTransition.None },
             ) {
                 composable<StoryScreen> {
+                    val showOverlayParameters = rememberSaveable { mutableStateOf(false) }
                     Column(modifier = Modifier.fillMaxSize()) {
                         GalleryTopAppBar(
                             appState = appState,
                             drawerState = drawerState,
-                            activeStoryName = activeStoryItem.value?.story?.name,
+                            activeStory = activeStoryItem.value?.story,
+                            showOverlayParameters = showOverlayParameters,
                         )
                         HorizontalDivider()
-                        StoryContent(activeStoryItem.value?.story, modifier = Modifier.fillMaxSize())
+                        StoryContent(
+                            activeStory = activeStoryItem.value?.story,
+                            showOverlayParameters = showOverlayParameters,
+                            modifier = Modifier.fillMaxSize(),
+                        )
                     }
                 }
             }
@@ -181,8 +191,10 @@ private fun DrawerContent(
 private fun GalleryTopAppBar(
     drawerState: DrawerState,
     appState: StorytaleGalleryAppState,
-    activeStoryName: String?,
+    activeStory: Story?,
+    showOverlayParameters: MutableState<Boolean>,
 ) {
+    val activeStoryName = activeStory?.name.orEmpty()
     val coroutineScope = rememberCoroutineScope()
     val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
@@ -190,7 +202,7 @@ private fun GalleryTopAppBar(
     CenterAlignedTopAppBar(
         title = {
             AnimatedContent(activeStoryName) { title ->
-                Text(title ?: "")
+                Text(title)
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
@@ -226,16 +238,36 @@ private fun GalleryTopAppBar(
             }
         },
         actions = {
+            val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+
+            val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
+            val useEmbeddedView = LocalIsEmbeddedView.current
+
             ThemeSwitcherIconButton(appState)
+            AnimatedVisibility(
+                (isSmallWidth || useEmbeddedView) && activeStory?.parameters?.isNotEmpty() == true,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                IconButton(
+                    onClick = {
+                        showOverlayParameters.value = true
+                    },
+                ) {
+                    Icon(imageVector = Icons.Default.Settings, null)
+                }
+            }
         },
     )
 }
 
 @Composable
 internal fun ThemeSwitcherIconButton(appState: StorytaleGalleryAppState) {
-    IconButton(onClick = {
-        appState.switchTheme(!appState.isDarkTheme())
-    }) {
+    IconButton(
+        onClick = {
+            appState.switchTheme(!appState.isDarkTheme())
+        },
+    ) {
         AnimatedContent(targetState = appState.isDarkTheme()) { isDarkTheme ->
             if (isDarkTheme) {
                 Icon(imageVector = Light_mode, contentDescription = null)

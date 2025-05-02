@@ -27,7 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,6 +45,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -58,27 +58,26 @@ import dev.snipme.highlights.model.SyntaxThemes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
+import org.jetbrains.compose.storytale.gallery.compose.LocalIsEmbeddedView
 import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
 
 @Composable
 internal fun StoryContent(
     activeStory: Story?,
     modifier: Modifier = Modifier,
-    useEmbeddedView: Boolean = false,
+    useEmbeddedView: Boolean = LocalIsEmbeddedView.current,
+    showOverlayParameters: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
 ) {
-    val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val heightClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
 
     val isSmallHeight = heightClass == WindowHeightSizeClass.COMPACT
-    val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
 
     val useTabs = isSmallHeight || useEmbeddedView
 
     Box(modifier = modifier) {
-        val showOverlayParameters = remember { mutableStateOf(false) }
 
         val previewContent = @Composable {
-            StoryPreview(showOverlayParameters, activeStory, useEmbeddedView, isSmallWidth)
+            StoryPreview(activeStory)
         }
 
         val codeContent: @Composable (BoxScope) -> Unit = { boxScope ->
@@ -112,10 +111,7 @@ internal fun StoryContent(
 @Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 private fun StoryPreview(
-    showOverlayParameters: MutableState<Boolean>,
     activeStory: Story? = null,
-    useEmbeddedView: Boolean = false,
-    isSmallWidth: Boolean = false,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -123,22 +119,6 @@ private fun StoryPreview(
             contentAlignment = Alignment.Center,
         ) {
             activeStory?.content?.invoke(activeStory)
-        }
-
-        AnimatedVisibility(
-            (isSmallWidth || useEmbeddedView) && activeStory?.parameters?.isNotEmpty() == true,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.align(Alignment.BottomEnd),
-        ) {
-            SmallFloatingActionButton(
-                onClick = {
-                    showOverlayParameters.value = true
-                },
-                modifier = Modifier.padding(16.dp),
-            ) {
-                Icon(imageVector = Icons.Default.Settings, null)
-            }
         }
     }
 }
@@ -210,7 +190,10 @@ private fun StoryPreviewAndCodeStacked(
             .background(MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Column(modifier = Modifier.fillMaxHeight().weight(0.75f)) {
-            Box(modifier = Modifier.fillMaxSize().weight(0.5f), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.fillMaxSize().weight(0.5f),
+                contentAlignment = Alignment.Center,
+            ) {
                 previewContent()
             }
             HorizontalDivider()
@@ -227,7 +210,8 @@ private fun StoryPreviewAndCodeStacked(
             Column(modifier = Modifier.fillMaxHeight().widthIn(max = 250.dp)) {
                 StoryParametersList(
                     storyParameters!!,
-                    modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
+                    modifier = Modifier.fillMaxSize().padding(8.dp)
+                        .verticalScroll(rememberScrollState(0)),
                 )
             }
         }
@@ -276,7 +260,8 @@ private fun BoxScope.OverlayParametersList(
                 }
                 StoryParametersList(
                     activeStory?.parameters ?: emptyList(),
-                    modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState(0)),
+                    modifier = Modifier.fillMaxSize().padding(8.dp)
+                        .verticalScroll(rememberScrollState(0)),
                 )
             }
         }
@@ -302,7 +287,8 @@ private fun StoryTabs(
             },
             modifier = Modifier.height(48.dp),
         ) {
-            val textColor = if (selectedTabIndex.value == 0) selectedTextColor else unselectedTextColor
+            val textColor =
+                if (selectedTabIndex.value == 0) selectedTextColor else unselectedTextColor
             Text(text = "Preview", style = MaterialTheme.typography.titleSmall, color = textColor)
         }
         Tab(
@@ -312,7 +298,8 @@ private fun StoryTabs(
                 onCodeTabClick()
             },
         ) {
-            val textColor = if (selectedTabIndex.value == 1) selectedTextColor else unselectedTextColor
+            val textColor =
+                if (selectedTabIndex.value == 1) selectedTextColor else unselectedTextColor
             Text(text = "Code", style = MaterialTheme.typography.titleSmall, color = textColor)
         }
     }
