@@ -61,6 +61,7 @@ import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.compose.LocalIsEmbeddedView
 import org.jetbrains.compose.storytale.gallery.story.code.CodeBlock
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 internal fun StoryContent(
     activeStory: Story?,
@@ -75,7 +76,6 @@ internal fun StoryContent(
     val useTabs = isSmallHeight || useEmbeddedView
 
     Box(modifier = modifier) {
-
         val previewContent = @Composable {
             StoryPreview(activeStory)
         }
@@ -108,7 +108,6 @@ internal fun StoryContent(
     }
 }
 
-@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 private fun StoryPreview(
     activeStory: Story? = null,

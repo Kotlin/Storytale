@@ -187,6 +187,7 @@ private fun DrawerContent(
     )
 }
 
+@Suppress("ktlint:compose:mutable-state-param-check")
 @Composable
 private fun GalleryTopAppBar(
     drawerState: DrawerState,
