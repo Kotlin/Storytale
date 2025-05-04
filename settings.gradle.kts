@@ -27,6 +27,26 @@ dependencyResolutionManagement {
     }
     mavenCentral()
     mavenLocal()
+      exclusiveContent {
+        forRepository {
+          maven {
+            url = uri("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
+          }
+        }
+        filter {
+          includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps.*")
+        }
+      }
+      exclusiveContent {
+        forRepository {
+          maven {
+            url = uri("https://www.jetbrains.com/intellij-repository/releases/")
+          }
+        }
+        filter {
+          includeGroup("com.jetbrains.intellij.platform")
+        }
+      }
   }
 }
 
