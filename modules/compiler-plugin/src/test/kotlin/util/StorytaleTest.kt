@@ -4,14 +4,13 @@ import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import org.jetbrains.compose.plugin.storytale.compiler.StorytaleComponentRegistrar
-import org.jetbrains.compose.storytale.storiesStorage
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
+import org.jetbrains.compose.plugin.storytale.compiler.StorytaleComponentRegistrar
+import org.jetbrains.compose.storytale.storiesStorage
 
 @OptIn(ExperimentalContracts::class)
 fun storytaleTest(

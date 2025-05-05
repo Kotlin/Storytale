@@ -33,12 +33,14 @@ class ReplaceStoryCallWithItsSuccessorWithCodeParameterTest {
         with(storiesStorage.first()) {
             assertThat(name).isEqualTo("Story1")
             assertThat(group).isEqualTo("Group1")
-            assertThat(code).isEqualTo("""
+            assertThat(code).isEqualTo(
+                """
                     |val text by parameter("Hello World")
                     |BasicText(text)
                 """
-                .trimMargin()
-                .trim('\n'))
+                    .trimMargin()
+                    .trim('\n'),
+            )
         }
     }
 }

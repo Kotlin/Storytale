@@ -72,5 +72,4 @@ class StorytaleComponentRegistrarLearningTest {
         assertThat(storiesStorage.map { it.group }.toSet())
             .containsExactlyInAnyOrder("Group1", "Group2")
     }
-
 }
