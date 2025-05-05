@@ -9,6 +9,8 @@ import org.jetbrains.compose.storytale.storiesStorage
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 
 @OptIn(ExperimentalContracts::class)
@@ -48,4 +50,13 @@ fun storytaleTest(
 
 interface StorytaleTestSourceScope {
     infix fun String.hasContent(@Language("kotlin") content: String)
+}
+
+fun JvmCompilationResult.invokeMainController() {
+    val clazz = classLoader.loadClass("org.jetbrains.compose.storytale.generated.MainKt")
+
+    Assertions.assertThat(clazz).isNotNull
+    Assertions.assertThat(clazz).hasDeclaredMethods("MainViewController")
+
+    clazz.getMethod("MainViewController").invoke(null)
 }

@@ -2,6 +2,7 @@ import com.tschuchort.compiletesting.KotlinCompilation
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.compose.storytale.storiesStorage
+import util.invokeMainController
 import util.storytaleTest
 
 class MentionAllStoriesGettersInsideMainFunctionLoweringTest {
@@ -29,12 +30,7 @@ class MentionAllStoriesGettersInsideMainFunctionLoweringTest {
 
         assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
 
-        val clazz = result.classLoader.loadClass("org.jetbrains.compose.storytale.generated.MainKt")
-
-        assertThat(clazz).isNotNull
-        assertThat(clazz).hasDeclaredMethods("MainViewController")
-
-        clazz.getMethod("MainViewController").invoke(null)
+        result.invokeMainController()
 
         // CRAZY!!!
         assertThat(storiesStorage).hasSize(3)
