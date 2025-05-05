@@ -9,20 +9,17 @@ plugins {
 }
 dependencies {
     compileOnly(compose.runtime)
-
     implementation(kotlin("compiler-embeddable"))
-    testImplementation("dev.zacsweers.kctfork:core:0.7.0")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation(kotlin("test"))
-    testImplementation("org.assertj:assertj-core:3.27.2")
-    testImplementation(project(":modules:runtime-api"))
-
-    testImplementation(compose.runtime)
     testImplementation(compose.foundation)
     testImplementation(compose.material3)
+    testImplementation(compose.runtime)
     testImplementation(compose.ui)
     testImplementation(kotlin("compose-compiler-plugin-embeddable"))
-    // testImplementation("com.jetbrains.intellij.platform:util:233.13135.128")
+    testImplementation(kotlin("test"))
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinCompileTesting.core)
+    testImplementation(project(":modules:runtime-api"))
 }
 
 sourceSets {
