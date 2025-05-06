@@ -4,6 +4,9 @@ android-compileSdk = "35"
 android-minSdk = "26"
 android-targetSdk = "35"
 androidx-activityCompose = "1.9.3"
+assertj = "3.27.2"
+kotlinCompileTesting = "0.7.0"
+junitVersion = "4.13.2"
 storytale = "0.0.3+dev8"
 
 compose-plugin = "1.8.0-beta02"
@@ -20,6 +23,9 @@ junit = "5.10.1"
 jsoup = "1.16.1"
 
 [libraries]
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+kotlinCompileTesting-core = { module = "dev.zacsweers.kctfork:core", version.ref = "kotlinCompileTesting" }
+junit = { module = "junit:junit", version.ref = "junitVersion" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
