@@ -13,6 +13,12 @@ plugins {
     alias(libs.plugins.spotless) apply false
 }
 
+buildscript {
+    dependencies {
+        classpath(kotlin("gradle-plugin", version = libs.versions.kotlin.asProvider().get()))
+    }
+}
+
 subprojects {
     version = findProperty("storytale.deploy.version")
         ?: error("'storytale.deploy.version' was not set")
