@@ -60,5 +60,6 @@ include(":modules:compiler-plugin")
 include(":modules:dokka-plugin")
 include(":modules:runtime-api")
 include(":modules:preview-processor")
+include(":modules:preview-processor-test")
 
 include(":gallery-demo")
