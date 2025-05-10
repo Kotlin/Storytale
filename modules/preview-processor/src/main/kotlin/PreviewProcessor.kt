@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.buildCodeBlock
+import org.jetbrains.compose.storytale.plugin.StorytaleGradlePlugin
 
 /**
  * https://github.com/google/ksp/blob/1db41bc678a1d0e86f71ca3b052a147675769691/examples/playground/test-processor/src/main/kotlin/BuilderProcessor.kt
@@ -39,13 +40,14 @@ class PreviewProcessor(
 
     inner class BuilderVisitor : KSVisitorVoid() {
         override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-            val packageName = function.packageName.asString()
+            val packageName = StorytaleGradlePlugin.STORYTALE_PACKAGE
             val fileSpecBuilder = FileSpec.builder(
                 MemberName(packageName, "Preview.story"),
             ).apply {
                 indent("    ")
 
                 addImport("org.jetbrains.compose.storytale", "story")
+                addImport(function.packageName.asString(), function.simpleName.asString())
 
                 addProperty(
                     PropertySpec

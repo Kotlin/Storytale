@@ -5,8 +5,6 @@ import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.sourcesGeneratedBySymbolProcessor
 import com.tschuchort.compiletesting.symbolProcessorProviders
 import com.tschuchort.compiletesting.useKsp2
-import java.io.File
-import java.nio.charset.Charset
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.util.Files
 import org.intellij.lang.annotations.Language
@@ -15,7 +13,7 @@ import org.junit.Test
 
 class PreviewProcessorTest {
     @Test
-    fun `first good test`() {
+    fun `generates story for single preview function`() {
         val group1Kt = SourceFile.kotlin(
             "KmpButton.kt",
             """
@@ -38,7 +36,7 @@ class PreviewProcessorTest {
                 @androidx.compose.runtime.Composable
                 fun AndroidButton() { }
 
-                @androidx.compose.ui.tooling.preview.Preview
+                @org.jetbrains.compose.ui.tooling.preview.Preview
                 @androidx.compose.runtime.Composable
                 fun PreviewAndroidButton() {
                     AndroidButton()
@@ -73,11 +71,12 @@ class PreviewProcessorTest {
             },
         )
             .containsExactlyInAnyOrder(
-                "kotlin/storytale/gallery/demo/Previews.story.kt" hasContent """
-                |package storytale.gallery.demo
+                "kotlin/org/jetbrains/compose/storytale/generated/Previews.story.kt" hasContent """
+                |package org.jetbrains.compose.storytale.generated
                 |
                 |import org.jetbrains.compose.storytale.Story
                 |import org.jetbrains.compose.storytale.story
+                |import storytale.gallery.demo.PreviewKmpButton
                 |
                 |public val KmpButton: Story by story {
                 |    PreviewKmpButton()
