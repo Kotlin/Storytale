@@ -11,11 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.storytale.previewParameter
 
 @org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun PreviewExtendedFAB() {
-    val bgColor = MaterialTheme.colorScheme.primary
+    val bgColor by previewParameter(MaterialTheme.colorScheme.primary)
 
     ExtendedFloatingActionButton(onClick = {}, containerColor = bgColor) {
         Icon(imageVector = Icons.Default.AddCircle, contentDescription = null)
