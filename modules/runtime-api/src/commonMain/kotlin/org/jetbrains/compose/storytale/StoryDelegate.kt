@@ -1,6 +1,7 @@
 package org.jetbrains.compose.storytale
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import kotlin.reflect.KProperty
 
 val storiesStorage = mutableListOf<Story>()
@@ -23,7 +24,17 @@ class StoryDelegate(
     }
 
     operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): StoryDelegate {
-        instance = Story(storiesStorage.size, property.name, group, code, content).also(storiesStorage::add)
+        val wrappedContent: @Composable Story.() -> Unit = {
+            val story = this
+            val delegate = this@StoryDelegate
+
+            CompositionLocalProvider(LocalStory provides story) {
+                delegate.content(story)
+            }
+        }
+
+        instance = Story(storiesStorage.size, property.name, group, code, wrappedContent)
+            .also(storiesStorage::add)
         return this
     }
 }
