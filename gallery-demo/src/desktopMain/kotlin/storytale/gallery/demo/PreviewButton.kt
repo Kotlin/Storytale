@@ -15,6 +15,7 @@ import org.jetbrains.compose.storytale.previewParameter
 
 @org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
+@Suppress("ktlint")
 fun PreviewExtendedFAB() {
     val bgColor by previewParameter(MaterialTheme.colorScheme.primary)
 

@@ -49,7 +49,7 @@ class PreviewProcessorTest {
 
             compilerPluginRegistrars = listOf(ComposePluginRegistrar())
             useKsp2()
-            symbolProcessorProviders.add(PreviewProcessor.Provider())// = mutableListOf(PreviewProcessor.Provider())
+            symbolProcessorProviders.add(PreviewProcessor.Provider())
 
             // magic
             inheritClassPath = true
