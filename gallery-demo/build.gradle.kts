@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha10"
+    alias(libs.plugins.ksp)
 }
 
 class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
@@ -105,6 +106,11 @@ kotlin {
             "-Xexpect-actual-classes",
         )
     }
+}
+
+dependencies {
+    add("kspCommonMainMetadata", project(":modules:preview-processor"))
+    add("ksp", project(":modules:preview-processor"))
 }
 
 compose.desktop {

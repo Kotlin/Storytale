@@ -66,6 +66,6 @@ buildTimeConfig = { id = "dev.limebeck.build-time-config", version.ref = "build-
 storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
 kotlinDsl = { id = "kotlin-dsl" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
