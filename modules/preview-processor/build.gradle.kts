@@ -24,6 +24,7 @@ dependencies {
     compileOnly(compose.runtime)
     implementation(libs.kotlin.poet)
     implementation(libs.ksp.api)
+    implementation(project(":modules:gradle-plugin"))
     testImplementation(compose.components.uiToolingPreview)
     testImplementation(compose.runtime)
     testImplementation(kotlin("compiler-embeddable"))
