@@ -1,6 +1,4 @@
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.compose.ComposePlugin.CommonComponentsDependencies
-import org.jetbrains.compose.ComposePlugin.CommonComponentsDependencies.uiToolingPreview
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
