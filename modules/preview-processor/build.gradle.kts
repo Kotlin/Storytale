@@ -22,13 +22,17 @@ java {
 
 dependencies {
     compileOnly(compose.runtime)
+    implementation(libs.kotlin.poet)
     implementation(libs.ksp.api)
     testImplementation(compose.components.uiToolingPreview)
     testImplementation(compose.runtime)
+    testImplementation(kotlin("compiler-embeddable"))
+    testImplementation(kotlin("compose-compiler-plugin-embeddable"))
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinCompileTesting.ksp)
+    testImplementation(project(":modules:runtime-api"))
 }
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {

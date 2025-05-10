@@ -1,8 +1,16 @@
+import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
+import com.tschuchort.compiletesting.kspSourcesDir
+import com.tschuchort.compiletesting.sourcesGeneratedBySymbolProcessor
 import com.tschuchort.compiletesting.symbolProcessorProviders
 import com.tschuchort.compiletesting.useKsp2
+import java.io.File
+import java.nio.charset.Charset
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.util.Files
+import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import org.junit.Test
 
 class PreviewProcessorTest {
@@ -38,9 +46,10 @@ class PreviewProcessorTest {
     """,
         )
 
-        val result = KotlinCompilation().apply {
+        val compilation = KotlinCompilation().apply {
             sources = listOf(group1Kt)
 
+            compilerPluginRegistrars = listOf(ComposePluginRegistrar())
             useKsp2()
             symbolProcessorProviders.add(PreviewProcessor.Provider())// = mutableListOf(PreviewProcessor.Provider())
 
@@ -50,8 +59,35 @@ class PreviewProcessorTest {
             jvmTarget = "21"
             verbose = false
         }
+        val result = compilation
             .compile()
 
         assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+
+        assertThat(result.sourcesGeneratedBySymbolProcessor.toList()).hasSize(1)
+
+        assertThat(
+            result.sourcesGeneratedBySymbolProcessor.toList().map {
+                it.descendantRelativeTo(compilation.kspSourcesDir).path to
+                    Files.contentOf(it, Charsets.UTF_8).trim()
+            },
+        )
+            .containsExactlyInAnyOrder(
+                "kotlin/storytale/gallery/demo/Previews.story.kt" hasContent """
+                |package storytale.gallery.demo
+                |
+                |import org.jetbrains.compose.storytale.Story
+                |import org.jetbrains.compose.storytale.story
+                |
+                |public val KmpButton: Story by story {
+                |    PreviewKmpButton()
+                |}
+                """.trimMargin(),
+            )
     }
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline infix fun String.hasContent(@Language("kotlin") content: String): Pair<String, String> {
+    return this to content
 }
