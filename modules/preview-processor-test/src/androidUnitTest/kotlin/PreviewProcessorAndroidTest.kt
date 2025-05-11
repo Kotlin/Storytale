@@ -1,14 +1,10 @@
-import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.sourcesGeneratedBySymbolProcessor
-import com.tschuchort.compiletesting.symbolProcessorProviders
-import com.tschuchort.compiletesting.useKsp2
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.util.Files
-import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import org.junit.Test
+import util.assertableGeneratedKspSources
+import util.createCompilation
 import util.hasContent
 
 class PreviewProcessorAndroidTest {
@@ -31,18 +27,8 @@ class PreviewProcessorAndroidTest {
             """,
         )
 
-        val compilation = KotlinCompilation().apply {
+        val compilation = createCompilation {
             sources = listOf(sourceFile)
-
-            compilerPluginRegistrars = listOf(ComposePluginRegistrar())
-            useKsp2()
-            symbolProcessorProviders.add(PreviewProcessor.Provider())
-
-            // magic
-            inheritClassPath = true
-            messageOutputStream = System.out // see diagnostics in real time
-            jvmTarget = "21"
-            verbose = false
         }
         val result = compilation
             .compile()
@@ -51,12 +37,7 @@ class PreviewProcessorAndroidTest {
 
         assertThat(result.sourcesGeneratedBySymbolProcessor.toList()).hasSize(1)
 
-        assertThat(
-            result.sourcesGeneratedBySymbolProcessor.toList().map {
-                it.descendantRelativeTo(compilation.kspSourcesDir).path to
-                    Files.contentOf(it, Charsets.UTF_8).trim()
-            },
-        )
+        assertThat(result.assertableGeneratedKspSources(compilation))
             .containsExactlyInAnyOrder(
                 "kotlin/org/jetbrains/compose/storytale/generated/Previews.story.kt" hasContent """
                 |package org.jetbrains.compose.storytale.generated
