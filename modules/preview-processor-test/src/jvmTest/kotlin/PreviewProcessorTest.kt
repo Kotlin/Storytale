@@ -1,18 +1,16 @@
 import com.tschuchort.compiletesting.KotlinCompilation
-import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.sourcesGeneratedBySymbolProcessor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import util.assertableGeneratedKspSources
-import util.createCompilation
 import util.hasContent
+import util.storytaleTest
 
 class PreviewProcessorTest {
     @Test
     fun `generates story for Jetbrains Compose Preview function`() {
-        val group1Kt = SourceFile.kotlin(
-            "KmpButton.kt",
-            """
+        val compilation = storytaleTest {
+            "KmpButton.kt" hasContent """
                 package storytale.gallery.demo
 
                 @androidx.compose.runtime.Composable
@@ -23,11 +21,7 @@ class PreviewProcessorTest {
                 fun PreviewKmpButton() {
                     KmpButton()
                 }
-    """,
-        )
-
-        val compilation = createCompilation {
-            sources = listOf(group1Kt)
+    """
         }
         val result = compilation
             .compile()
@@ -54,9 +48,8 @@ class PreviewProcessorTest {
 
     @Test
     fun `generates story for Androidx Desktop Preview function`() {
-        val sourceFile = SourceFile.kotlin(
-            "DesktopButton.kt",
-            """
+        val compilation = storytaleTest {
+            "DesktopButton.kt" hasContent """
                 package storytale.gallery.demo
 
                 @androidx.compose.runtime.Composable
@@ -67,11 +60,7 @@ class PreviewProcessorTest {
                 fun PreviewDesktopButton() {
                     DesktopButton()
                 }
-            """,
-        )
-
-        val compilation = createCompilation {
-            sources = listOf(sourceFile)
+            """
         }
         val result = compilation
             .compile()

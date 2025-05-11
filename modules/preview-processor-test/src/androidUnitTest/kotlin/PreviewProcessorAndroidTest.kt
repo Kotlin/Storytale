@@ -1,19 +1,17 @@
 import com.tschuchort.compiletesting.KotlinCompilation
-import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.sourcesGeneratedBySymbolProcessor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import util.assertableGeneratedKspSources
-import util.createCompilation
 import util.hasContent
+import util.storytaleTest
 
 class PreviewProcessorAndroidTest {
 
     @Test
     fun `generates story for Androidx Android Preview function`() {
-        val sourceFile = SourceFile.kotlin(
-            "AndroidButton.kt",
-            """
+        val compilation = storytaleTest {
+            "AndroidButton.kt" hasContent """
                 package storytale.gallery.demo
 
                 @androidx.compose.runtime.Composable
@@ -24,11 +22,7 @@ class PreviewProcessorAndroidTest {
                 fun PreviewAndroidButton() {
                     AndroidButton()
                 }
-            """,
-        )
-
-        val compilation = createCompilation {
-            sources = listOf(sourceFile)
+            """
         }
         val result = compilation
             .compile()
