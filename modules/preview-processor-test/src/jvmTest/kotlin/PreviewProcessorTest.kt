@@ -87,7 +87,6 @@ class PreviewProcessorTest {
 
     @Test
     fun `generates stories for multiple Preview functions in the same file`() {
-
         val compilation = storytaleTest {
             "MultiplePreviews.kt" hasContent """
                 package storytale.gallery.demo
@@ -133,7 +132,7 @@ class PreviewProcessorTest {
                 |public val Button2: Story by story {
                 |    PreviewButton2()
                 |}
-                """.trimMargin()
+                """.trimMargin(),
             )
     }
 
@@ -200,7 +199,7 @@ class PreviewProcessorTest {
                 |public val ButtonSecondary: Story by story {
                 |    PreviewButtonSecondary()
                 |}
-                """.trimMargin()
+                """.trimMargin(),
             )
     }
 }

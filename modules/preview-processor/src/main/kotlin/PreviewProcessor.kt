@@ -32,7 +32,6 @@ class PreviewProcessor(
             .filter { it is KSFunctionDeclaration && it.validate() }
             .map { it as KSFunctionDeclaration }
 
-
         generatePreviewFile(validPreviewFunctions)
 
         return discarded1 + discarded2 + discarded3
@@ -43,7 +42,8 @@ class PreviewProcessor(
 
         val packageName = StorytaleGradlePlugin.STORYTALE_PACKAGE
         val fileSpecBuilder = FileSpec.builder(
-            packageName, "Previews.story",
+            packageName,
+            "Previews.story",
         ).apply {
             indent("    ")
             addImport("org.jetbrains.compose.storytale", "story")
