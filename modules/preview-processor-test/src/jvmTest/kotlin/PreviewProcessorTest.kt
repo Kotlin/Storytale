@@ -84,4 +84,123 @@ class PreviewProcessorTest {
                 """.trimMargin(),
             )
     }
+
+    @Test
+    fun `generates stories for multiple Preview functions in the same file`() {
+
+        val compilation = storytaleTest {
+            "MultiplePreviews.kt" hasContent """
+                package storytale.gallery.demo
+
+                import androidx.compose.runtime.Composable
+                import org.jetbrains.compose.ui.tooling.preview.Preview
+
+                @Composable
+                fun Button() { }
+
+                @Preview
+                @Composable
+                fun PreviewButton1() {
+                    Button()
+                }
+                @Preview
+                @Composable
+                fun PreviewButton2() {
+                    Button()
+                }
+            """.trimIndent()
+        }
+        val result = compilation.compile()
+
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+
+        assertThat(result.sourcesGeneratedBySymbolProcessor.toList()).hasSize(1)
+
+        assertThat(result.assertableGeneratedKspSources(compilation))
+            .containsExactlyInAnyOrder(
+                "kotlin/org/jetbrains/compose/storytale/generated/Previews.story.kt" hasContent """
+                |package org.jetbrains.compose.storytale.generated
+                |
+                |import org.jetbrains.compose.storytale.Story
+                |import org.jetbrains.compose.storytale.story
+                |import storytale.gallery.demo.PreviewButton1
+                |import storytale.gallery.demo.PreviewButton2
+                |
+                |public val Button1: Story by story {
+                |    PreviewButton1()
+                |}
+                |
+                |public val Button2: Story by story {
+                |    PreviewButton2()
+                |}
+                """.trimMargin()
+            )
+    }
+
+    @Test
+    fun `generates stories for Preview functions in different files calling same component`() {
+        val compilation = storytaleTest {
+            "CommonButton.kt" hasContent """
+                package storytale.gallery.demo
+
+                import androidx.compose.runtime.Composable
+
+                @Composable
+                fun Button() { }
+            """.trimIndent()
+
+            "FirstPreview.kt" hasContent """
+                package storytale.gallery.demo.first
+
+                import androidx.compose.runtime.Composable
+                import org.jetbrains.compose.ui.tooling.preview.Preview
+                import storytale.gallery.demo.Button
+
+                @Preview
+                @Composable
+                fun PreviewButtonPrimary() {
+                    Button()
+                }
+            """.trimIndent()
+
+            "SecondPreview.kt" hasContent """
+                package storytale.gallery.demo.second
+
+                import androidx.compose.runtime.Composable
+                import org.jetbrains.compose.ui.tooling.preview.Preview
+                import storytale.gallery.demo.Button
+
+                @Preview
+                @Composable
+                fun PreviewButtonSecondary() {
+                    Button()
+                }
+            """.trimIndent()
+        }
+        val result = compilation.compile()
+
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+
+        assertThat(result.sourcesGeneratedBySymbolProcessor.toList()).hasSize(1)
+
+        assertThat(result.assertableGeneratedKspSources(compilation))
+            .containsExactlyInAnyOrder(
+                "kotlin/org/jetbrains/compose/storytale/generated/Previews.story.kt" hasContent """
+                |package org.jetbrains.compose.storytale.generated
+                |
+                |import org.jetbrains.compose.storytale.Story
+                |import org.jetbrains.compose.storytale.story
+                |import storytale.gallery.demo.first.PreviewButtonPrimary
+                |import storytale.gallery.demo.second.PreviewButtonSecondary
+                |
+                |public val ButtonPrimary: Story by story {
+                |    PreviewButtonPrimary()
+                |}
+                |
+                |public val ButtonSecondary: Story by story {
+                |    PreviewButtonSecondary()
+                |}
+                """.trimMargin()
+            )
+    }
 }

@@ -7,18 +7,13 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.buildCodeBlock
 import org.jetbrains.compose.storytale.plugin.StorytaleGradlePlugin
 
-/**
- * https://github.com/google/ksp/blob/1db41bc678a1d0e86f71ca3b052a147675769691/examples/playground/test-processor/src/main/kotlin/BuilderProcessor.kt
- */
 class PreviewProcessor(
     private val logger: KSPLogger,
     private val codeGenerator: CodeGenerator,
@@ -33,50 +28,66 @@ class PreviewProcessor(
         val (androidxAndroid, discarded3) = resolver.getSymbolsWithAnnotation("androidx.compose.ui.tooling.preview.Preview")
             .partition { it.validate() }
 
-        (jetbrains + androidxDesktop + androidxAndroid)
+        val validPreviewFunctions = (jetbrains + androidxDesktop + androidxAndroid)
             .filter { it is KSFunctionDeclaration && it.validate() }
-            .forEach { it.accept(BuilderVisitor(), Unit) }
+            .map { it as KSFunctionDeclaration }
+
+
+        generatePreviewFile(validPreviewFunctions)
 
         return discarded1 + discarded2 + discarded3
     }
 
-    inner class BuilderVisitor : KSVisitorVoid() {
-        override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-            val packageName = StorytaleGradlePlugin.STORYTALE_PACKAGE
-            val fileSpecBuilder = FileSpec.builder(
-                MemberName(packageName, "Preview.story"),
-            ).apply {
-                indent("    ")
+    private fun generatePreviewFile(previewFunctions: List<KSFunctionDeclaration>) {
+        if (previewFunctions.isEmpty()) return
 
-                addImport("org.jetbrains.compose.storytale", "story")
+        val packageName = StorytaleGradlePlugin.STORYTALE_PACKAGE
+        val fileSpecBuilder = FileSpec.builder(
+            packageName, "Previews.story",
+        ).apply {
+            indent("    ")
+            addImport("org.jetbrains.compose.storytale", "story")
+
+            previewFunctions.forEach { function ->
                 addImport(function.packageName.asString(), function.simpleName.asString())
+
+                val functionName = function.simpleName.asString()
+                val storyName = functionName.removePrefix("Preview").removeSuffix("Preview")
 
                 addProperty(
                     PropertySpec
                         .builder(
-                            function.simpleName.asString()
-                                // because removeSurrounding doesn't work
-                                .removePrefix("Preview").removeSuffix("Preview"),
+                            storyName.ifEmpty { functionName },
                             ClassName("org.jetbrains.compose.storytale", "Story"),
                         )
                         .delegate(
                             buildCodeBlock {
                                 beginControlFlow("story")
-                                addStatement("%N()", function.simpleName.asString())
+                                addStatement("%N()", functionName)
                                 endControlFlow()
                             },
                         )
                         .build(),
                 )
             }
-
-            val file = codeGenerator.createNewFile(
-                Dependencies(true, function.containingFile!!),
-                packageName,
-                "Previews.story",
-            )
-            fileSpecBuilder.build().toJavaFileObject().openInputStream().copyTo(file)
         }
+
+        val containingFiles = previewFunctions
+            .mapNotNull { it.containingFile }
+            .distinct()
+
+        val dependencies = if (containingFiles.isNotEmpty()) {
+            Dependencies(true, containingFiles.first())
+        } else {
+            Dependencies.ALL_FILES
+        }
+
+        val file = codeGenerator.createNewFile(
+            dependencies,
+            packageName,
+            "Previews.story",
+        )
+        fileSpecBuilder.build().toJavaFileObject().openInputStream().copyTo(file)
     }
 
     class Provider : SymbolProcessorProvider {

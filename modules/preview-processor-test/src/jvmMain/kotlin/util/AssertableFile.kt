@@ -7,7 +7,17 @@ import org.intellij.lang.annotations.Language
 data class AssertableFile(
     val path: String,
     val content: String,
-)
+) {
+    override fun toString(): String {
+        return buildString {
+            append('\"')
+            append(path)
+            appendLine("\" has content \"\"\"")
+            appendLine(content)
+            appendLine("\"\"\"")
+        }
+    }
+}
 
 fun File.assertable(): AssertableFile {
     val it = this
