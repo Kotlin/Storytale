@@ -14,7 +14,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.buildCodeBlock
-import org.gradle.internal.impldep.org.bouncycastle.pqc.legacy.math.linearalgebra.PolynomialRingGF2.rest
 import org.jetbrains.compose.storytale.plugin.StorytaleGradlePlugin
 
 /**

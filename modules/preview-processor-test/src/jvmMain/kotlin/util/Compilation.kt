@@ -20,7 +20,6 @@ fun createCompilation(builder: KotlinCompilation.() -> Unit): KotlinCompilation 
     }
 
     return KotlinCompilation().apply {
-
         compilerPluginRegistrars = listOf(ComposePluginRegistrar())
         useKsp2()
         symbolProcessorProviders.add(PreviewProcessor.Provider())

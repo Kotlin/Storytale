@@ -95,5 +95,4 @@ class PreviewProcessorTest {
                 """.trimMargin(),
             )
     }
-
 }
