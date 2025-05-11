@@ -14,6 +14,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.buildCodeBlock
+import org.gradle.internal.impldep.org.bouncycastle.pqc.legacy.math.linearalgebra.PolynomialRingGF2.rest
 import org.jetbrains.compose.storytale.plugin.StorytaleGradlePlugin
 
 /**
@@ -24,13 +25,20 @@ class PreviewProcessor(
     private val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val symbols =
+        val (jetbrains, discarded1) =
             resolver.getSymbolsWithAnnotation("org.jetbrains.compose.ui.tooling.preview.Preview")
-        val ret = symbols.filter { !it.validate() }.toList()
-        symbols
+                .partition { it.validate() }
+        val (androidxDesktop, discarded2) = resolver.getSymbolsWithAnnotation("androidx.compose.desktop.ui.tooling.preview.Preview")
+            .partition { it.validate() }
+
+        val (androidxAndroid, discarded3) = resolver.getSymbolsWithAnnotation("androidx.compose.ui.tooling.preview.Preview")
+            .partition { it.validate() }
+
+        (jetbrains + androidxDesktop + androidxAndroid)
             .filter { it is KSFunctionDeclaration && it.validate() }
             .forEach { it.accept(BuilderVisitor(), Unit) }
-        return ret
+
+        return discarded1 + discarded2 + discarded3
     }
 
     inner class BuilderVisitor : KSVisitorVoid() {
