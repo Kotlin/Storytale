@@ -1,7 +1,6 @@
 package org.jetbrains.compose.storytale
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
 import kotlin.enums.enumEntries
 
 data class Story(
@@ -12,7 +11,7 @@ data class Story(
     val content: @Composable Story.() -> Unit,
 ) {
     @PublishedApi
-    internal val nameToParameterMapping = mutableStateMapOf<String, StoryParameter<*>>()
+    internal val nameToParameterMapping = linkedMapOf<String, StoryParameter<*>>() // using linkedMap to keep the order
     val parameters inline get() = nameToParameterMapping.values.toList()
 
     inline fun <reified T> parameter(defaultValue: T) = StoryParameterDelegate(this, T::class, defaultValue)
