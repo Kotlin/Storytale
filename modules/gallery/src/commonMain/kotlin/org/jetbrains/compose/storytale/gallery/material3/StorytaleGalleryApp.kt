@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.jetbrains.compose.storytale.gallery.compose.LocalIsEmbeddedView
 import org.jetbrains.compose.storytale.gallery.ui.theme.LocalCustomDensity
 
 @Composable
@@ -30,7 +29,6 @@ fun StorytaleGalleryApp(
 
     CompositionLocalProvider(
         LocalCustomDensity provides Density(LocalDensity.current.density * 0.8f),
-        LocalIsEmbeddedView provides isEmbedded,
     ) {
         MaterialTheme(colorScheme = if (appState.isDarkTheme()) darkThemeColors else lightThemeColors) {
             if (isEmbedded) {
