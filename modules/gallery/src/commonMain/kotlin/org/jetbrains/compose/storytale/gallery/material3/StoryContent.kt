@@ -48,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
@@ -210,7 +211,7 @@ private fun StoryPreviewAndCodeStacked(
             .background(MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Column(modifier = Modifier.fillMaxHeight().weight(0.75f)) {
-            Box(modifier = Modifier.fillMaxSize().weight(0.5f), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().weight(0.5f).clipToBounds(), contentAlignment = Alignment.Center) {
                 previewContent()
             }
             HorizontalDivider()

@@ -33,9 +33,12 @@ val `List Parameters` by story {
 }
 
 enum class PrimaryButtonSize {
+    XS,
     Small,
     Medium,
     Large,
+    XL,
+    XXL
 }
 
 val `Enum Parameters` by story {
@@ -45,9 +48,12 @@ val `Enum Parameters` by story {
         onClick = {},
         modifier = Modifier.size(
             when (size) {
+                PrimaryButtonSize.XS -> 60.dp
                 PrimaryButtonSize.Small -> 90.dp
                 PrimaryButtonSize.Medium -> 120.dp
                 PrimaryButtonSize.Large -> 150.dp
+                PrimaryButtonSize.XL -> 170.dp
+                PrimaryButtonSize.XXL -> 200.dp
             },
         ),
     ) {
