@@ -38,7 +38,7 @@ enum class PrimaryButtonSize {
     Medium,
     Large,
     XL,
-    XXL
+    XXL,
 }
 
 val `Enum Parameters` by story {

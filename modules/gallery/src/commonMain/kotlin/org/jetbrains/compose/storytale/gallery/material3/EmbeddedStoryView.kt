@@ -88,8 +88,8 @@ fun EmbeddedStoryView(
                             withStyle(
                                 style = SpanStyle(
                                     textDecoration = TextDecoration.Underline,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+                                    color = MaterialTheme.colorScheme.primary,
+                                ),
                             ) {
                                 append("Storytale")
                             }
@@ -106,11 +106,10 @@ fun EmbeddedStoryView(
     }
 }
 
-
 /**
  * EXPERIMENTAL!
  * A lambda to be provided by the Storytale gallery consumers to open a full screen gallery.
  */
-var openFullScreenStory : (StoryScreen, UriHandler) -> Unit = { story, uriHandler ->
+var openFullScreenStory: (StoryScreen, UriHandler) -> Unit = { story, uriHandler ->
     println("openFullScreenStory($story) is not implemented. It should be provided by the Gallery consumer.")
 }

@@ -273,8 +273,6 @@ internal val Light_mode: ImageVector
 
 private var _Light_mode: ImageVector? = null
 
-
-
 public val OpenInFull: ImageVector
     get() {
         if (_openInFull != null) {
@@ -285,7 +283,7 @@ public val OpenInFull: ImageVector
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
-            viewportHeight = 960f
+            viewportHeight = 960f,
         ).apply {
             path(
                 fill = SolidColor(Color.Black),
@@ -296,7 +294,7 @@ public val OpenInFull: ImageVector
                 strokeLineCap = StrokeCap.Butt,
                 strokeLineJoin = StrokeJoin.Miter,
                 strokeLineMiter = 1.0f,
-                pathFillType = PathFillType.NonZero
+                pathFillType = PathFillType.NonZero,
             ) {
                 moveTo(120f, 840f)
                 verticalLineToRelative(-320f)
