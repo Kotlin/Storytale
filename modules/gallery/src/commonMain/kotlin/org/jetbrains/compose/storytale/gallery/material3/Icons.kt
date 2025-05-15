@@ -272,3 +272,48 @@ internal val Light_mode: ImageVector
     }
 
 private var _Light_mode: ImageVector? = null
+
+public val OpenInFull: ImageVector
+    get() {
+        if (_openInFull != null) {
+            return _openInFull!!
+        }
+        _openInFull = ImageVector.Builder(
+            name = "Open_in_full",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 960f,
+            viewportHeight = 960f,
+        ).apply {
+            path(
+                fill = SolidColor(Color.Black),
+                fillAlpha = 1.0f,
+                stroke = null,
+                strokeAlpha = 1.0f,
+                strokeLineWidth = 1.0f,
+                strokeLineCap = StrokeCap.Butt,
+                strokeLineJoin = StrokeJoin.Miter,
+                strokeLineMiter = 1.0f,
+                pathFillType = PathFillType.NonZero,
+            ) {
+                moveTo(120f, 840f)
+                verticalLineToRelative(-320f)
+                horizontalLineToRelative(80f)
+                verticalLineToRelative(184f)
+                lineToRelative(504f, -504f)
+                horizontalLineTo(520f)
+                verticalLineToRelative(-80f)
+                horizontalLineToRelative(320f)
+                verticalLineToRelative(320f)
+                horizontalLineToRelative(-80f)
+                verticalLineToRelative(-184f)
+                lineTo(256f, 760f)
+                horizontalLineToRelative(184f)
+                verticalLineToRelative(80f)
+                close()
+            }
+        }.build()
+        return _openInFull!!
+    }
+
+private var _openInFull: ImageVector? = null

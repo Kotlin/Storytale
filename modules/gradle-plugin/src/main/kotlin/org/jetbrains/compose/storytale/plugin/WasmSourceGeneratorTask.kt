@@ -52,7 +52,12 @@ open class WasmSourceGeneratorTask : DefaultTask() {
         styles.writeText(webStylesCssContent)
 
         val index = File(outputResourcesDir, "index.html")
-        index.writeText(webIndexHtmlContent(JsSourceGeneratorTask.SCRIPT_FILE_NAME))
+        index.writeText(
+            webIndexHtmlContent(
+                jsFileName = JsSourceGeneratorTask.SCRIPT_FILE_NAME,
+                addSkikoJs = false,
+            ),
+        )
     }
 }
 
@@ -100,7 +105,7 @@ internal val webStylesCssContent = """
             |}
 """.trimMargin()
 
-internal fun webIndexHtmlContent(jsFileName: String): String {
+internal fun webIndexHtmlContent(jsFileName: String, addSkikoJs: Boolean = true): String {
     return """
             |<!DOCTYPE html>
             |<html lang="en">
@@ -109,7 +114,7 @@ internal fun webIndexHtmlContent(jsFileName: String): String {
             |    <meta name="viewport" content="width=device-width, initial-scale=1.0">
             |    <title>Gallery</title>
             |    <link type="text/css" rel="stylesheet" href="styles.css">
-            |    <script type="application/javascript" src="skiko.js"></script>
+            |    ${if (addSkikoJs) """<script type="application/javascript" src="skiko.js"></script>""" else ""}
             |  </head>
             |  <body>
             |      <script type="application/javascript" src="$jsFileName"></script>
