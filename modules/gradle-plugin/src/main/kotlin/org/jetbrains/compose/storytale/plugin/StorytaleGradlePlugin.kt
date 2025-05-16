@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
-class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
+open class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(project: Project) {
         project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
@@ -31,8 +31,8 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>) = kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
 
-    private fun Project.processConfigurations(extension: StorytaleExtension) {
-        extension.targets.all {
+    protected fun Project.processConfigurations(extension: StorytaleExtension) {
+        extension.targets.forEach {
             when (this) {
                 is KotlinJsIrTarget ->
                     when (wasmTargetType) {

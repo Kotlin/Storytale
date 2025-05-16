@@ -13,6 +13,10 @@ gradlePlugin {
             id = "org.jetbrains.compose.storytale"
             implementationClass = "org.jetbrains.compose.storytale.plugin.StorytaleGradlePlugin"
         }
+        create("storytaleAndroidApplication") {
+            id = "org.jetbrains.compose.storytale.android.application"
+            implementationClass = "org.jetbrains.compose.storytale.plugin.AndroidApplicationStorytaleGradlePlugin"
+        }
     }
 }
 
