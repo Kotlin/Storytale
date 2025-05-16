@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 open class StorytaleExtension(internal val project: Project) {
     var buildDir: String = "storytale"
 
-    val multiplatformExtension = run {
+    private val multiplatformExtension = run {
         val multiplatformClass =
             tryGetClass<KotlinMultiplatformExtension>(
                 className = "org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension",
@@ -15,9 +15,9 @@ open class StorytaleExtension(internal val project: Project) {
         multiplatformClass?.let { project.extensions.findByType(it) } ?: error("UNEXPECTED")
     }
 
-    val targets = multiplatformExtension.targets
+    open val targets = multiplatformExtension.targets.toList()
 
-    val mainStoriesSourceSet by lazy {
+    open val mainStoriesSourceSet by lazy {
         multiplatformExtension
             .sourceSets
             .create("common${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}")
@@ -33,7 +33,7 @@ open class StorytaleExtension(internal val project: Project) {
         }
     }
 
-    private fun <T> Any.tryGetClass(className: String): Class<T>? {
+    protected fun <T> Any.tryGetClass(className: String): Class<T>? {
         val classLoader = javaClass.classLoader
         return try {
             @Suppress("UNCHECKED_CAST")
