@@ -202,4 +202,81 @@ class PreviewProcessorTest {
                 """.trimMargin(),
             )
     }
+
+    @Test
+    fun `verifies stories are generated in alphabetical order`() {
+        val compilation = storytaleTest {
+            "ZAButton.kt" hasContent """
+                package storytale.gallery.demo.z
+
+                import androidx.compose.runtime.Composable
+                import org.jetbrains.compose.ui.tooling.preview.Preview
+
+                @Composable
+                fun ZAButton() { }
+
+                @Preview
+                @Composable
+                fun PreviewZAButton() {
+                    ZAButton()
+                }
+            """.trimIndent()
+
+            "BButton.kt" hasContent """
+                package storytale.gallery.demo.b
+
+                import androidx.compose.runtime.Composable
+                import org.jetbrains.compose.ui.tooling.preview.Preview
+
+                @Composable
+                fun BButton() { }
+
+                @Preview
+                @Composable
+                fun PreviewBButton() {
+                    BButton()
+                }
+            """.trimIndent()
+
+            "AButton.kt" hasContent """
+                package storytale.gallery.demo.a
+
+                import androidx.compose.runtime.Composable
+                import org.jetbrains.compose.ui.tooling.preview.Preview
+
+                @Composable
+                fun AButton() { }
+
+                @Preview
+                @Composable
+                fun PreviewAButton() {
+                    AButton()
+                }
+            """.trimIndent()
+        }
+        val result = compilation.compile()
+
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+
+        assertThat(result.sourcesGeneratedBySymbolProcessor.toList()).hasSize(1)
+
+        // Verify the stories are generated in alphabetical order based on qualified name
+        // The package name affects the sorting order: a.PreviewAButton comes before b.PreviewBButton before z.PreviewZAButton
+        val generatedSource = result.assertableGeneratedKspSources(compilation).first()
+        val content = generatedSource.content
+
+        val importLines = content.lines().filter { it.startsWith("import storytale.gallery.demo") }
+        assertThat(importLines).containsExactly(
+            "import storytale.gallery.demo.a.PreviewAButton",
+            "import storytale.gallery.demo.b.PreviewBButton",
+            "import storytale.gallery.demo.z.PreviewZAButton"
+        )
+
+        val storyLines = content.lines().filter { it.startsWith("public val") }
+        assertThat(storyLines).containsExactly(
+            "public val AButton: Story by story {",
+            "public val BButton: Story by story {",
+            "public val ZAButton: Story by story {"
+        )
+    }
 }

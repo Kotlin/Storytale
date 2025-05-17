@@ -31,6 +31,7 @@ class PreviewProcessor(
         val validPreviewFunctions = (jetbrains + androidxDesktop + androidxAndroid)
             .filter { it is KSFunctionDeclaration && it.validate() }
             .map { it as KSFunctionDeclaration }
+            .sortedBy { (it.qualifiedName ?: it.simpleName).asString() }
 
         generatePreviewFile(validPreviewFunctions)
 
