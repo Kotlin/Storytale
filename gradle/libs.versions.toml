@@ -21,10 +21,12 @@ dokka = "1.9.10"
 kotlinx-html = "0.7.3"
 junit = "5.10.1"
 jsoup = "1.16.1"
+ksp = "2.1.20-2.0.1"
 
 [libraries]
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 kotlinCompileTesting-core = { module = "dev.zacsweers.kctfork:core", version.ref = "kotlinCompileTesting" }
+kotlinCompileTesting-ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kotlinCompileTesting" }
 junit = { module = "junit:junit", version.ref = "junitVersion" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -45,6 +47,7 @@ junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jun
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 ktlint = "com.pinterest.ktlint:ktlint-cli:1.5.0"
 composeRules = "io.nlopez.compose.rules:ktlint:0.4.22"
+ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -57,6 +60,6 @@ buildTimeConfig = { id = "dev.limebeck.build-time-config", version.ref = "build-
 storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
 kotlinDsl = { id = "kotlin-dsl" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
