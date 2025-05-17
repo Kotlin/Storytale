@@ -269,14 +269,14 @@ class PreviewProcessorTest {
         assertThat(importLines).containsExactly(
             "import storytale.gallery.demo.a.PreviewAButton",
             "import storytale.gallery.demo.b.PreviewBButton",
-            "import storytale.gallery.demo.z.PreviewZAButton"
+            "import storytale.gallery.demo.z.PreviewZAButton",
         )
 
         val storyLines = content.lines().filter { it.startsWith("public val") }
         assertThat(storyLines).containsExactly(
             "public val AButton: Story by story {",
             "public val BButton: Story by story {",
-            "public val ZAButton: Story by story {"
+            "public val ZAButton: Story by story {",
         )
     }
 }
