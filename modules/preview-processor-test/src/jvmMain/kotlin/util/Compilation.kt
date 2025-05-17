@@ -1,6 +1,7 @@
 package util
 
 import PreviewProcessor
+import PublicPreviewComposableRegistrar
 import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
@@ -32,7 +33,10 @@ fun storytaleTest(
     }
 
     return KotlinCompilation().apply {
-        compilerPluginRegistrars = listOf(ComposePluginRegistrar())
+        compilerPluginRegistrars = listOf(
+            ComposePluginRegistrar(),
+            PublicPreviewComposableRegistrar(),
+        )
         useKsp2()
         symbolProcessorProviders.add(PreviewProcessor.Provider())
 
