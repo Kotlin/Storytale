@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-
 class MakePreviewPublicFirExtensionRegistrar : FirExtensionRegistrar() {
     companion object {
         private val PREVIEW_ANNOTATION_FQ_NAME = FqName("org.jetbrains.compose.ui.tooling.preview.Preview")
@@ -21,7 +20,7 @@ class MakePreviewPublicFirExtensionRegistrar : FirExtensionRegistrar() {
         private val PREVIEW_CLASS_IDS = setOf(
             ClassId.topLevel(PREVIEW_ANNOTATION_FQ_NAME),
             ClassId.topLevel(ANDROIDX_PREVIEW_ANNOTATION_FQ_NAME),
-            ClassId.topLevel(DESKTOP_PREVIEW_ANNOTATION_FQ_NAME)
+            ClassId.topLevel(DESKTOP_PREVIEW_ANNOTATION_FQ_NAME),
         )
     }
 
