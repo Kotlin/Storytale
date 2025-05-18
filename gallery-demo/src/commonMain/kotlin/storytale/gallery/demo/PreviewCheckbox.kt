@@ -12,7 +12,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 @Composable
 @Suppress("ktlint")
-fun PreviewCheckbox() {
+private fun PreviewCheckbox() {
     var state by previewParameter(ToggleableState.entries)
 
     TriStateCheckbox(
