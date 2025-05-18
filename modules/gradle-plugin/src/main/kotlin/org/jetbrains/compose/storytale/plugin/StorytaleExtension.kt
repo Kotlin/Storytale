@@ -1,12 +1,10 @@
 package org.jetbrains.compose.storytale.plugin
 
-import com.android.kotlin.multiplatform.models.AndroidTarget
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 open class StorytaleExtension(internal val project: Project) {
     var buildDir: String = "storytale"

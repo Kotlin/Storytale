@@ -19,8 +19,8 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
         val composeEnabled = project.plugins.hasPlugin("org.jetbrains.compose")
         val composePluginEnabled = project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.compose")
         if (
-            (composeEnabled || composePluginEnabled)
-            && (multiplatformEnabled || androidApplicationEnabled)
+            (composeEnabled || composePluginEnabled) &&
+            (multiplatformEnabled || androidApplicationEnabled)
         ) {
             val extension = project.extensions.create(
                 STORYTALE_EXTENSION_NAME,
