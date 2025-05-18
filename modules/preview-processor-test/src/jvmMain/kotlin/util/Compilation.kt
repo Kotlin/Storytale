@@ -1,7 +1,7 @@
 package util
 
-import PreviewProcessor
 import PreviewComponentRegistrar
+import PreviewProcessor
 import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation

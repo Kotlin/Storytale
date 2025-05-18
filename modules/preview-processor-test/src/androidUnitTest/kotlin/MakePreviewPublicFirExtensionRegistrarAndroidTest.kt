@@ -1,12 +1,11 @@
 package com.storytale
 
-import androidx.compose.runtime.Composable
 import com.tschuchort.compiletesting.KotlinCompilation
+import java.lang.reflect.Modifier
+import kotlin.test.Ignore
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import util.storytaleTest
-import java.lang.reflect.Modifier
-import kotlin.test.Ignore
 
 class MakePreviewPublicFirExtensionRegistrarAndroidTest {
 
