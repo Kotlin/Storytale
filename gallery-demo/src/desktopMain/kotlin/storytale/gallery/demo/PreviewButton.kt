@@ -21,7 +21,7 @@ import org.jetbrains.compose.storytale.previewParameter
 @org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Suppress("ktlint")
-fun PreviewExtendedFAB() {
+private fun PreviewExtendedFAB() {
     val bgColor by previewParameter(MaterialTheme.colorScheme.primary)
 
     ExtendedFloatingActionButton(onClick = {}, containerColor = bgColor) {
@@ -34,7 +34,7 @@ fun PreviewExtendedFAB() {
 @androidx.compose.desktop.ui.tooling.preview.Preview
 @Composable
 @Suppress("ktlint")
-fun PreviewSegmentedButton() {
+private fun PreviewSegmentedButton() {
     val selectedIndex = remember { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow {

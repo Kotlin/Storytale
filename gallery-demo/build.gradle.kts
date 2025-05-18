@@ -35,13 +35,36 @@ class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         )
     }
 }
+class MakePreviewPublicCompilerPlugin : KotlinCompilerPluginSupportPlugin {
+    override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
+        return kotlinCompilation.project.provider { emptyList() }
+    }
+
+    override fun getCompilerPluginId(): String {
+        return "org.jetbrains.compose.compiler.plugins.storytale.preview.public"
+    }
+
+    override fun getPluginArtifact(): SubpluginArtifact {
+        return SubpluginArtifact("org.jetbrains.compose.storytale.preview.public", "local-compiler-plugin")
+    }
+
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+        return kotlinCompilation.target.platformType in setOf(
+            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm,
+            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.wasm,
+        )
+    }
+}
 
 apply<StorytaleCompilerPlugin>()
+apply<MakePreviewPublicCompilerPlugin>()
 
 configurations.all {
     resolutionStrategy.dependencySubstitution {
         substitute(module("org.jetbrains.compose.storytale:local-compiler-plugin"))
             .using(project(":modules:compiler-plugin"))
+        substitute(module("org.jetbrains.compose.storytale.preview.public:local-compiler-plugin"))
+            .using(project(":modules:preview-processor"))
     }
 }
 
