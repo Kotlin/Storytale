@@ -11,15 +11,23 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
-open class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
+class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(project: Project) {
-        project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
-            project.plugins.withId("org.jetbrains.compose") {
-                val extension =
-                    project.extensions.create(STORYTALE_EXTENSION_NAME, StorytaleExtension::class.java, project)
-                project.processConfigurations(extension)
-            }
+        val multiplatformEnabled = project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")
+        val androidApplicationEnabled = project.plugins.hasPlugin("com.android.application")
+        val composeEnabled = project.plugins.hasPlugin("org.jetbrains.compose")
+        val composePluginEnabled = project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.compose")
+        if (
+            (composeEnabled || composePluginEnabled)
+            && (multiplatformEnabled || androidApplicationEnabled)
+        ) {
+            val extension = project.extensions.create(
+                STORYTALE_EXTENSION_NAME,
+                StorytaleExtension::class.java,
+                project,
+            )
+            project.processConfigurations(extension)
         }
     }
 
@@ -31,18 +39,18 @@ open class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>) = kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
 
-    protected fun Project.processConfigurations(extension: StorytaleExtension) {
+    private fun Project.processConfigurations(extension: StorytaleExtension) {
         extension.targets.forEach {
-            when (this) {
+            when (it) {
                 is KotlinJsIrTarget ->
-                    when (wasmTargetType) {
-                        KotlinWasmTargetType.JS -> processWasmCompilation(extension, this)
-                        null -> processJsCompilation(extension, this)
+                    when (it.wasmTargetType) {
+                        KotlinWasmTargetType.JS -> processWasmCompilation(extension, it)
+                        null -> processJsCompilation(extension, it)
                         else -> {}
                     }
-                is KotlinAndroidTarget -> processAndroidCompilation(extension, this)
-                is KotlinJvmTarget -> processJvmCompilation(extension, this)
-                is KotlinNativeTarget -> processNativeCompilation(extension, this)
+                is KotlinAndroidTarget -> processAndroidCompilation(extension, it)
+                is KotlinJvmTarget -> processJvmCompilation(extension, it)
+                is KotlinNativeTarget -> processNativeCompilation(extension, it)
             }
         }
     }

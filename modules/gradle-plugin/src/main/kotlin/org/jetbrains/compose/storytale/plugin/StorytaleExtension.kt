@@ -1,26 +1,51 @@
 package org.jetbrains.compose.storytale.plugin
 
+import com.android.kotlin.multiplatform.models.AndroidTarget
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 open class StorytaleExtension(internal val project: Project) {
     var buildDir: String = "storytale"
 
-    private val multiplatformExtension = run {
-        val multiplatformClass =
-            tryGetClass<KotlinMultiplatformExtension>(
-                className = "org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension",
+    val multiplatformProject: Boolean
+    val targets: List<KotlinTarget>
+    val mainStoriesSourceSet: KotlinSourceSet
+
+    init {
+        val multiplatformExtension = tryGetClass<KotlinMultiplatformExtension>(
+            className = "org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension",
+        )
+            ?.let { project.extensions.findByType(it) }
+
+        val kotlinAndroidExtension = tryGetClass<KotlinAndroidExtension>(
+            className = "org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension",
+        )
+            ?.let { project.extensions.findByType(it) }
+
+        val extension = checkNotNull(multiplatformExtension ?: kotlinAndroidExtension) {
+            "UNEXPECTED"
+        }
+        val multiplatformTargets = multiplatformExtension
+            ?.targets
+            ?.toList()
+        val androidTarget = kotlinAndroidExtension
+            ?.target
+            ?.let { listOf(it) }
+
+        multiplatformProject = multiplatformExtension != null
+        targets = multiplatformTargets ?: androidTarget ?: error("UNEXPECTED")
+        mainStoriesSourceSet = extension.sourceSets
+            .create(
+                if (multiplatformExtension != null) {
+                    "common${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}"
+                } else {
+                    StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX.lowercase()
+                },
             )
-        multiplatformClass?.let { project.extensions.findByType(it) } ?: error("UNEXPECTED")
-    }
-
-    open val targets = multiplatformExtension.targets.toList()
-
-    open val mainStoriesSourceSet by lazy {
-        multiplatformExtension
-            .sourceSets
-            .create("common${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}")
             .apply { setupCommonStoriesSourceSetDependencies(this) }
     }
 
@@ -33,7 +58,7 @@ open class StorytaleExtension(internal val project: Project) {
         }
     }
 
-    protected fun <T> Any.tryGetClass(className: String): Class<T>? {
+    private fun <T> Any.tryGetClass(className: String): Class<T>? {
         val classLoader = javaClass.classLoader
         return try {
             @Suppress("UNCHECKED_CAST")
