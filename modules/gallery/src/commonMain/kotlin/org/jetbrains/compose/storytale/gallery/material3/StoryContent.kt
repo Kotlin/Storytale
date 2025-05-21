@@ -82,7 +82,7 @@ internal fun StoryContent(
             StoryPreview(
                 showOverlayParameters = showOverlayParameters,
                 activeStory = activeStory,
-                useFabForParametersMenu = useTabs
+                useFabForParametersMenu = useTabs,
             )
         }
 
