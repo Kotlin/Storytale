@@ -99,6 +99,7 @@ fun EmbeddedStoryView(
                         }),
                         style = MaterialTheme.typography.bodySmall,
                         fontSize = 9.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }

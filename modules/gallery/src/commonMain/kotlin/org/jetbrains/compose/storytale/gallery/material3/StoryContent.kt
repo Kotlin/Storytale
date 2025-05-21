@@ -73,13 +73,17 @@ internal fun StoryContent(
     val isSmallHeight = heightClass == WindowHeightSizeClass.COMPACT
     val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
 
-    val useTabs = isSmallHeight || useEmbeddedView
+    val useTabs = isSmallHeight || useEmbeddedView || isSmallWidth
 
     Box(modifier = modifier) {
         val showOverlayParameters = remember { mutableStateOf(false) }
 
         val previewContent = @Composable {
-            StoryPreview(showOverlayParameters, activeStory, useEmbeddedView, isSmallWidth)
+            StoryPreview(
+                showOverlayParameters = showOverlayParameters,
+                activeStory = activeStory,
+                useFabForParametersMenu = useTabs,
+            )
         }
 
         val codeContent: @Composable (BoxScope) -> Unit = { boxScope ->
@@ -115,8 +119,7 @@ internal fun StoryContent(
 private fun StoryPreview(
     showOverlayParameters: MutableState<Boolean>,
     activeStory: Story? = null,
-    useEmbeddedView: Boolean = false,
-    isSmallWidth: Boolean = false,
+    useFabForParametersMenu: Boolean = false,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -127,7 +130,7 @@ private fun StoryPreview(
         }
 
         AnimatedVisibility(
-            (isSmallWidth || useEmbeddedView) && activeStory?.parameters?.isNotEmpty() == true,
+            useFabForParametersMenu && activeStory?.parameters?.isNotEmpty() == true,
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier.align(Alignment.BottomEnd),
