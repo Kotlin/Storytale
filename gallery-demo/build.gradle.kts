@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha03"
+    alias(libs.plugins.ksp)
 }
 
 class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
@@ -34,13 +35,36 @@ class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
         )
     }
 }
+class MakePreviewPublicCompilerPlugin : KotlinCompilerPluginSupportPlugin {
+    override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
+        return kotlinCompilation.project.provider { emptyList() }
+    }
+
+    override fun getCompilerPluginId(): String {
+        return "org.jetbrains.compose.compiler.plugins.storytale.preview.public"
+    }
+
+    override fun getPluginArtifact(): SubpluginArtifact {
+        return SubpluginArtifact("org.jetbrains.compose.storytale.preview.public", "local-compiler-plugin")
+    }
+
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+        return kotlinCompilation.target.platformType in setOf(
+            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm,
+            org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.wasm,
+        )
+    }
+}
 
 apply<StorytaleCompilerPlugin>()
+apply<MakePreviewPublicCompilerPlugin>()
 
 configurations.all {
     resolutionStrategy.dependencySubstitution {
         substitute(module("org.jetbrains.compose.storytale:local-compiler-plugin"))
             .using(project(":modules:compiler-plugin"))
+        substitute(module("org.jetbrains.compose.storytale.preview.public:local-compiler-plugin"))
+            .using(project(":modules:preview-processor"))
     }
 }
 
@@ -106,9 +130,17 @@ kotlin {
     }
 }
 
+dependencies {
+    add("kspCommonMainMetadata", project(":modules:preview-processor"))
+    add("ksp", project(":modules:preview-processor"))
+}
+
 compose.desktop {
     application {
         mainClass = "storytale.gallery.demo.MainKt"
+        buildTypes.release.proguard {
+            isEnabled.set(false)
+        }
     }
 }
 
