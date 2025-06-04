@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
-    id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha03"
+    id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha10"
 }
 
 class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
@@ -116,6 +116,7 @@ composeCompiler {
     featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
 }
 
-tasks.register<ComposeHotRun>("runHot") {
+// ./gradlew :gallery-demo:desktopRunHot --auto
+tasks.withType<ComposeHotRun>().configureEach {
     mainClass.set("storytale.gallery.demo.MainKt")
 }
