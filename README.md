@@ -148,3 +148,8 @@ All aspects related to building Storytale, including various Gradle tasks, gener
 #### runtime
 
 The runtime module is designed to provide developers with essential APIs during the coding process
+
+## Feedback and questions
+
+Share your feedback or questions in our [#storytale](https://slack-chats.kotlinlang.org/c/storytale) Slack channel.
+[Get a Slack invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up).
