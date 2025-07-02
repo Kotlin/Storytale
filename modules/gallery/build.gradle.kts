@@ -80,6 +80,9 @@ kotlin {
 
         val jvmMain by getting {
             dependsOn(desktopMain)
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
         }
     }
 
