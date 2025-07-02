@@ -9,10 +9,10 @@ kotlinCompileTesting = "0.7.0"
 junitVersion = "4.13.2"
 storytale = "0.0.3+dev8"
 
-compose-plugin = "1.8.0-beta02"
+compose-plugin = "1.8.1"
 compose-navigation = "2.9.0-alpha16"
 kotlinx-serialization-json = "1.7.3"
-kotlin = "2.1.20"
+kotlin = "2.1.21"
 kotlin-poet = "1.18.1"
 build-time-config = "2.3.0"
 code-highlights = "1.0.0"
@@ -21,6 +21,10 @@ dokka = "1.9.10"
 kotlinx-html = "0.7.3"
 junit = "5.10.1"
 jsoup = "1.16.1"
+ktlint = "1.5.0"
+composeRules = "0.4.22"
+material3-icons = "1.7.3"
+material3-adaptive = "1.1.0-beta01"
 
 [libraries]
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -43,8 +47,10 @@ dokka-base-test-utils = { module = "org.jetbrains.dokka:dokka-base-test-utils", 
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
-ktlint = "com.pinterest.ktlint:ktlint-cli:1.5.0"
-composeRules = "io.nlopez.compose.rules:ktlint:0.4.22"
+ktlint = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
+composeRules = { module = "io.nlopez.compose.rules:ktlint", version.ref = "composeRules" }
+material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "material3-adaptive" }
+material3-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material3-icons" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

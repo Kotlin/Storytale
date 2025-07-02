@@ -16,10 +16,14 @@ kotlin {
     js {
         browser()
     }
-    jvm()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    jvm {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
     androidTarget {
         publishLibraryVariants("release")
 
