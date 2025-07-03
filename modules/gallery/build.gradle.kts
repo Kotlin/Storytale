@@ -17,10 +17,14 @@ kotlin {
     wasmJs {
         browser()
     }
-    jvm()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    jvm {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
     androidTarget {
         publishLibraryVariants("release")
 
@@ -37,6 +41,8 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
+                implementation(libs.material3.adaptive)
+                implementation(libs.material3.icons.core)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
@@ -45,7 +51,6 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(projects.modules.runtimeApi)
                 implementation(libs.navigation.compose)
-                implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.1.0-beta01")
             }
         }
 
@@ -75,6 +80,9 @@ kotlin {
 
         val jvmMain by getting {
             dependsOn(desktopMain)
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
         }
     }
 

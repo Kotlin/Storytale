@@ -77,7 +77,8 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(projects.modules.runtimeApi)
                 implementation(projects.modules.gallery)
-                implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.1.0-beta01")
+                implementation(libs.material3.adaptive)
+                implementation(libs.material3.icons.core)
             }
         }
 
