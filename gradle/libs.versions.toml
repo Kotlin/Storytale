@@ -11,7 +11,7 @@ storytale = "0.0.3+dev8"
 
 compose-plugin = "1.8.1"
 compose-navigation = "2.9.0-alpha16"
-kotlinx-serialization-json = "1.7.3"
+kotlinx-serialization-json = "1.9.0"
 kotlin = "2.1.21"
 kotlin-poet = "1.18.1"
 build-time-config = "2.3.0"
