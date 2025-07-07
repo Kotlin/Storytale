@@ -110,6 +110,9 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "storytale.gallery.demo.MainKt"
+        buildTypes.release.proguard {
+            isEnabled.set(false)
+        }
     }
 }
 
