@@ -7,11 +7,11 @@ import org.jetbrains.compose.storytale.example.compose_multiplatform
 
 @Composable
 fun ComposeLogo(
-  modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
 ) {
-  Image(
-    painter = painterResource(Res.drawable.compose_multiplatform),
-    contentDescription = "Compose Multiplatform Logo",
-    modifier = modifier,
-  )
+    Image(
+        painter = painterResource(Res.drawable.compose_multiplatform),
+        contentDescription = "Compose Multiplatform Logo",
+        modifier = modifier,
+    )
 }

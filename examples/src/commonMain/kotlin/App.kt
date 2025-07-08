@@ -16,21 +16,21 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun App(modifier: Modifier = Modifier) {
-  var showContent by remember { mutableStateOf(false) }
+    var showContent by remember { mutableStateOf(false) }
 
-  MaterialTheme {
-    Column(
-      modifier = modifier.fillMaxWidth(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      PrimaryButton(text = "Click Me", onClick = { showContent = !showContent })
-      AnimatedVisibility(showContent) {
-        val greeting = remember { Greeting().greet() }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-          ComposeLogo(Modifier.size(600.dp))
-          Text("Compose: $greeting")
+    MaterialTheme {
+        Column(
+            modifier = modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            PrimaryButton(text = "Click Me", onClick = { showContent = !showContent })
+            AnimatedVisibility(showContent) {
+                val greeting = remember { Greeting().greet() }
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    ComposeLogo(Modifier.size(600.dp))
+                    Text("Compose: $greeting")
+                }
+            }
         }
-      }
     }
-  }
 }
