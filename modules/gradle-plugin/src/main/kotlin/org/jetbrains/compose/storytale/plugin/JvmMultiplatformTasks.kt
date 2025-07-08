@@ -7,7 +7,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.toolchain.JavaLauncher
 import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.task
+import org.jetbrains.compose.reload.gradle.ComposeHotRun
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -20,6 +22,7 @@ fun Project.processJvmCompilation(extension: StorytaleExtension, target: KotlinJ
 
     val runtimeClasspath = storytaleCompilation.output.allOutputs + storytaleCompilation.runtimeDependencyFiles
     createJvmStorytaleExecTask(extension, storytaleCompilation, target, runtimeClasspath)
+    createJvmStorytaleHotReloadExecTask(compilation = storytaleCompilation, target = target)
 }
 
 private fun Project.createJvmStorytaleGenerateSourceTask(
@@ -93,6 +96,22 @@ private fun Project.createJvmStorytaleExecTask(
         )
 
         javaLauncher.set(javaLauncherProvider())
+    }
+}
+
+private fun Project.createJvmStorytaleHotReloadExecTask(
+    compilation: KotlinJvmCompilation,
+    target: KotlinJvmTarget,
+) {
+    val taskName = "${target.name}${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}HotRun"
+    project.plugins.withId("org.jetbrains.compose.hot-reload") {
+        logger.info("Compose Hot Reload plugin found, configuring Storytale Hot Reload for ${target.name}")
+        tasks.register<ComposeHotRun>(taskName) {
+            this.compilation.set(compilation)
+            group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
+            description = "Execute storytale for '${target.name}' with hot reload"
+            mainClass.set("org.jetbrains.compose.storytale.generated.MainKt")
+        }
     }
 }
 
