@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.android.gradle.plugin)
     implementation(libs.kotlin.compiler.embeddable)
     implementation(libs.compose.gradle.plugin)
+    implementation(libs.compose.hot.reload.plugin)
     implementation(libs.kotlin.poet)
 }
 
