@@ -12,6 +12,17 @@ plugins {
     alias(libs.plugins.compose.hot.reload)
 }
 
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("org.jetbrains.compose.storytale:compiler-plugin"))
+            .using(project(":modules:compiler-plugin"))
+        substitute(module("org.jetbrains.compose.storytale:runtime-api"))
+            .using(project(":modules:runtime-api"))
+        substitute(module("org.jetbrains.compose.storytale:gallery"))
+            .using(project(":modules:gallery"))
+    }
+}
+
 kotlin {
     wasmJs {
         moduleName = "composeApp"
