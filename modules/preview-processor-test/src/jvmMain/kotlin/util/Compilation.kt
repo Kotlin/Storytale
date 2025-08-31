@@ -43,7 +43,7 @@ fun storytaleTest(
         // magic
         inheritClassPath = true
         messageOutputStream = System.out // see diagnostics in real time
-        jvmTarget = "21"
+        jvmTarget = "17"
         verbose = false
 
         compilationBuilder()
