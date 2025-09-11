@@ -1,9 +1,12 @@
 package org.jetbrains.compose.storytale.plugin
 
 import com.android.build.gradle.AppExtension
-import com.android.build.gradle.api.ApplicationVariant
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.api.BaseVariant
 import java.io.ByteArrayOutputStream
 import java.io.File
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -12,7 +15,10 @@ import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
-val androidGradlePlugins = listOf("com.android.application")
+val androidGradlePlugins = listOf(
+    "com.android.application" to AppExtension::class,
+    "com.android.library" to LibraryExtension::class,
+)
 
 fun Project.processAndroidCompilation(extension: StorytaleExtension, target: KotlinAndroidTarget) {
     project.logger.info("Configuring storytale for Kotlin on Android")
@@ -23,18 +29,20 @@ fun Project.createAndroidCompilationTasks(
     target: KotlinAndroidTarget,
     extension: StorytaleExtension,
 ) {
-    androidGradlePlugins.forEach { pluginId ->
+    androidGradlePlugins.forEach { (pluginId, extensionClass) ->
         extension.project.plugins.withId(pluginId) {
             val storytaleBuildDir = extension.getBuildDirectory(target)
             val storytaleBuildSourcesDir = file("$storytaleBuildDir/sources")
             val storytaleBuildResourcesDir = file("$storytaleBuildDir/resources")
-            val applicationExtension = extension.project.extensions.findByType(AppExtension::class)
-                ?: error("Android Application plugin must be applied to the module")
+            val applicationExtension = extension.project.extensions.findByType(extensionClass)
+                ?: error("Android Application or Library plugin must be applied to the module")
 
             applicationExtension.buildTypes.create(StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX)
                 .apply {
                     initWith(applicationExtension.buildTypes.getByName("debug"))
-                    applicationIdSuffix = ".${StorytaleGradlePlugin.STORYTALE_EXEC_PREFIX}"
+                    if (extensionClass == AppExtension::class) {
+                        applicationIdSuffix = ".${StorytaleGradlePlugin.STORYTALE_EXEC_PREFIX}"
+                    }
                 }
 
             applicationExtension.sourceSets
@@ -53,7 +61,7 @@ fun Project.createAndroidCompilationTasks(
                     }
                 }
 
-            applicationExtension.applicationVariants
+            applicationExtension.variants
                 .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX }
                 .configureEach {
                     val generatorTask = createAndroidStorytaleGenerateSourceTask(
@@ -99,9 +107,16 @@ fun Project.createAndroidCompilationTasks(
     }
 }
 
+private val BaseExtension.variants: DomainObjectSet<out BaseVariant>
+    get() = when (this) {
+        is AppExtension -> applicationVariants
+        is LibraryExtension -> libraryVariants
+        else -> error("Unsupported extension type: ${this::class.java}")
+    }
+
 private fun Project.createAndroidStorytaleGenerateSourceTask(
     target: KotlinAndroidTarget,
-    applicationVariant: ApplicationVariant,
+    applicationVariant: BaseVariant,
     buildSourcesDir: File,
     buildResourcesDir: File,
 ) = task<AndroidSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
@@ -113,7 +128,7 @@ private fun Project.createAndroidStorytaleGenerateSourceTask(
     outputResourcesDir = buildResourcesDir
 }
 
-private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applicationExtension: AppExtension): Task {
+private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applicationExtension: BaseExtension): Task {
     return task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}StartEmulator") {
         doLast {
             val adbPath = applicationExtension.adbExecutable.absolutePath
