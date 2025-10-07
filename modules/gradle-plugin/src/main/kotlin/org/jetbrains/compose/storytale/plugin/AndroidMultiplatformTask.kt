@@ -31,6 +31,8 @@ fun Project.createAndroidCompilationTasks(
             val applicationExtension = extension.project.extensions.findByType(AppExtension::class)
                 ?: error("Android Application plugin must be applied to the module")
 
+            val mainStoriesSourceSet = extension.mainStoriesSourceSet
+
             applicationExtension.buildTypes.create(StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX)
                 .apply {
                     initWith(applicationExtension.buildTypes.getByName("debug"))
@@ -48,7 +50,7 @@ fun Project.createAndroidCompilationTasks(
                 .configureEach {
                     kotlin.srcDir(storytaleBuildSourcesDir)
                     extension.setupCommonStoriesSourceSetDependencies(this)
-                    extension.mainStoriesSourceSet.kotlin.srcDirs.forEach {
+                    mainStoriesSourceSet.kotlin.srcDirs.forEach {
                         kotlin.srcDir(it)
                     }
                 }
