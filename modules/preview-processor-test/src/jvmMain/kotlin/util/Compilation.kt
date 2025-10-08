@@ -1,27 +1,29 @@
 package util
 
+import PreviewComponentRegistrar
+import PreviewProcessor
 import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
+import com.tschuchort.compiletesting.kspSourcesDir
+import com.tschuchort.compiletesting.sourcesGeneratedBySymbolProcessor
+import com.tschuchort.compiletesting.symbolProcessorProviders
+import com.tschuchort.compiletesting.useKsp2
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import org.assertj.core.api.Assertions
 import org.intellij.lang.annotations.Language
-import org.jetbrains.compose.plugin.storytale.compiler.StorytaleComponentRegistrar
-import org.jetbrains.compose.storytale.storiesStorage
+import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 
 @OptIn(ExperimentalContracts::class)
 fun storytaleTest(
     compilationBuilder: KotlinCompilation.() -> Unit = {},
     testSourceBuilder: StorytaleTestSourceScope.() -> Unit,
-): JvmCompilationResult {
+): KotlinCompilation {
     contract {
         callsInPlace(compilationBuilder, InvocationKind.EXACTLY_ONCE)
-        callsInPlace(testSourceBuilder, InvocationKind.EXACTLY_ONCE)
     }
-    storiesStorage.clear()
 
     val testSourceScope = object : StorytaleTestSourceScope {
         val sources = mutableListOf<SourceFile>()
@@ -30,32 +32,35 @@ fun storytaleTest(
         }
     }
 
-    val compilationSetup = KotlinCompilation().apply {
-        compilerPluginRegistrars =
-            listOf(StorytaleComponentRegistrar(), ComposePluginRegistrar())
+    return KotlinCompilation().apply {
+        compilerPluginRegistrars = listOf(
+            ComposePluginRegistrar(),
+            PreviewComponentRegistrar(),
+        )
+        useKsp2()
+        symbolProcessorProviders.add(PreviewProcessor.Provider())
+
+        // magic
         inheritClassPath = true
         messageOutputStream = System.out // see diagnostics in real time
         jvmTarget = "17"
         verbose = false
+
+        compilationBuilder()
+        testSourceScope.testSourceBuilder()
+        sources = testSourceScope.sources
     }
-
-    compilationSetup.compilationBuilder()
-    testSourceScope.testSourceBuilder()
-
-    compilationSetup.sources = testSourceScope.sources
-
-    return compilationSetup.compile()
 }
 
 interface StorytaleTestSourceScope {
     infix fun String.hasContent(@Language("kotlin") content: String)
 }
 
-fun JvmCompilationResult.invokeMainController() {
-    val clazz = classLoader.loadClass("org.jetbrains.compose.storytale.generated.MainKt")
-
-    Assertions.assertThat(clazz).isNotNull
-    Assertions.assertThat(clazz).hasDeclaredMethods("MainViewController")
-
-    clazz.getMethod("MainViewController").invoke(null)
+fun JvmCompilationResult.assertableGeneratedKspSources(
+    compilation: KotlinCompilation,
+): List<AssertableFile> {
+    return sourcesGeneratedBySymbolProcessor.toList().map {
+        it.descendantRelativeTo(compilation.kspSourcesDir).path hasContent
+            org.assertj.core.util.Files.contentOf(it, Charsets.UTF_8).trim()
+    }
 }

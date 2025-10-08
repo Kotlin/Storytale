@@ -25,10 +25,12 @@ ktlint = "1.5.0"
 composeRules = "0.4.22"
 material3-icons = "1.7.3"
 material3-adaptive = "1.1.0-beta01"
+ksp = "2.1.20-2.0.1"
 
 [libraries]
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 kotlinCompileTesting-core = { module = "dev.zacsweers.kctfork:core", version.ref = "kotlinCompileTesting" }
+kotlinCompileTesting-ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kotlinCompileTesting" }
 junit = { module = "junit:junit", version.ref = "junitVersion" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -51,6 +53,7 @@ ktlint = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
 composeRules = { module = "io.nlopez.compose.rules:ktlint", version.ref = "composeRules" }
 material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "material3-adaptive" }
 material3-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material3-icons" }
+ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -63,6 +66,6 @@ buildTimeConfig = { id = "dev.limebeck.build-time-config", version.ref = "build-
 storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
 kotlinDsl = { id = "kotlin-dsl" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
