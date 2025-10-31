@@ -24,7 +24,7 @@ Since Storytale is still in the early stages of development, the api is marked a
 
 ```toml
 [versions]
-storytale = "0.0.4-alpha01+dev18"
+storytale = "0.0.4-alpha01+dev19"
 
 [plugins]
 storytale = { id = "org.jetbrains.compose.storytale", version.ref = "storytale" }
