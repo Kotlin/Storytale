@@ -1,4 +1,4 @@
-import org.jetbrains.compose.reload.ComposeHotRun
+import org.jetbrains.compose.reload.gradle.ComposeHotRun
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -11,8 +11,8 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
-    id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha10"
     alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.hot.reload)
 }
 
 class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
