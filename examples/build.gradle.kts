@@ -25,7 +25,7 @@ configurations.all {
 
 kotlin {
     wasmJs {
-        moduleName = "composeApp"
+        outputModuleName = "composeApp"
         browser {
             commonWebpackConfig {
                 outputFileName = "composeApp.js"

@@ -91,7 +91,7 @@ fun Project.createAndroidCompilationTasks(
                         dependsOn("install${this@configureEach.name}")
 
                         doLast {
-                            exec {
+                            execOps.exec {
                                 commandLine(adbPath, "shell", "am", "start", "-n", "$applicationId/$activityPath")
                             }
                         }
@@ -122,7 +122,7 @@ private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applica
 
             // First check whether any physical devices are connected
             val connectedDevices = ByteArrayOutputStream().use { output ->
-                exec {
+                execOps.exec {
                     commandLine(adbPath, "devices")
                     standardOutput = output
                 }
@@ -137,13 +137,13 @@ private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applica
 
             if (physicalDevice != null) {
                 project.logger.info("Using physical device: $physicalDevice")
-                exec {
+                execOps.exec {
                     commandLine(adbPath, "-s", physicalDevice, "wait-for-device")
                 }
             } else {
                 val output = ByteArrayOutputStream()
                 val emulatorPath = applicationExtension.sdkDirectory.resolve("emulator/emulator")
-                exec {
+                execOps.exec {
                     commandLine(emulatorPath, "-list-avds")
                     standardOutput = output
                 }
@@ -153,12 +153,12 @@ private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applica
                 if (emulatorName != null) {
                     project.logger.info("Starting emulator: $emulatorName")
                     Thread {
-                        exec {
+                        execOps.exec {
                             commandLine(emulatorPath, "-avd", emulatorName, "-no-snapshot-load")
                         }
                     }.start()
 
-                    exec {
+                    execOps.exec {
                         commandLine(
                             adbPath,
                             "wait-for-device",
