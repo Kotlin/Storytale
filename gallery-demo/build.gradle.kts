@@ -74,7 +74,7 @@ kotlin {
         binaries.executable()
     }
     wasmJs {
-        moduleName = "gallery-demo"
+        outputModuleName = "gallery-demo"
         browser {
             commonWebpackConfig {
                 outputFileName = "gallery-demo.js"

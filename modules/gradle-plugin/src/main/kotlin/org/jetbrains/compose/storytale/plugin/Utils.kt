@@ -14,6 +14,7 @@ import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.zip.ZipInputStream
+import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -23,7 +24,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.newInstance
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -132,8 +134,20 @@ fun getArchivesFromResources(compilation: KotlinCompilation<*>): FileCollection 
 }
 
 fun Project.execute(vararg args: String): String = ByteArrayOutputStream().apply {
-    exec {
+    execOps.exec {
         commandLine(*args)
         standardOutput = this@apply
     }
 }.toString()
+
+fun CharSequence.capitalized(): String {
+    return this.toString().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+}
+
+interface ExecOpsProvider {
+    @get:Inject
+    val execOperations: ExecOperations
+}
+
+val Project.execOps: ExecOperations
+    get() = objects.newInstance<ExecOpsProvider>().execOperations

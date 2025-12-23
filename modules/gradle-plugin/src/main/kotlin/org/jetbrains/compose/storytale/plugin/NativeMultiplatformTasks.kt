@@ -6,7 +6,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -113,7 +112,7 @@ private fun Project.createNativeStorytaleExecTask(
         inputs.property("deviceId", deviceId)
 
         doLast {
-            exec {
+            execOps.exec {
                 workingDir = unzipXCodeProjectTask.outputDir.get().asFile
                 commandLine(
                     "/usr/bin/xcrun",
@@ -123,7 +122,7 @@ private fun Project.createNativeStorytaleExecTask(
                     StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_PATH,
                 )
             }
-            exec {
+            execOps.exec {
                 commandLine("/usr/bin/open", "-a", "Simulator")
             }
         }
@@ -167,7 +166,7 @@ private fun Project.createSimulatorRegistrationTask(unzipResourceTask: UnzipReso
                 deviceId = existingDeviceId
             }
 
-            if (!isBooted) exec { commandLine("/usr/bin/xcrun", "simctl", "boot", deviceId) }
+            if (!isBooted) execOps.exec { commandLine("/usr/bin/xcrun", "simctl", "boot", deviceId) }
 
             deviceIdProperty.set(deviceId)
         }
@@ -219,7 +218,7 @@ private fun Project.createBuildTask(
 
         doLast {
             val frameworkPath = linkTask.destinationDirectory.asFile.get().path
-            exec {
+            execOps.exec {
                 workingDir = xcodeProjectPath
                 commandLine(
                     "/usr/bin/xcodebuild",
@@ -288,7 +287,7 @@ private fun Project.createInstallApplicationToSimulatorTask(
         inputs.property("deviceId", deviceId)
 
         doLast {
-            exec {
+            execOps.exec {
                 workingDir = unzipResourceTask.outputDir.get().asFile
                 val appPath = "${StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME}/Build/Products/${StorytaleGradlePlugin.LINK_BUILD_VERSION}-$platform/${StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME}.app"
                 commandLine(

@@ -6,9 +6,9 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -55,7 +55,7 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
             val owner = expression.symbol.owner
             if (!owner.isTopLevel || owner.callableId != storyFunction) return super.visitCall(expression)
 
-            val callee = expression.getValueArgument(2)
+            val callee = expression.arguments[2]
             val storyDescriber = when (callee) {
                 is IrFunctionExpression -> callee.function
                 else -> error("Unexpected callee: $callee")
@@ -66,9 +66,9 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
 
             val storyTitle = storyDescriber.file.name.substringAfterLast("/").substringBeforeLast(".story.kt")
 
-            expression.putValueArgument(0, storyCodeSnippet.toIrConst(context.irBuiltIns.stringType))
-            expression.putValueArgument(1, storyTitle.toIrConst(context.irBuiltIns.stringType))
-            expression.putValueArgument(2, callee)
+            expression.arguments[0] = storyCodeSnippet.toIrConst(context.irBuiltIns.stringType)
+            expression.arguments[1] = storyTitle.toIrConst(context.irBuiltIns.stringType)
+            expression.arguments[2] = callee
 
             return super.visitCall(expression)
         }
@@ -160,10 +160,10 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
         override var type: IrType,
         override val statements: MutableList<IrStatement>,
     ) : IrBlock() {
-        override val startOffset = UNDEFINED_OFFSET
-        override val endOffset = UNDEFINED_OFFSET
+        override var startOffset = UNDEFINED_OFFSET
+        override var endOffset = UNDEFINED_OFFSET
         override var origin: IrStatementOrigin? = null
-        override var attributeOwnerId: IrAttributeContainer = this
+        override var attributeOwnerId: IrElement = this
     }
 }
 
