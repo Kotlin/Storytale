@@ -66,3 +66,8 @@ subprojects {
 inline fun <reified T> Project.configureIfExists(fn: T.() -> Unit) {
     extensions.findByType(T::class.java)?.fn()
 }
+
+tasks.register("publishToMavenLocal") {
+    dependsOn(gradle.includedBuild("gradle-plugin").task(":publishToMavenLocal"))
+    dependsOn(subprojects.mapNotNull { it.tasks.findByName("publishToMavenLocal") })
+}

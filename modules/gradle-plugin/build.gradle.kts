@@ -1,3 +1,4 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -25,7 +26,15 @@ dependencies {
     implementation(libs.kotlin.poet)
 }
 
+val rootProperties = Properties().apply {
+    file("../../gradle.properties").inputStream().use { load(it) }
+}
+
+val storytaleVersion: String = rootProperties.getProperty("storytale.deploy.version")
+    ?: error("storytale.deploy.version not found in root gradle.properties")
+
 group = "org.jetbrains.compose.storytale"
+version = storytaleVersion
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
