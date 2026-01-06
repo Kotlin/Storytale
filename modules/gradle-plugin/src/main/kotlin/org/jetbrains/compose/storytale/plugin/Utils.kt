@@ -137,3 +137,19 @@ fun Project.execute(vararg args: String): String = ByteArrayOutputStream().apply
         standardOutput = this@apply
     }
 }.toString()
+
+@Suppress("SpellCheckingInspection")
+fun File.createDirectory() {
+    when {
+        isDirectory -> Unit
+        isFile -> error("A regular file already exists at this path: $path")
+        else -> {
+            // Note that `mkdirs()` returns `false` if the directory already exists (even though we have checked that the directory did not
+            // exist earlier, it might just have been created by some other thread). Therefore, we need to check if the directory exists
+            // again when `mkdirs()` returns `false`.
+            if (!mkdirs() && !isDirectory) {
+                throw IOException("Could not create directory '$path'")
+            }
+        }
+    }
+}

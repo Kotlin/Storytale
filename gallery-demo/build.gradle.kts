@@ -12,7 +12,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.compose.hot.reload)
 }
 
 class StorytaleCompilerPlugin : KotlinCompilerPluginSupportPlugin {
@@ -74,7 +73,7 @@ kotlin {
         binaries.executable()
     }
     wasmJs {
-        moduleName = "gallery-demo"
+        outputModuleName.set("gallery-demo")
         browser {
             commonWebpackConfig {
                 outputFileName = "gallery-demo.js"

@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.hot.reload)
 }
 
 configurations.all {
@@ -25,7 +24,7 @@ configurations.all {
 
 kotlin {
     wasmJs {
-        moduleName = "composeApp"
+        outputModuleName.set("composeApp")
         browser {
             commonWebpackConfig {
                 outputFileName = "composeApp.js"
