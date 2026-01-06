@@ -17,7 +17,7 @@ kotlin-poet = "2.2.0"
 build-time-config = "2.3.1"
 code-highlights = "1.1.0"
 spotless = "7.0.2"
-dokka = "1.9.20"
+dokka = "2.1.0"
 kotlinx-html = "0.7.3"
 junit = "5.10.1"
 jsoup = "1.16.1"
@@ -46,6 +46,7 @@ dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.ref = "dokka" 
 dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "dokka" }
 dokka-test-api = { module = "org.jetbrains.dokka:dokka-test-api", version.ref = "dokka" }
 dokka-base-test-utils = { module = "org.jetbrains.dokka:dokka-base-test-utils", version.ref = "dokka" }
+dokka-analysisKotlinSymbols = { module = "org.jetbrains.dokka:analysis-kotlin-symbols", version.ref = "dokka" }
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }

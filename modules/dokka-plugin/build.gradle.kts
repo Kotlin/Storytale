@@ -25,6 +25,7 @@ dependencies {
     testImplementation(libs.dokka.base)
     testImplementation(libs.junit.api)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.dokka.analysisKotlinSymbols)
 }
 
 tasks.withType<Test> {
@@ -32,7 +33,7 @@ tasks.withType<Test> {
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(21)
 }
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
