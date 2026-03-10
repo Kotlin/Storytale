@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 
 class StorytaleComponentRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean get() = true
+    override val pluginId: String = "storytale"
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         Companion.registerExtensions(this)
