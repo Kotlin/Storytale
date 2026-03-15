@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 @OptIn(ExperimentalCompilerApi::class)
 class PreviewComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String = "storytale-preview"
     override val supportsK2: Boolean get() = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
