@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
@@ -7,6 +8,15 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
 }
+
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        apiVersion = KotlinVersion.KOTLIN_2_1
+        languageVersion = KotlinVersion.KOTLIN_2_1
+        optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
+    }
+}
+
 dependencies {
     compileOnly(compose.runtime)
     implementation(kotlin("compiler-embeddable"))
@@ -49,8 +59,4 @@ publishing {
             artifact(emptyJavadocJar)
         }
     }
-}
-
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }
