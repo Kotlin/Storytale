@@ -63,6 +63,39 @@ subprojects {
     }
 }
 
+// includeBuild() provides automatic plugin substitution but root tasks
+// don't propagate to composite builds. Wire in the gradle-plugin publish.
+// We use afterEvaluate to ensure all plugins are applied before we reference tasks.
+gradle.projectsEvaluated {
+    tasks.register("publishToMavenLocal") {
+        group = "publishing"
+        description = "Publish all modules (including gradle-plugin) to Maven Local"
+
+        // Depend on subprojects that have maven-publish applied
+        subprojects.forEach { subproject ->
+            if (subproject.plugins.hasPlugin("maven-publish")) {
+                dependsOn(subproject.tasks.named("publishToMavenLocal"))
+            }
+        }
+        // Also publish the gradle-plugin composite build
+        dependsOn(gradle.includedBuild("gradle-plugin").task(":publishToMavenLocal"))
+    }
+
+    tasks.register("publishAllPublicationsToComposeRepoRepository") {
+        group = "publishing"
+        description = "Publish all modules (including gradle-plugin) to ComposeRepo"
+
+        // Depend on subprojects that have the ComposeRepo task
+        subprojects.forEach { subproject ->
+            if (subproject.tasks.findByName("publishAllPublicationsToComposeRepoRepository") != null) {
+                dependsOn(subproject.tasks.named("publishAllPublicationsToComposeRepoRepository"))
+            }
+        }
+        // Also publish the gradle-plugin composite build
+        dependsOn(gradle.includedBuild("gradle-plugin").task(":publishAllPublicationsToComposeRepoRepository"))
+    }
+}
+
 inline fun <reified T> Project.configureIfExists(fn: T.() -> Unit) {
     extensions.findByType(T::class.java)?.fn()
 }

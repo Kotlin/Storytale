@@ -1,3 +1,5 @@
+rootProject.name = "gradle-plugin"
+
 dependencyResolutionManagement {
     repositories {
         google()

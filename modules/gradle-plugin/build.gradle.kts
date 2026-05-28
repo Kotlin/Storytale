@@ -24,6 +24,8 @@ dependencies {
 }
 
 group = "org.jetbrains.compose.storytale"
+version = findProperty("storytale.deploy.version")
+    ?: "unspecified"
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
@@ -37,6 +39,16 @@ publishing {
         }
         withType<MavenPublication> {
             artifact(emptyJavadocJar)
+        }
+    }
+    repositories {
+        maven {
+            name = "ComposeRepo"
+            setUrl(System.getenv("COMPOSE_REPO_URL"))
+            credentials {
+                username = System.getenv("COMPOSE_REPO_USERNAME")
+                password = System.getenv("COMPOSE_REPO_KEY")
+            }
         }
     }
 }
