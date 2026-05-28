@@ -1,3 +1,5 @@
+import java.util.Properties
+import java.io.File
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -24,8 +26,16 @@ dependencies {
 }
 
 group = "org.jetbrains.compose.storytale"
+
+// Composite builds don't inherit properties from the root project.
+// Read from the root's gradle.properties as a fallback.
+val rootGradleProperties = Properties().apply {
+    val rootProps = rootProject.rootDir.toPath().resolve("../../gradle.properties").toFile()
+    if (rootProps.exists()) load(rootProps.inputStream())
+}
 version = findProperty("storytale.deploy.version")
-    ?: "unspecified"
+    ?: rootGradleProperties.getProperty("storytale.deploy.version")
+    ?: error("'storytale.deploy.version' was not set")
 
 val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
