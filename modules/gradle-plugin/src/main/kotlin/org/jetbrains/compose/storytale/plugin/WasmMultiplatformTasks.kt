@@ -20,5 +20,6 @@ private fun Project.createWasmStorytaleGenerateSourceTask(extension: StorytaleEx
         title = target.name
         outputSourcesDir = file("$storytaleBuildDir/sources")
         outputResourcesDir = file("$storytaleBuildDir/resources")
+        scriptFileName.convention(project.provider { resolveScriptFileName(target) })
     }
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.WebpackConfigurator
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 fun Project.processJsCompilation(extension: StorytaleExtension, target: KotlinJsIrTarget) {
@@ -101,7 +102,24 @@ private fun Project.createJsStorytaleGenerateSourceTask(extension: StorytaleExte
         title = target.name
         outputResourcesDir = file("$storytaleBuildDir/resources")
         outputSourcesDir = file("$storytaleBuildDir/sources")
+        scriptFileName.convention(project.provider { resolveScriptFileName(target) })
     }
+}
+
+internal fun Project.resolveScriptFileName(target: KotlinJsIrTarget): String {
+    val webpackTasks = tasks.withType(KotlinWebpack::class.java)
+        .matching { it.name.startsWith(target.name) && it.name.contains("Stories") }
+    val webpackFileName = webpackTasks.firstOrNull()?.mainOutputFileName?.orNull
+    if (!webpackFileName.isNullOrBlank()) {
+        return if (webpackFileName.endsWith(".js")) webpackFileName else "$webpackFileName.js"
+    }
+
+    val outputModuleName = target.outputModuleName.orNull
+    if (!outputModuleName.isNullOrBlank()) {
+        return "$outputModuleName.js"
+    }
+
+    return "${project.name}.js"
 }
 
 fun Project.createWasmAndJsStorytaleExecTask(compilation: KotlinJsIrCompilation) {
@@ -111,6 +129,11 @@ fun Project.createWasmAndJsStorytaleExecTask(compilation: KotlinJsIrCompilation)
         browser.subTargetConfigurators.withType<WebpackConfigurator>().configureEach {
             setupBuild(compilation)
             setupRun(compilation)
+        }
+
+        val storytaleWebTaskPrefix = "${compilation.target.name}Browser${compilation.name}"
+        tasks.matching { it.name.startsWith(storytaleWebTaskPrefix) }.configureEach {
+            group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         }
     }
 }
