@@ -54,10 +54,17 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
-include(":examples")
 include(":gallery-demo")
 include(":modules:gallery")
-includeBuild("modules/gradle-plugin")
+val isTeamcityPublication = System.getenv("TEAMCITY_PUBLICATION") != null
+
+if (isTeamcityPublication) {
+    include(":modules:gradle-plugin")
+} else {
+    include(":examples")
+    includeBuild("modules/gradle-plugin")
+}
+
 include(":modules:compiler-plugin")
 include(":modules:dokka-plugin")
 include(":modules:runtime-api")
