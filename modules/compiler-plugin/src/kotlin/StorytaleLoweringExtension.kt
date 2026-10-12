@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -74,7 +73,7 @@ private class AddCodeSnippetToStoriesLowering(context: IrPluginContext) : BodyLo
         }
 
         private fun IrDeclaration.getFileSourceCode(): CharSequence? {
-            return (file.metadata as FirMetadataSource).fir.source.text
+            return (file.metadata as? FirMetadataSource)?.fir?.source?.text
         }
     }
 }
@@ -134,11 +133,10 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
         )
     }
 
+    // In K2, delegate backing field origin may not be PROPERTY_DELEGATE; match factory type directly
     private fun IrProperty.isStory(factoryType: IrType) = isTopLevel &&
         isDelegated &&
-        backingField?.let {
-            it.origin == IrDeclarationOrigin.PROPERTY_DELEGATE && it.type == factoryType
-        } ?: false
+        backingField?.type == factoryType
 
     private fun IrSimpleFunction.isGeneratedMainViewController() = isTopLevel &&
         visibility.isPublicAPI &&

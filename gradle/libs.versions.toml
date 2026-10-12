@@ -5,7 +5,7 @@ android-compileSdk = "36"
 android-minSdk = "26"
 androidx-activityCompose = "1.12.2"
 assertj = "3.27.2"
-kotlinCompileTesting = "0.11.0"
+kotlinCompileTesting = "0.12.1"
 junitVersion = "4.13.2"
 storytale = "0.0.3+dev8"
 
