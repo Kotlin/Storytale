@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -92,13 +94,21 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
     private val anyType = context.irBuiltIns.anyType
     private val unitType = context.irBuiltIns.unitType
     private val storyFactory = context.referenceClass(storyFactoryId)
-    private val hiddenFromObjCAnnotation = context.referenceConstructors(hideFromObjcId).single()
+    private val hiddenFromObjCAnnotation by lazy {
+        context.referenceConstructors(hideFromObjcId).firstOrNull()
+    }
+
+    private val isNativeTarget: Boolean by lazy {
+        context.platform?.componentPlatforms?.any { it.platformName.equals("Native", ignoreCase = true) } == true
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         val factoryType = storyFactory?.defaultType ?: return null
 
         if (declaration is IrProperty && declaration.isStory(factoryType)) {
-            declaration.addHiddenFromObjCAnnotation()
+            if (isNativeTarget) {
+                declaration.addHiddenFromObjCAnnotation()
+            }
             declaration.mentionGetterInsideMainFunction()
         }
 
@@ -143,15 +153,54 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
         kotlinFqName.asString() == "org.jetbrains.compose.storytale.generated.MainViewController"
 
     private fun IrDeclaration.addHiddenFromObjCAnnotation() {
-        val annotation = IrConstructorCallImpl(
+        val constructorSymbol = hiddenFromObjCAnnotation ?: return
+        val annotation = createHiddenFromObjCAnnotation(constructorSymbol)
+        context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(this, listOf(annotation))
+    }
+
+    private fun createHiddenFromObjCAnnotation(constructorSymbol: IrConstructorSymbol): IrConstructorCall {
+        // In Kotlin 2.4+, metadata visible annotations must implement IrAnnotation (IrAnnotationImpl)
+        val irAnnotationImplClass = try {
+            Class.forName("org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl")
+        } catch (_: ClassNotFoundException) {
+            null
+        }
+
+        if (irAnnotationImplClass != null) {
+            try {
+                val buildersClass = Class.forName("org.jetbrains.kotlin.ir.expressions.impl.BuildersKt")
+                val companionClass = Class.forName("org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl\$Companion")
+                val fromSymbolOwnerMethod = buildersClass.methods.firstOrNull {
+                    it.name == "fromSymbolOwner" &&
+                        it.parameterTypes.size == 6 &&
+                        it.parameterTypes[0] == companionClass
+                }
+                if (fromSymbolOwnerMethod != null) {
+                    val companion = irAnnotationImplClass.getField("Companion").get(null)
+                    val result = fromSymbolOwnerMethod.invoke(
+                        null,
+                        companion,
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        anyType,
+                        constructorSymbol,
+                        null,
+                    )
+                    if (result is IrConstructorCall) return result
+                }
+            } catch (_: Throwable) {
+                // Fall back to direct constructor call on 2.3.x
+            }
+        }
+
+        return IrConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             anyType,
-            hiddenFromObjCAnnotation,
+            constructorSymbol,
             0,
             0,
         )
-        context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(this, annotation)
     }
 
     private class IrObservableBlockImpl(
