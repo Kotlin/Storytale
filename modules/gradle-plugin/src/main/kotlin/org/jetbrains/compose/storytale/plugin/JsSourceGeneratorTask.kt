@@ -3,6 +3,7 @@ package org.jetbrains.compose.storytale.plugin
 import com.squareup.kotlinpoet.FileSpec
 import java.io.File
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -13,6 +14,9 @@ open class JsSourceGeneratorTask : DefaultTask() {
 
     @Input
     lateinit var title: String
+
+    @Input
+    val scriptFileName: Property<String> = project.objects.property(String::class.java).convention(SCRIPT_FILE_NAME)
 
     @OutputDirectory
     lateinit var outputResourcesDir: File
@@ -51,7 +55,7 @@ open class JsSourceGeneratorTask : DefaultTask() {
         stylesFile.writeText(webStylesCssContent)
 
         val index = File(outputResourcesDir, "index.html")
-        index.writeText(webIndexHtmlContent(SCRIPT_FILE_NAME))
+        index.writeText(webIndexHtmlContent(scriptFileName.get()))
     }
 
     companion object {

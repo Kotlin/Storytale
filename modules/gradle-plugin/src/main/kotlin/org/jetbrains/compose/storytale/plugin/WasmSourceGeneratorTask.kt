@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import java.io.File
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -14,6 +15,9 @@ import org.gradle.api.tasks.TaskAction
 open class WasmSourceGeneratorTask : DefaultTask() {
     @Input
     lateinit var title: String
+
+    @Input
+    val scriptFileName: Property<String> = project.objects.property(String::class.java).convention(JsSourceGeneratorTask.SCRIPT_FILE_NAME)
 
     @OutputDirectory
     lateinit var outputResourcesDir: File
@@ -53,7 +57,7 @@ open class WasmSourceGeneratorTask : DefaultTask() {
         val index = File(outputResourcesDir, "index.html")
         index.writeText(
             webIndexHtmlContent(
-                jsFileName = JsSourceGeneratorTask.SCRIPT_FILE_NAME,
+                jsFileName = scriptFileName.get(),
                 addSkikoJs = false,
             ),
         )
