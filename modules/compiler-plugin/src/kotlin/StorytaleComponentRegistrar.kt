@@ -13,8 +13,15 @@ class StorytaleComponentRegistrar : CompilerPluginRegistrar() {
     }
 
     companion object {
-        fun registerExtensions(extensionStorage: ExtensionStorage) = with(extensionStorage) {
-            IrGenerationExtension.registerExtension(StorytaleLoweringExtension())
+        fun registerExtensions(extensionStorage: ExtensionStorage) {
+            val extension = StorytaleLoweringExtension()
+            // In Kotlin 2.4+, ExtensionStorage.registerExtension parameter changed from
+            // ProjectExtensionDescriptor to ExtensionPointDescriptor; invoke reflectively for cross-version compatibility
+            val companion = IrGenerationExtension::class.java.getField("Companion").get(null)
+            val registerMethod = extensionStorage.javaClass.methods.firstOrNull {
+                it.name == "registerExtension" && it.parameterCount == 2
+            } ?: error("Storytale: Could not resolve registerExtension method on ${extensionStorage.javaClass.name}")
+            registerMethod.invoke(extensionStorage, companion, extension)
         }
     }
 }
