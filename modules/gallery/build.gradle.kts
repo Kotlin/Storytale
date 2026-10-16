@@ -17,7 +17,6 @@ kotlin {
     wasmJs {
         browser()
     }
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
     jvm {
@@ -38,14 +37,13 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
                 implementation(libs.material3.adaptive)
                 implementation(libs.material3.icons.core)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
                 implementation(libs.navigation.compose)
                 implementation(libs.compose.highlights)
                 implementation(libs.kotlinx.serialization.json)

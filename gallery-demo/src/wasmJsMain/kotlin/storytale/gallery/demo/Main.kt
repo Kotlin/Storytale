@@ -3,7 +3,7 @@ package storytale.gallery.demo
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.ComposeViewport
 import androidx.navigation.ExperimentalBrowserHistoryApi
-import androidx.navigation.bindToNavigation
+import androidx.navigation.bindToBrowserNavigation
 import androidx.navigation.compose.rememberNavController
 import kotlinx.browser.window
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -31,7 +31,7 @@ fun main() {
             StorytaleGalleryApp(isEmbedded = useEmbedded, navHostController)
 
             LaunchedEffect(Unit) {
-                window.bindToNavigation(navHostController)
+                navHostController.bindToBrowserNavigation()
             }
         }
     }

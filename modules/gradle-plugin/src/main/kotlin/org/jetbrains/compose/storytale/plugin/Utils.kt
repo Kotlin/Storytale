@@ -7,7 +7,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.MemberSpecHolder
 import com.squareup.kotlinpoet.TypeSpec
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -17,13 +16,15 @@ import java.util.zip.ZipInputStream
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.register
+import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -61,8 +62,18 @@ inline fun FileSpec.Builder.klass(
     }
 }
 
+inline fun <reified T : Task> Project.registerAndRealizeTypedTask(
+    name: String,
+    noinline configuration: T.() -> Unit,
+): T = tasks.register<T>(name) { configuration() }.get()
+
+fun Project.registerAndRealizeTask(
+    name: String,
+    configuration: Task.() -> Unit,
+): Task = tasks.register(name) { configuration() }.get()
+
 fun StorytaleExtension.getBuildDirectory(target: KotlinTarget) = with(project) {
-    file(buildDir.resolve(this@getBuildDirectory.buildDir).resolve(name).resolve(target.name))
+    file(layout.buildDirectory.get().asFile.resolve(this@getBuildDirectory.buildDir).resolve(name).resolve(target.name))
 }
 
 abstract class UnzipResourceTask : DefaultTask() {
@@ -100,7 +111,7 @@ abstract class UnzipResourceTask : DefaultTask() {
 }
 
 val KotlinCompilation<*>.resolveDependencyResourcesTaskName: String
-    get() = "${name.lowercase()}${target.name.capitalized()}ResolveDependencyResources"
+    get() = "${name.lowercase()}${target.name.replaceFirstChar(Char::uppercaseChar)}ResolveDependencyResources"
 
 fun setupResourceResolvingForTarget(storytaleBuildDir: File, compilation: KotlinCompilation<*>) {
     compilation.project.tasks.register(
@@ -131,12 +142,15 @@ fun getArchivesFromResources(compilation: KotlinCompilation<*>): FileCollection 
     }.files
 }
 
-fun Project.execute(vararg args: String): String = ByteArrayOutputStream().apply {
-    exec {
-        commandLine(*args)
-        standardOutput = this@apply
-    }
-}.toString()
+fun Project.execute(vararg args: String): String {
+    val execution = providers.exec { commandLine(*args) }
+    execution.result.get().assertNormalExitValue()
+    return execution.standardOutput.asText.get()
+}
+
+fun Project.execCommand(configuration: ExecSpec.() -> Unit) {
+    providers.exec { configuration() }.result.get().assertNormalExitValue()
+}
 
 @Suppress("SpellCheckingInspection")
 fun File.createDirectory() {

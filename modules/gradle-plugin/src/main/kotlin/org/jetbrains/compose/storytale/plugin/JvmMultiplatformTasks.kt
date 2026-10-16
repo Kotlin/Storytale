@@ -8,7 +8,6 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.toolchain.JavaLauncher
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.task
 import org.jetbrains.compose.reload.gradle.ComposeHotRun
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
@@ -30,7 +29,7 @@ private fun Project.createJvmStorytaleGenerateSourceTask(
     target: KotlinJvmTarget,
 ) {
     val storytaleBuildDir = extension.getBuildDirectory(target)
-    task<JvmSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
+    registerAndRealizeTypedTask<JvmSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         description = "Generate JVM source files for '${target.name}'"
         title = target.name
@@ -46,7 +45,7 @@ fun Project.createJvmStorytaleCompileTask(
     val mainCompilation = target.compilations.named(KotlinCompilation.MAIN_COMPILATION_NAME).get()
     val storytaleBuildDir = extension.getBuildDirectory(target)
     val storytaleCompilation =
-        target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX) as KotlinJvmCompilation
+        target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX)
 
     storytaleCompilation.associateWith(mainCompilation)
 
@@ -81,7 +80,7 @@ private fun Project.createJvmStorytaleExecTask(
     target: KotlinJvmTarget,
     runtimeClasspath: FileCollection,
 ) {
-    task<JavaExec>("${target.name}${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}Run") {
+    registerAndRealizeTypedTask<JavaExec>("${target.name}${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}Run") {
         dependsOn(compilation.compileTaskProvider)
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         description = "Execute storytale for '${target.name}'"

@@ -1,14 +1,14 @@
 package org.jetbrains.compose.storytale.plugin
 
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.ApplicationVariant
 import com.android.build.gradle.AppExtension
-import com.android.build.gradle.api.ApplicationVariant
 import java.io.ByteArrayOutputStream
 import java.io.File
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
@@ -55,48 +55,51 @@ fun Project.createAndroidCompilationTasks(
                     }
                 }
 
-            applicationExtension.applicationVariants
-                .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX }
-                .configureEach {
-                    val generatorTask = createAndroidStorytaleGenerateSourceTask(
-                        target,
-                        this,
-                        storytaleBuildSourcesDir,
-                        storytaleBuildResourcesDir,
-                    )
+            val androidComponents = extension.project.extensions
+                .getByType(ApplicationAndroidComponentsExtension::class.java)
+            androidComponents.onVariants(
+                androidComponents.selector().withName(StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX),
+            ) { variant ->
+                val generatorTask = createAndroidStorytaleGenerateSourceTask(
+                    target,
+                    variant,
+                    storytaleBuildSourcesDir,
+                    storytaleBuildResourcesDir,
+                )
 
-                    extension.project.tasks
-                        .matching { it.name == "process${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}MainManifest" }
-                        .configureEach { dependsOn(generatorTask) }
+                extension.project.tasks
+                    .matching { it.name == "process${StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX}MainManifest" }
+                    .configureEach { dependsOn(generatorTask) }
 
-                    target.compilations
-                        .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX }
-                        .configureEach {
-                            associateWith(target.compilations.getByName("debug"))
-                            compileTaskProvider.configure {
-                                dependsOn(generatorTask)
-                                dependsOn(":generateResourceAccessorsForCommonStories")
-                            }
+                target.compilations
+                    .matching { it.name == StorytaleGradlePlugin.STORYTALE_EXEC_SUFFIX }
+                    .configureEach {
+                        associateWith(target.compilations.getByName("debug"))
+                        compileTaskProvider.configure {
+                            dependsOn(generatorTask)
+                            dependsOn("generateResourceAccessorsForCommonStories")
                         }
+                    }
 
-                    val startEmulatorTask = createStartEmulatorTask(target, applicationExtension)
+                val startEmulatorTask = createStartEmulatorTask(target, applicationExtension)
+                val applicationId = variant.applicationId
 
-                    task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}Run") {
-                        group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
+                registerAndRealizeTask("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}Run") {
+                    group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
 
-                        val adbPath = applicationExtension.adbExecutable.absolutePath
-                        val activityPath = "$applicationId.StorytaleAppActivity"
+                    val adbPath = applicationExtension.adbExecutable.absolutePath
+                    dependsOn(startEmulatorTask)
+                    dependsOn("install${variant.name}")
 
-                        dependsOn(startEmulatorTask)
-                        dependsOn("install${this@configureEach.name}")
-
-                        doLast {
-                            exec {
-                                commandLine(adbPath, "shell", "am", "start", "-n", "$applicationId/$activityPath")
-                            }
+                    doLast {
+                        val appId = applicationId.get()
+                        val activityPath = "$appId.StorytaleAppActivity"
+                        project.execCommand {
+                            commandLine(adbPath, "shell", "am", "start", "-n", "$appId/$activityPath")
                         }
                     }
                 }
+            }
         }
     }
 }
@@ -106,23 +109,23 @@ private fun Project.createAndroidStorytaleGenerateSourceTask(
     applicationVariant: ApplicationVariant,
     buildSourcesDir: File,
     buildResourcesDir: File,
-) = task<AndroidSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
+) = registerAndRealizeTypedTask<AndroidSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
     group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
     description = "Generate Android source files for '${target.name}'"
     title = target.name
-    appPackageName = applicationVariant.applicationId
+    appPackageName.set(applicationVariant.applicationId)
     outputSourcesDir = buildSourcesDir
     outputResourcesDir = buildResourcesDir
 }
 
 private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applicationExtension: AppExtension): Task {
-    return task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}StartEmulator") {
+    return registerAndRealizeTask("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}StartEmulator") {
         doLast {
             val adbPath = applicationExtension.adbExecutable.absolutePath
 
             // First check whether any physical devices are connected
             val connectedDevices = ByteArrayOutputStream().use { output ->
-                exec {
+                project.execCommand {
                     commandLine(adbPath, "devices")
                     standardOutput = output
                 }
@@ -137,13 +140,13 @@ private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applica
 
             if (physicalDevice != null) {
                 project.logger.info("Using physical device: $physicalDevice")
-                exec {
+                project.execCommand {
                     commandLine(adbPath, "-s", physicalDevice, "wait-for-device")
                 }
             } else {
                 val output = ByteArrayOutputStream()
                 val emulatorPath = applicationExtension.sdkDirectory.resolve("emulator/emulator")
-                exec {
+                project.execCommand {
                     commandLine(emulatorPath, "-list-avds")
                     standardOutput = output
                 }
@@ -153,12 +156,12 @@ private fun Project.createStartEmulatorTask(target: KotlinAndroidTarget, applica
                 if (emulatorName != null) {
                     project.logger.info("Starting emulator: $emulatorName")
                     Thread {
-                        exec {
+                        project.execCommand {
                             commandLine(emulatorPath, "-avd", emulatorName, "-no-snapshot-load")
                         }
                     }.start()
 
-                    exec {
+                    project.execCommand {
                         commandLine(
                             adbPath,
                             "wait-for-device",

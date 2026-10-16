@@ -53,8 +53,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import dev.snipme.highlights.model.SyntaxThemes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -67,11 +66,9 @@ internal fun StoryContent(
     modifier: Modifier = Modifier,
     useEmbeddedView: Boolean = false,
 ) {
-    val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    val heightClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
-
-    val isSmallHeight = heightClass == WindowHeightSizeClass.COMPACT
-    val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isSmallHeight = !windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+    val isSmallWidth = !windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
 
     val useTabs = isSmallHeight || useEmbeddedView || isSmallWidth
 
@@ -206,8 +203,8 @@ private fun StoryPreviewAndCodeStacked(
     codeContent: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val widthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    val isSmallWidth = widthClass == WindowWidthSizeClass.COMPACT
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isSmallWidth = !windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
 
     Row(
         modifier = modifier

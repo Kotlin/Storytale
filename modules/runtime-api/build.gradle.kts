@@ -16,7 +16,6 @@ kotlin {
     js {
         browser()
     }
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
     jvm {
@@ -35,7 +34,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
+            implementation(libs.compose.runtime)
         }
     }
 }

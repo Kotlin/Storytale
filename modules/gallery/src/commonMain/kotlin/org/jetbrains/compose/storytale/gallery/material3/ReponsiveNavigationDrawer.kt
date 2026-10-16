@@ -13,7 +13,7 @@ import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 
 @Composable
 fun ResponsiveNavigationDrawer(
@@ -21,9 +21,9 @@ fun ResponsiveNavigationDrawer(
     drawerContent: @Composable ColumnScope.() -> Unit,
     content: @Composable () -> Unit,
 ) {
-    val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    val isWideWindow = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
-    val isSmallWindow = currentWindowWidthClass == WindowWidthSizeClass.COMPACT
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isWideWindow = windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+    val isSmallWindow = !windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
 
     val drawerModifier = Modifier.width(280.dp)
     if (!isWideWindow) {

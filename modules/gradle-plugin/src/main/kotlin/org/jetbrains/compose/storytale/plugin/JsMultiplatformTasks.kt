@@ -5,7 +5,6 @@ package org.jetbrains.compose.storytale.plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.AbstractCopyTask
-import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.web.tasks.UnpackSkikoWasmRuntimeTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -35,7 +34,7 @@ fun Project.createWasmAndJsStorytaleCompilation(
     val mainCompilation = target.compilations.named(KotlinCompilation.MAIN_COMPILATION_NAME).get()
     val storytaleBuildDir = extension.getBuildDirectory(target)
     val storytaleCompilation =
-        target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX) as KotlinJsIrCompilation
+        target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX)
 
     storytaleCompilation.associateWith(mainCompilation)
     setupResourceResolvingForTarget(storytaleBuildDir, storytaleCompilation)
@@ -96,7 +95,7 @@ private fun Kotlin2JsCompile.configureOptions() {
 
 private fun Project.createJsStorytaleGenerateSourceTask(extension: StorytaleExtension, target: KotlinJsIrTarget) {
     val storytaleBuildDir = extension.getBuildDirectory(target)
-    task<JsSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
+    registerAndRealizeTypedTask<JsSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         description = "Generate JS source files for '${target.name}'"
         title = target.name

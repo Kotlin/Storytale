@@ -91,11 +91,10 @@ private class MentionAllStoriesGettersInsideMainFunctionLowering(
 
     private val anyType = context.irBuiltIns.anyType
     private val unitType = context.irBuiltIns.unitType
-    private val storyFactory = context.referenceClass(storyFactoryId)
-    private val hiddenFromObjCAnnotation = context.referenceConstructors(hideFromObjcId).single()
+    private val hiddenFromObjCAnnotation = context.finderForBuiltins().findConstructors(hideFromObjcId).single()
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        val factoryType = storyFactory?.defaultType ?: return null
+        val factoryType = context.finderForSource(declaration.file).findClass(storyFactoryId)?.defaultType ?: return null
 
         if (declaration is IrProperty && declaration.isStory(factoryType)) {
             declaration.addHiddenFromObjCAnnotation()

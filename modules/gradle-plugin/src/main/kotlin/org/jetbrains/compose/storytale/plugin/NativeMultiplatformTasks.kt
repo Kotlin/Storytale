@@ -6,9 +6,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.property
-import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -35,7 +33,7 @@ private fun Project.createNativeStorytaleCompileTask(
     val storytaleBuildDir = extension.getBuildDirectory(target)
     val mainCompilation = target.compilations.named(KotlinCompilation.MAIN_COMPILATION_NAME).get()
     val storytaleCompilation =
-        target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX) as KotlinNativeCompilation
+        target.compilations.create(StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX)
 
     storytaleCompilation.associateWith(mainCompilation)
     setupResourceResolvingForTarget(storytaleBuildDir, storytaleCompilation)
@@ -75,7 +73,7 @@ private fun Project.createNativeStorytaleGenerateSourceTask(
     target: KotlinNativeTarget,
 ): NativeSourceGeneratorTask {
     val storytaleBuildDir = extension.getBuildDirectory(target)
-    return task<NativeSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
+    return registerAndRealizeTypedTask<NativeSourceGeneratorTask>("${target.name}${StorytaleGradlePlugin.STORYTALE_GENERATE_SUFFIX}") {
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         description = "Generate Native source files for '${target.name}'"
         title = target.name
@@ -92,8 +90,8 @@ private fun Project.createNativeStorytaleExecTask(
     if (!target.name.contains("Simulator")) return null
 
     val deviceId = objects.property<String>()
-    val targetSuffix = target.name.capitalized()
-    val linkTask = tasks.findByPath("link${StorytaleGradlePlugin.STORYTALE_TASK_GROUP.capitalized()}${StorytaleGradlePlugin.LINK_BUILD_VERSION}Framework$targetSuffix") as? KotlinNativeLink
+    val targetSuffix = target.name.replaceFirstChar(Char::uppercaseChar)
+    val linkTask = tasks.findByPath("link${StorytaleGradlePlugin.STORYTALE_TASK_GROUP.replaceFirstChar(Char::uppercaseChar)}${StorytaleGradlePlugin.LINK_BUILD_VERSION}Framework$targetSuffix") as? KotlinNativeLink
         ?: error("Link task was not created for target ${target.name}")
 
     val unzipXCodeProjectTask = createUnzipResourceTask(extension)
@@ -105,7 +103,7 @@ private fun Project.createNativeStorytaleExecTask(
     val copyResourcesTask = createCopyNativeResourcesTask(platform, target, targetSuffix, compilation, unzipXCodeProjectTask, buildTask)
     val installAppTask = createInstallApplicationToSimulatorTask(deviceId, targetSuffix, platform, unzipXCodeProjectTask, buildTask, copyResourcesTask)
 
-    return task("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}Run") {
+    return registerAndRealizeTask("${target.name}${StorytaleGradlePlugin.STORYTALE_SOURCESET_SUFFIX}Run") {
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         dependsOn(unzipXCodeProjectTask)
         dependsOn(installAppTask)
@@ -113,7 +111,7 @@ private fun Project.createNativeStorytaleExecTask(
         inputs.property("deviceId", deviceId)
 
         doLast {
-            exec {
+            project.execCommand {
                 workingDir = unzipXCodeProjectTask.outputDir.get().asFile
                 commandLine(
                     "/usr/bin/xcrun",
@@ -123,7 +121,7 @@ private fun Project.createNativeStorytaleExecTask(
                     StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_PATH,
                 )
             }
-            exec {
+            project.execCommand {
                 commandLine("/usr/bin/open", "-a", "Simulator")
             }
         }
@@ -131,7 +129,7 @@ private fun Project.createNativeStorytaleExecTask(
 }
 
 private fun Project.createUnzipResourceTask(extension: StorytaleExtension): UnzipResourceTask {
-    return task<UnzipResourceTask>("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}UnzipXCodeProject") {
+    return registerAndRealizeTypedTask<UnzipResourceTask>("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}UnzipXCodeProject") {
         resourcePath.set("${StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME}.zip")
         outputDir.set(
             file(
@@ -144,7 +142,7 @@ private fun Project.createUnzipResourceTask(extension: StorytaleExtension): Unzi
 }
 
 private fun Project.createSimulatorRegistrationTask(unzipResourceTask: UnzipResourceTask, targetSuffix: String, deviceIdProperty: Property<String>): Task {
-    return task("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}Register$targetSuffix") {
+    return registerAndRealizeTask("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}Register$targetSuffix") {
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         dependsOn(unzipResourceTask)
 
@@ -167,7 +165,7 @@ private fun Project.createSimulatorRegistrationTask(unzipResourceTask: UnzipReso
                 deviceId = existingDeviceId
             }
 
-            if (!isBooted) exec { commandLine("/usr/bin/xcrun", "simctl", "boot", deviceId) }
+            if (!isBooted) project.execCommand { commandLine("/usr/bin/xcrun", "simctl", "boot", deviceId) }
 
             deviceIdProperty.set(deviceId)
         }
@@ -205,7 +203,7 @@ private fun Project.createBuildTask(
     simulatorRegistrationTask: Task,
     linkTask: KotlinNativeLink,
 ): Task {
-    return task("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}Build$targetSuffix") {
+    return registerAndRealizeTask("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}Build$targetSuffix") {
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         dependsOn(unzipResourceTask)
         dependsOn(simulatorRegistrationTask)
@@ -219,7 +217,7 @@ private fun Project.createBuildTask(
 
         doLast {
             val frameworkPath = linkTask.destinationDirectory.asFile.get().path
-            exec {
+            project.execCommand {
                 workingDir = xcodeProjectPath
                 commandLine(
                     "/usr/bin/xcodebuild",
@@ -252,7 +250,7 @@ private fun Project.createCopyNativeResourcesTask(
         compilation.allKotlinSourceSets.forAll { from(it.resources.sourceDirectories) }
     }
 
-    return task<NativeCopyResourcesTask>("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}CopyResources$targetSuffix") {
+    return registerAndRealizeTypedTask<NativeCopyResourcesTask>("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}CopyResources$targetSuffix") {
         dependsOn(frameworkResources)
         dependsOn(unzipResourceTask)
         dependsOn(buildTask)
@@ -279,7 +277,7 @@ private fun Project.createInstallApplicationToSimulatorTask(
     buildTask: Task,
     copyResourcesTask: Task,
 ): Task {
-    return task("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}InstallApp$targetSuffix") {
+    return registerAndRealizeTask("${StorytaleGradlePlugin.STORYTALE_TASK_GROUP}InstallApp$targetSuffix") {
         group = StorytaleGradlePlugin.STORYTALE_TASK_GROUP
         dependsOn(unzipResourceTask)
         dependsOn(buildTask)
@@ -288,7 +286,7 @@ private fun Project.createInstallApplicationToSimulatorTask(
         inputs.property("deviceId", deviceId)
 
         doLast {
-            exec {
+            project.execCommand {
                 workingDir = unzipResourceTask.outputDir.get().asFile
                 val appPath = "${StorytaleGradlePlugin.DERIVED_DATA_DIRECTORY_NAME}/Build/Products/${StorytaleGradlePlugin.LINK_BUILD_VERSION}-$platform/${StorytaleGradlePlugin.STORYTALE_NATIVE_PROJECT_NAME}.app"
                 commandLine(

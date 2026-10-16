@@ -18,12 +18,12 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    compileOnly(compose.runtime)
+    compileOnly(libs.compose.runtime)
     implementation(kotlin("compiler-embeddable"))
-    testImplementation(compose.foundation)
-    testImplementation(compose.material3)
-    testImplementation(compose.runtime)
-    testImplementation(compose.ui)
+    testImplementation(libs.compose.foundation)
+    testImplementation(libs.compose.material3)
+    testImplementation(libs.compose.runtime)
+    testImplementation(libs.compose.ui)
     testImplementation(kotlin("compose-compiler-plugin-embeddable"))
     testImplementation(kotlin("test"))
     testImplementation(libs.assertj.core)

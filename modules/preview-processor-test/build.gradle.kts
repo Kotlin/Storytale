@@ -18,16 +18,17 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(compose.runtime)
+                compileOnly(libs.compose.runtime)
             }
         }
         val jvmMain by getting {
             dependencies {
-                implementation(compose.components.uiToolingPreview)
+                implementation(libs.compose.ui.tooling.preview)
+                implementation(libs.compose.legacy.preview)
                 implementation(project(":modules:preview-processor"))
                 implementation(kotlin("test"))
 
-                implementation(compose.runtime)
+                implementation(libs.compose.runtime)
                 implementation(kotlin("compiler-embeddable"))
                 implementation(kotlin("compose-compiler-plugin-embeddable"))
                 implementation(kotlin("test"))

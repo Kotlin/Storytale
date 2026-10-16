@@ -7,7 +7,7 @@ import androidx.compose.ui.state.ToggleableState.Indeterminate
 import androidx.compose.ui.state.ToggleableState.Off
 import androidx.compose.ui.state.ToggleableState.On
 import org.jetbrains.compose.storytale.previewParameter
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable

@@ -43,7 +43,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.storytale.Story
 import org.jetbrains.compose.storytale.gallery.ui.theme.UseCustomDensity
@@ -184,8 +184,8 @@ private fun GalleryTopAppBar(
     activeStoryName: String?,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val currentWindowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    val isExpanded = currentWindowWidthClass == WindowWidthSizeClass.EXPANDED
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isExpanded = windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     CenterAlignedTopAppBar(
         title = {

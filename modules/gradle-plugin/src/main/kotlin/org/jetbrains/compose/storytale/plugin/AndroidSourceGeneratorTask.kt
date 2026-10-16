@@ -6,18 +6,19 @@ import com.squareup.kotlinpoet.KModifier
 import java.io.File
 import java.nio.file.Files
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
-open class AndroidSourceGeneratorTask : DefaultTask() {
+abstract class AndroidSourceGeneratorTask : DefaultTask() {
     @Input
     lateinit var title: String
 
-    @Input
-    lateinit var appPackageName: String
+    @get:Input
+    abstract val appPackageName: Property<String>
 
     @OutputDirectory
     lateinit var outputResourcesDir: File
@@ -46,7 +47,7 @@ open class AndroidSourceGeneratorTask : DefaultTask() {
             .build()
             .writeTo(outputSourcesDir)
 
-        FileSpec.builder(appPackageName, "StorytaleAppActivity").apply {
+        FileSpec.builder(appPackageName.get(), "StorytaleAppActivity").apply {
             addImport("androidx.activity", "enableEdgeToEdge")
             addImport("androidx.activity.compose", "setContent")
             addImport(StorytaleGradlePlugin.STORYTALE_PACKAGE, "MainViewController")

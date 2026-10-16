@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
@@ -30,13 +30,13 @@ class MakePreviewPublicFirExtensionRegistrar : FirExtensionRegistrar() {
 
     class Extension(session: FirSession) : FirStatusTransformerExtension(session) {
         override fun needTransformStatus(declaration: FirDeclaration): Boolean {
-            if (declaration !is FirSimpleFunction) return false
+            if (declaration !is FirNamedFunction) return false
             return PREVIEW_CLASS_IDS.any { declaration.hasAnnotation(it, session) }
         }
 
         override fun transformStatus(
             status: FirDeclarationStatus,
-            function: FirSimpleFunction,
+            function: FirNamedFunction,
             containingClass: FirClassLikeSymbol<*>?,
             isLocal: Boolean,
         ): FirDeclarationStatus {
