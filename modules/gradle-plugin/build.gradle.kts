@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.compose.gradle.plugin)
     implementation(libs.kotlin.poet)
     testImplementation(libs.junit)
+    testImplementation(libs.compose.compiler.gradle.plugin)
 }
 
 group = "org.jetbrains.compose.storytale"

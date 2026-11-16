@@ -3,6 +3,8 @@ package org.jetbrains.compose.storytale.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -33,16 +35,21 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     private fun Project.processConfigurations(extension: StorytaleExtension) {
         extension.targets.all {
-            when (this) {
+            val target = this
+            when (target) {
                 is KotlinJsIrTarget ->
-                    when (wasmTargetType) {
-                        KotlinWasmTargetType.JS -> processWasmCompilation(extension, this)
-                        null -> processJsCompilation(extension, this)
+                    when (target.wasmTargetType) {
+                        KotlinWasmTargetType.JS -> processWasmCompilation(extension, target)
+                        null -> processJsCompilation(extension, target)
                         else -> {}
                     }
-                is KotlinAndroidTarget -> processAndroidCompilation(extension, this)
-                is KotlinJvmTarget -> processJvmCompilation(extension, this)
-                is KotlinNativeTarget -> processNativeCompilation(extension, this)
+                is KotlinJvmTarget -> processJvmCompilation(extension, target)
+                is KotlinNativeTarget -> processNativeCompilation(extension, target)
+                else -> {
+                    if (target.isAndroidTarget) {
+                        processAndroidCompilation(extension, target)
+                    }
+                }
             }
         }
     }
@@ -66,3 +73,9 @@ class StorytaleGradlePlugin : KotlinCompilerPluginSupportPlugin {
         val VERSION = BuildTimeConfig.projectVersion
     }
 }
+
+private val KotlinTarget.isAndroidTarget: Boolean
+    get() = platformType == KotlinPlatformType.androidJvm ||
+        this is KotlinAndroidTarget ||
+        javaClass.name.contains("Android")
+
